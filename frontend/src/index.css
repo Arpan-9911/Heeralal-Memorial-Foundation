@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+:root {
+  --color-primary: #e0be38;        /* golden yellow */
+  --color-primary-light: #f1ef62;  /* lighter yellow */
+  --color-primary-dark: #c8a724;   /* deeper gold */
+
+  --color-secondary: #7b2a23;      /* rich brown */
+  --color-secondary-light: #c52415;
+  --color-secondary-dark: #6e0f06;
+
+  /* UI */
+  --color-bg: #ffffff;
+  --color-text: #1f2937;
+  --color-muted: #6b7280;
+
+  /* STATES */
+  --color-danger: #ef4444;
+
+  /* RINGS */
+  --color-ring: rgba(212, 160, 23, 0.35);
+}

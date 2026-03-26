@@ -4,11 +4,14 @@ import Input from "../components/common/Input";
 import Textarea from "../components/common/Textarea";
 import Loader from "../components/common/Loader";
 
+import Navbar from "../components/layout/Navbar";
+
 import { FiArrowRight, FiMail, FiUser } from "react-icons/fi";
 
 const Home = () => {
   return (
-    <div className="p-6 space-y-10">
+    <div>
+      <Navbar />
       <h1 className="text-2xl font-semibold text-gray-800">
         UI Components Showcase
       </h1>
@@ -26,6 +29,7 @@ const Home = () => {
             <Button variant="outline">Outline</Button>
             <Button variant="ghost">Ghost</Button>
             <Button variant="danger">Danger</Button>
+            <Button variant="glass">Glass</Button>
           </div>
         </div>
 

@@ -22,13 +22,13 @@ const Textarea = ({
           className={`block text-xs font-medium transition-colors duration-200
           ${
             error
-              ? "text-red-500"
+              ? "text-[var(--color-danger)]"
               : focused
-              ? "text-amber-600"
+              ? "text-[var(--color-secondary)]"
               : "text-gray-500"
           }`}
         >
-          {label} {required && <span className="text-red-500">*</span>}
+          {label} {required && <span className="text-[var(--color-danger)]">*</span>}
         </label>
       )}
 
@@ -37,13 +37,13 @@ const Textarea = ({
         className={`group rounded border bg-white transition-all duration-200
         ${
           error
-            ? "border-red-400 focus-within:ring-2 focus-within:ring-red-200"
-            : "border-gray-300 focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-200"
+            ? "border-[var(--color-danger)] focus-within:ring-2 focus-within:ring-[var(--color-danger)]"
+            : "border-gray-300 focus-within:border-[var(--color-primary-light)] focus-within:ring-2 focus-within:ring-[var(--color-primary-light)]"
         }
         ${
           disabled
             ? "bg-gray-100 cursor-not-allowed opacity-70"
-            : "hover:border-amber-300"
+            : "hover:border-[var(--color-primary)]"
         }
         `}
       >
@@ -60,7 +60,7 @@ const Textarea = ({
       </div>
 
       {/* Error */}
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-[var(--color-danger)]">{error}</p>}
 
       {/* Helper */}
       {helperText && !error && (

@@ -20,37 +20,44 @@ const Button = ({
   const variants = {
     // 🔥 MAIN PREMIUM BUTTON
     primary:
-      "bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 text-black " +
+      "bg-gradient-to-br from-[var(--color-primary-light)] via-[var(--color-primary)] to-[var(--color-primary-dark)] text-black " +
       "shadow-[0_6px_20px_rgba(251,191,36,0.35)] " +
       "hover:shadow-[0_10px_30px_rgba(251,191,36,0.55)] " +
-      "hover:-translate-y-[2px] focus:ring-amber-400",
+      "hover:-translate-y-[2px] focus:ring-[var(--color-primary-light)]",
 
     // ✨ CLEAN PROFESSIONAL
     secondary:
-      "bg-amber-600 text-white border border-amber-200 " +
-      "shadow-sm hover:shadow-md hover:-translate-y-[1px] " +
-      "hover:bg-amber-700 focus:ring-amber-800",
+      "bg-[var(--color-secondary)] text-white " +
+      "shadow-[0_6px_20px_rgba(251,191,36,0.35)] " +
+      "hover:shadow-[0_10px_30px_rgba(251,191,36,0.55)] " +
+      "hover:-translate-y-[2px] hover:bg-[var(--color-secondary-dark)] focus:ring-[var(--color-secondary)]",
 
     // ⚡ MINIMAL OUTLINE
     outline:
-      "border border-amber-300 text-amber-600 " +
-      "hover:bg-amber-50 hover:border-amber-400 " +
-      "focus:ring-amber-300",
+      "border border-[var(--color-primary)] text-[var(--color-secondary)] " +
+      "hover:bg-[var(--color-primary-light)] hover:border-[var(--color-primary-light)] " +
+      "shadow-[0_6px_20px_rgba(251,191,36,0.35)] " +
+      "hover:shadow-[0_10px_30px_rgba(251,191,36,0.55)] " +
+      "hover:-translate-y-[2px] focus:ring-[var(--color-primary)]",
 
     // 💡 SUBTLE ACTION
     ghost:
-      "text-amber-600 hover:bg-amber-100/60 focus:ring-amber-200",
+      "text-[var(--color-secondary)] hover:bg-[var(--color-primary-light)] " +
+      "hover:shadow-[0_10px_30px_rgba(251,191,36,0.55)] " +
+      "hover:-translate-y-[2px] focus:ring-[var(--color-secondary-light)]",
 
     // 🚨 DANGER
     danger:
-      "bg-red-500 text-white shadow-sm " +
-      "hover:bg-red-600 hover:shadow-md hover:-translate-y-[1px] focus:ring-red-400",
+      "bg-[var(--color-danger)] text-white " +
+      "shadow-[0_6px_20px_rgba(251,191,36,0.35)] " +
+      "hover:shadow-[0_10px_30px_rgba(251,191,36,0.55)] " +
+      "hover:bg-[var(--color-danger)] hover:-translate-y-[2px] focus:ring-[var(--color-danger)]",
 
     // 💎 GLASS PREMIUM (best on dark bg)
     glass:
-      "bg-amber-400/20 backdrop-blur-xl text-amber-200 border border-amber-300/30 " +
+      "bg-[var(--color-primary-light)]/20 backdrop-blur-xl text-[var(--color-secondary-light) " +
       "shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_20px_rgba(251,191,36,0.25)] " +
-      "hover:bg-amber-400/30 focus:ring-amber-300",
+      "hover:bg-[var(--color-primary-light)]/30 focus:ring-[var(--color-primary)] hover:-translate-y-[2px]",
   };
 
   const sizes = {
@@ -80,7 +87,7 @@ const Button = ({
       <span className="relative z-10">{children}</span>
 
       {/* 🌟 Glow Aura */}
-      <span className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition duration-300 bg-linear-to-r from-amber-200/50 via-yellow-200/50 to-amber-300/50 blur-md"></span>
+      <span className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition duration-300 bg-linear-to-r from-[var(--color-primary-light)]/25 to-[var(--color-primary)]/25 blur-md"></span>
 
       {/* ✨ Top Shine Line */}
       <span className="absolute top-0 left-0 w-full h-px bg-white/40 opacity-50"></span>
