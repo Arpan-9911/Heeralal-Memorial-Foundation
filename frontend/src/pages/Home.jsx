@@ -10,6 +10,7 @@ import "swiper/css/effect-fade";
 
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
 
 const slides = [
@@ -459,35 +460,12 @@ const FormalCommendation = () => {
           {commendation.title[lang]}
         </h2>
         <div className="w-20 h-1 bg-[var(--color-primary-dark)] my-4 mx-auto rounded"></div>
-        <div className="bg-white md:p-10 p-4 rounded border border-gray-200 shadow-md max-w-2xl mx-auto">
-          <div className="flex gap-4 items-start justify-between max-md:flex-col">
-            <div
-              className="text-[var(--color-secondary)] font-semibold"
-              dangerouslySetInnerHTML={{
-                __html: commendation.letter.address[lang],
-              }}
-            />
-            <div className="text-sm text-gray-600 italic">
-              Dated:{" "}
-              {new Date(commendation.letter.date).toLocaleDateString(
-                lang === "en" ? "en-US" : "hi-IN",
-                { year: "numeric", month: "long", day: "numeric" },
-              )}
-            </div>
-          </div>
-          <div
-            className="text-sm mt-4"
-            dangerouslySetInnerHTML={{ __html: commendation.letter.body[lang] }}
+        <div className="bg-white md:p-6 p-3 rounded border border-gray-200 shadow-md max-w-2xl mx-auto">
+          <img
+            src="/commendation-letter.jpg"
+            alt={lang === "en" ? "Formal Commendation Letter" : "औपचारिक प्रशंसा पत्र"}
+            className="w-full h-auto rounded object-contain"
           />
-          <div className="flex flex-col items-end mt-8 justify-center">
-            <img
-              src={commendation.letter.sign}
-              alt="Signature"
-              className="w-32"
-            />
-            <p className="font-semibold">{commendation.letter.name[lang]}</p>
-            <p className="text-xs">{commendation.letter.post[lang]}</p>
-          </div>
         </div>
       </div>
     </section>
@@ -718,7 +696,7 @@ const Home = () => {
       <InstitutionalProgress />
       <InstitutionalPillars />
       <LatestFromField />
-      {/* Footer */}
+      <Footer />
     </div>
   );
 };
