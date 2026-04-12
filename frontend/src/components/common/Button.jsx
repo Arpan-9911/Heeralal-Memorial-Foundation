@@ -34,7 +34,7 @@ const Button = ({
 
     // ⚡ MINIMAL OUTLINE
     outline:
-      "border border-[var(--color-primary)] text-[var(--color-secondary)] " +
+      "border border-[var(--color-primary)] text-[var(--color-primary)] hover:text-black " +
       "hover:bg-[var(--color-primary-light)] hover:border-[var(--color-primary-light)] " +
       "shadow-[0_6px_20px_rgba(251,191,36,0.35)] " +
       "hover:shadow-[0_10px_30px_rgba(251,191,36,0.55)] " +

@@ -1,22 +1,89 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #e0be38;        /* golden yellow */
-  --color-primary-light: #f1ef62;  /* lighter yellow */
-  --color-primary-dark: #c8a724;   /* deeper gold */
+  /* PRIMARY (Elegant Gold) */
+  --color-primary: #e4af2b;
+  --color-primary-light: #f6eeda;
+  --color-primary-dark: #9c7a10;
 
-  --color-secondary: #7b2a23;      /* rich brown */
-  --color-secondary-light: #c52415;
-  --color-secondary-dark: #6e0f06;
+  /* SECONDARY (Deep Maroon) */
+  --color-secondary: #6b1f1a;
+  --color-secondary-light: #a9443a;
+  --color-secondary-dark: #4a120e;
 
-  /* UI */
-  --color-bg: #ffffff;
-  --color-text: #1f2937;
+  /* NEUTRALS */
+  --color-bg: #fffdf7;
+  --color-surface: #ffffff;
   --color-muted: #6b7280;
 
-  /* STATES */
-  --color-danger: #ef4444;
+  /* GRADIENTS */
+  --gradient-primary: linear-gradient(135deg, #d4a017, #f0c94d);
+  --gradient-secondary: linear-gradient(135deg, #6b1f1a, #a9443a);
 
-  /* RINGS */
-  --color-ring: rgba(212, 160, 23, 0.35);
+  /* SHADOWS */
+  --shadow-soft: 0 4px 20px rgba(0,0,0,0.05);
+  --shadow-medium: 0 8px 30px rgba(0,0,0,0.08);
+  --shadow-strong: 0 10px 40px rgba(0,0,0,0.12);
+
+  --color-ring: rgba(212, 160, 23, 0.25);
+}
+
+* {
+  transition: all 0.25s ease;
+}
+
+body {
+  background-color: var(--color-bg);
+  font-family: 'Poppins', sans-serif;
+  color: #1f2937;
+}
+
+/* Swiper arrows */
+.swiper-button-next {
+  transform: scale(0.6) translateX(20px);
+}
+.swiper-button-prev {
+  transform: scale(0.6) translateX(-20px);
+}
+
+/* ---------------- GLOBAL SECTION ANIMATION ---------------- */
+section {
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition: all 0.7s ease;
+}
+
+/* when visible */
+section.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* slight stagger feel */
+section:nth-child(even) {
+  transition-delay: 0.1s;
+}
+section:nth-child(odd) {
+  transition-delay: 0.2s;
+}
+
+/* ---------------- OPTIONAL: FADE VARIANTS ---------------- */
+.fade-left {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: all 0.7s ease;
+}
+.fade-left.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-right {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: all 0.7s ease;
+}
+.fade-right.show {
+  opacity: 1;
+  transform: translateX(0);
 }

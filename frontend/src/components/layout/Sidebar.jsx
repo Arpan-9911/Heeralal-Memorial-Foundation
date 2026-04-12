@@ -1,9 +1,75 @@
-import React from 'react'
+import React from "react";
+import { Link } from "react-router-dom";
+import { useLanguage } from "../../LanguageContext";
+import { FiX } from "react-icons/fi";
 
-const Sidebar = () => {
+const Sidebar = ({ open, setOpen }) => {
+  const { lang, changeLanguage } = useLanguage();
+
   return (
-    <div>Sidebar</div>
-  )
-}
+    <>
+      {/* Overlay */}
+      <div
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+          open ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+        onClick={() => setOpen(false)}
+      />
 
-export default Sidebar
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full w-72 bg-white z-50 shadow-2xl transform transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center p-4 border-b">
+          <h2 className="font-bold text-lg">
+            {lang === "en" ? "MENU" : "मेनू"}
+          </h2>
+          <button onClick={() => setOpen(false)}>
+            <FiX size={22} />
+          </button>
+        </div>
+
+        {/* Links */}
+        <div className="flex flex-col p-4 gap-4 text-sm font-medium">
+          <Link to="/" onClick={() => setOpen(false)}>{lang === "en" ? "HOME" : "होम"}</Link>
+          <Link to="/about" onClick={() => setOpen(false)}>{lang === "en" ? "ABOUT US" : "हमारे बारे में"}</Link>
+          <Link to="/media" onClick={() => setOpen(false)}>{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
+          <Link to="/achievements" onClick={() => setOpen(false)}>{lang === "en" ? "ACHIEVEMENTS" : "उत्पादन" }</Link>
+          <Link to="/programs" onClick={() => setOpen(false)}>{lang === "en" ? "PROGRAMS" : "प्रोग्राम" }</Link>
+          <Link to="/teams" onClick={() => setOpen(false)}>{lang === "en" ? "TEAM" : "टीम" }</Link>
+
+          {/* Donate Button */}
+          <Link
+            to="/donate"
+            onClick={() => setOpen(false)}
+            className="mt-4 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-center"
+          >
+            {lang === "en" ? "SUPPORT & DONATE" : "समर्थन एवं दान"}
+          </Link>
+        </div>
+
+        {/* Language Switch */}
+        <div className="absolute bottom-6 left-4 right-4 flex items-center gap-2 text-sm">
+          <button
+            onClick={() => changeLanguage("en")}
+            className={lang === "en" ? "font-bold" : ""}
+          >
+            English
+          </button>
+          <span>|</span>
+          <button
+            onClick={() => changeLanguage("hi")}
+            className={lang === "hi" ? "font-bold" : ""}
+          >
+            हिंदी
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Sidebar;

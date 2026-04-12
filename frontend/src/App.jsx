@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 
@@ -7,6 +7,22 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    document.querySelectorAll("section").forEach((el) => {
+      observer.observe(el);
+    });
+  }, []);
   return (
     <>
       <Toaster position="top-right" richColors />
