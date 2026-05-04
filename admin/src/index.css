@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+:root {
+  /* ADMIN PALETTE — derived from main brand */
+  --admin-sidebar: #1e1214;
+  --admin-sidebar-hover: #2d1a1e;
+  --admin-sidebar-active: #3d2228;
+  --admin-bg: #f5f5f5;
+  --admin-surface: #ffffff;
+  --admin-accent: #e4af2b;
+  --admin-accent-light: #f6eeda;
+  --admin-accent-dark: #9c7a10;
+  --admin-maroon: #6b1f1a;
+  --admin-maroon-light: #a9443a;
+  --admin-text: #1f2937;
+  --admin-muted: #6b7280;
+  --admin-border: #e5e7eb;
+  --admin-danger: #ef4444;
+  --admin-success: #22c55e;
+  --admin-warning: #f59e0b;
+  --admin-info: #3b82f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--admin-bg);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--admin-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* Table row hover */
+.admin-table-row:hover {
+  background-color: var(--admin-accent-light);
+}

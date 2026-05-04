@@ -20,8 +20,8 @@ const footerData = {
     },
     links: [
       {
-        label: { en: "Internal Complaints Committee", hi: "आंतरिक शिकायत समिति" },
-        href: "/icc",
+        label: { en: "Contact Us", hi: "संपर्क करें" },
+        href: "/contact",
       },
       {
         label: { en: "Privacy Policy", hi: "गोपनीयता नीति" },

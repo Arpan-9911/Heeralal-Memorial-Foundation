@@ -9,6 +9,8 @@ import Achievements from "./pages/Achievements";
 import Programs from "./pages/Programs";
 import Teams from "./pages/Teams";
 import NotFound from "./pages/NotFound";
+import Donate from "./pages/Donate";
+import Contact from "./pages/Contact";
 
 const App = () => {
   useEffect(() => {
@@ -39,6 +41,8 @@ const App = () => {
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/programs" element={<Programs />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/donate" element={<Donate />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
