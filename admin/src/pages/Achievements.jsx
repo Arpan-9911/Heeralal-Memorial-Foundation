@@ -1,65 +1,498 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const mock = [
-  { id: 1, image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=400", titleEn: "Certificate of Excellence in Rural Education", titleHi: "ग्रामीण शिक्षा में उत्कृष्टता प्रमाणपत्र", descEn: "Awarded for Vidya Jyoti initiative bridging the digital divide.", descHi: "विद्या ज्योति पहल के लिए सम्मानित।", presentedByEn: "National Education Council (2024)", presentedByHi: "राष्ट्रीय शिक्षा परिषद (2024)" },
-  { id: 2, image: "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=400", titleEn: "Community Health Impact Pioneer", titleHi: "सामुदायिक स्वास्थ्य प्रभाव अग्रणी", descEn: "Recognition for Swasthya Seva mobile clinic model.", descHi: "स्वास्थ्य सेवा मोबाइल क्लिनिक के लिए मान्यता।", presentedByEn: "Delhi Health & Welfare Board", presentedByHi: "दिल्ली स्वास्थ्य एवं कल्याण बोर्ड" },
-];
+import {
+  getAchievements,
+  createAchievement,
+  updateAchievement,
+  deleteAchievement,
+} from "../api/achievement.api";
+
+const initialForm = {
+  titleEn: "",
+  titleHi: "",
+
+  descEn: "",
+  descHi: "",
+
+  presentedByEn: "",
+  presentedByHi: "",
+
+  image: null,
+};
 
 const Achievements = () => {
-  const [items, setItems] = useState(mock);
-  const [editing, setEditing] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const empty = { image: "", titleEn: "", titleHi: "", descEn: "", descHi: "", presentedByEn: "", presentedByHi: "" };
-  const [form, setForm] = useState(empty);
+  const [items, setItems] = useState([]);
 
-  const reset = () => { setForm(empty); setEditing(null); setShowForm(false); };
-  const save = () => { if (editing) setItems(p => p.map(i => i.id === editing ? { ...form, id: editing } : i)); else setItems(p => [...p, { ...form, id: Date.now() }]); reset(); };
-  const del = (id) => setItems(p => p.filter(i => i.id !== id));
-  const inp = "w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)]";
+  const [editing, setEditing] = useState(null);
+
+  const [showForm, setShowForm] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState(initialForm);
+
+  const fetchAchievements = async () => {
+    try {
+      setLoading(true);
+
+      const data = await getAchievements();
+
+      setItems(data?.achievements || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAchievements();
+  }, []);
+
+  const reset = () => {
+    setForm(initialForm);
+
+    setEditing(null);
+
+    setShowForm(false);
+  };
+
+  const handleEdit = (achievement) => {
+    setForm({
+      titleEn: achievement.title?.en || "",
+
+      titleHi: achievement.title?.hi || "",
+
+      descEn: achievement.description?.en || "",
+
+      descHi: achievement.description?.hi || "",
+
+      presentedByEn:
+        achievement.presentedBy?.en || "",
+
+      presentedByHi:
+        achievement.presentedBy?.hi || "",
+
+      image: null,
+    });
+
+    setEditing(achievement._id);
+
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      if (!form.titleEn) {
+        alert("Please enter title");
+
+        return;
+      }
+
+      if (!editing && !form.image) {
+        alert("Please select image");
+
+        return;
+      }
+
+      setSaving(true);
+
+      const formData = new FormData();
+
+      formData.append(
+        "titleEn",
+        form.titleEn
+      );
+
+      formData.append(
+        "titleHi",
+        form.titleHi
+      );
+
+      formData.append(
+        "descEn",
+        form.descEn
+      );
+
+      formData.append(
+        "descHi",
+        form.descHi
+      );
+
+      formData.append(
+        "presentedByEn",
+        form.presentedByEn
+      );
+
+      formData.append(
+        "presentedByHi",
+        form.presentedByHi
+      );
+
+      if (form.image) {
+        formData.append(
+          "image",
+          form.image
+        );
+      }
+
+      if (editing) {
+        const data =
+          await updateAchievement(
+            editing,
+            formData
+          );
+
+        setItems((prev) =>
+          prev.map((i) =>
+            i._id === editing
+              ? data.achievement
+              : i
+          )
+        );
+      } else {
+        const data =
+          await createAchievement(
+            formData
+          );
+
+        setItems((prev) => [
+          data.achievement,
+          ...prev,
+        ]);
+      }
+
+      reset();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete =
+      window.confirm(
+        "Delete this achievement?"
+      );
+
+    if (!confirmDelete) return;
+
+    try {
+      await deleteAchievement(id);
+
+      setItems((prev) =>
+        prev.filter(
+          (i) => i._id !== id
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const inputClass =
+    "w-full px-3 py-2.5 text-sm border border-[var(--admin-border)] rounded-xl outline-none focus:border-[var(--admin-accent)]";
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-[var(--admin-muted)]">{items.length} achievement{items.length !== 1 && "s"}</p>
-        <button onClick={() => { reset(); setShowForm(true); }} className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--admin-maroon)] text-white hover:bg-[var(--admin-maroon-light)]">+ Add Achievement</button>
+    <div className="space-y-5">
+      {/* Top */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">
+            Achievements
+          </h2>
+
+          <p className="text-xs text-[var(--admin-muted)]">
+            {items.length} total achievements
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            reset();
+
+            setShowForm(true);
+          }}
+          className="px-4 py-2 text-xs font-semibold rounded-xl bg-[var(--admin-maroon)] text-white hover:opacity-90 transition-all"
+        >
+          + Add Achievement
+        </button>
       </div>
+
+      {/* Form */}
       {showForm && (
-        <div className="bg-white rounded-xl border border-[var(--admin-border)] p-5 space-y-4">
-          <h3 className="text-sm font-bold">{editing ? "Edit" : "New"} Achievement</h3>
-          <div className="space-y-1"><label className="text-xs font-medium text-[var(--admin-muted)]">Image URL</label><input value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} className={inp} /></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[["titleEn","Title (EN)"],["titleHi","Title (HI)"],["presentedByEn","Presented By (EN)"],["presentedByHi","Presented By (HI)"]].map(([k,l])=>(
-              <div key={k} className="space-y-1"><label className="text-xs font-medium text-[var(--admin-muted)]">{l}</label><input value={form[k]} onChange={e=>setForm({...form,[k]:e.target.value})} className={inp}/></div>
-            ))}
-            {[["descEn","Description (EN)"],["descHi","Description (HI)"]].map(([k,l])=>(
-              <div key={k} className="space-y-1"><label className="text-xs font-medium text-[var(--admin-muted)]">{l}</label><textarea value={form[k]} onChange={e=>setForm({...form,[k]:e.target.value})} rows={2} className={inp+" resize-none"}/></div>
-            ))}
+        <div className="bg-white rounded-2xl border border-[var(--admin-border)] p-5 space-y-5">
+          <h3 className="text-sm font-bold text-gray-800">
+            {editing
+              ? "Edit Achievement"
+              : "Add Achievement"}
+          </h3>
+
+          {/* Image */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Upload Image
+            </label>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  image:
+                    e.target.files[0],
+                })
+              }
+              className={inputClass}
+            />
           </div>
+
+          {/* Titles */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Title English
+              </label>
+
+              <input
+                value={form.titleEn}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    titleEn:
+                      e.target.value,
+                  })
+                }
+                className={inputClass}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Title Hindi
+              </label>
+
+              <input
+                value={form.titleHi}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    titleHi:
+                      e.target.value,
+                  })
+                }
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Presented By */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Presented By English
+              </label>
+
+              <input
+                value={
+                  form.presentedByEn
+                }
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    presentedByEn:
+                      e.target.value,
+                  })
+                }
+                className={inputClass}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Presented By Hindi
+              </label>
+
+              <input
+                value={
+                  form.presentedByHi
+                }
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    presentedByHi:
+                      e.target.value,
+                  })
+                }
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Description English
+              </label>
+
+              <textarea
+                rows={4}
+                value={form.descEn}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    descEn:
+                      e.target.value,
+                  })
+                }
+                className={`${inputClass} resize-none`}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Description Hindi
+              </label>
+
+              <textarea
+                rows={4}
+                value={form.descHi}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    descHi:
+                      e.target.value,
+                  })
+                }
+                className={`${inputClass} resize-none`}
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
           <div className="flex gap-2">
-            <button onClick={save} className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--admin-accent)] text-black">{editing?"Update":"Add"}</button>
-            <button onClick={reset} className="px-4 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600">Cancel</button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-5 py-2.5 text-xs font-semibold rounded-xl bg-[var(--admin-accent)] hover:opacity-90 transition-all"
+            >
+              {saving
+                ? "Saving..."
+                : editing
+                ? "Update"
+                : "Add"}
+            </button>
+
+            <button
+              onClick={reset}
+              className="px-5 py-2.5 text-xs font-semibold rounded-xl bg-gray-100 hover:bg-gray-200 transition-all"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
-      <div className="space-y-4">
-        {items.map(a => (
-          <div key={a.id} className="bg-white rounded-xl border border-[var(--admin-border)] overflow-hidden flex flex-col md:flex-row">
-            <div className="md:w-56 h-40 md:h-auto flex-shrink-0">
-              <img src={a.image} alt="" className="w-full h-full object-cover" />
+
+      {/* Loading */}
+      {loading && (
+        <div className="bg-white rounded-2xl border p-10 text-center text-sm text-gray-500">
+          Loading achievements...
+        </div>
+      )}
+
+      {/* Empty */}
+      {!loading &&
+        items.length === 0 && (
+          <div className="bg-white rounded-2xl border p-10 text-center text-sm text-gray-500">
+            No achievements found
+          </div>
+        )}
+
+      {/* Cards */}
+{!loading && items.length > 0 && (
+  <div className="space-y-3">
+    {items.map((a) => (
+      <div
+        key={a._id}
+        className="relative bg-white border border-[var(--admin-border)] rounded-2xl p-3 hover:shadow-md transition-all duration-300"
+      >
+        <div className="flex gap-3">
+          {/* Image */}
+          <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+            <img
+              src={`${import.meta.env.VITE_BACKEND_URL}/uploads/achievements/${a.image}`}
+              alt={a.title?.en}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0 pr-24">
+            {/* Top Right Presented By */}
+            <div className="absolute top-3 right-3 text-right max-w-[180px]">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-gray-400">
+                Presented By
+              </p>
+
+              <p className="text-xs font-semibold text-[var(--admin-maroon)] leading-tight line-clamp-1">
+                {a.presentedBy?.en}
+              </p>
+
+              <p className="text-[11px] text-gray-500 leading-tight line-clamp-1">
+                {a.presentedBy?.hi}
+              </p>
             </div>
-            <div className="flex-1 p-5">
-              <h3 className="text-sm font-bold">{a.titleEn}</h3>
-              <p className="text-xs text-[var(--admin-muted)]">{a.titleHi}</p>
-              <p className="text-xs text-gray-600 mt-2 line-clamp-2">{a.descEn}</p>
-              <p className="text-xs text-[var(--admin-maroon)] font-medium mt-2">{a.presentedByEn}</p>
-              <div className="flex gap-1.5 mt-3">
-                <button onClick={() => { setForm(a); setEditing(a.id); setShowForm(true); }} className="px-2.5 py-1 text-xs rounded-lg bg-gray-100 hover:bg-gray-200">Edit</button>
-                <button onClick={() => del(a.id)} className="px-2.5 py-1 text-xs rounded-lg bg-red-50 text-red-600 hover:bg-red-100">Delete</button>
+
+            {/* Titles */}
+            <div>
+              <h3 className="text-sm font-bold text-gray-900 leading-snug pr-2">
+                {a.title?.en}
+              </h3>
+
+              <p className="text-xs text-[var(--admin-muted)] mt-0.5 leading-snug pr-2">
+                {a.title?.hi}
+              </p>
+            </div>
+
+            {/* Description */}
+            <div className="mt-2 space-y-2">
+              <div>
+                <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">
+                  {a.description?.en}
+                </p>
+                <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
+                  {a.description?.hi}
+                </p>
               </div>
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* Actions */}
+        <div className="absolute bottom-3 right-3 flex gap-2">
+          <button
+            onClick={() => handleEdit(a)}
+            className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 transition-all"
+          >
+            Edit
+          </button>
+
+          <button
+            onClick={() => handleDelete(a._id)}
+            className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all"
+          >
+            Delete
+          </button>
+        </div>
       </div>
+    ))}
+  </div>
+)}
     </div>
   );
 };

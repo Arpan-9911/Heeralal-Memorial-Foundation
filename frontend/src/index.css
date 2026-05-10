@@ -46,27 +46,6 @@ body {
   transform: scale(0.6) translateX(-20px);
 }
 
-/* ---------------- GLOBAL SECTION ANIMATION ---------------- */
-section {
-  opacity: 0;
-  transform: translateY(40px) scale(0.98);
-  transition: all 0.7s ease;
-}
-
-/* when visible */
-section.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* slight stagger feel */
-section:nth-child(even) {
-  transition-delay: 0.1s;
-}
-section:nth-child(odd) {
-  transition-delay: 0.2s;
-}
-
 /* ---------------- OPTIONAL: FADE VARIANTS ---------------- */
 .fade-left {
   opacity: 0;

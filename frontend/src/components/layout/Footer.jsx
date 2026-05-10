@@ -79,13 +79,13 @@ const footerData = {
   },
 };
 
-const Footer = () => {
+const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
   const { lang } = useLanguage();
 
   return (
     <footer id="site-footer">
       {/* Decorative Wave Separator */}
-      <div className="relative overflow-hidden bg-[var(--color-bg)]">
+      <div className={`relative overflow-hidden ${topBg}`}>
         <svg
           viewBox="0 0 1440 80"
           fill="none"
@@ -98,17 +98,17 @@ const Footer = () => {
             d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z"
             fill="var(--color-secondary-dark)"
           />
-          <path
+          {/* <path
             d="M0,50 C240,80 480,20 720,50 C960,80 1200,20 1440,50 L1440,80 L0,80 Z"
             fill="var(--color-secondary)"
             opacity="0.6"
-          />
+          /> */}
         </svg>
       </div>
 
       {/* Main Footer Content */}
       <div className="bg-[var(--color-secondary-dark)] text-gray-300">
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-6 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
 
             {/* Column 1: Foundation Info */}
@@ -202,7 +202,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-[var(--color-secondary)]">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-[11px] text-gray-500">
               {footerData.copyright[lang]}
             </p>

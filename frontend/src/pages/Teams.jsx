@@ -275,7 +275,7 @@ const Teams = () => {
       <Navbar />
 
       <div className="bg-[var(--color-bg)] min-h-[60vh]">
-        <div className="max-w-5xl mx-auto px-4 pt-8 pb-14">
+        <div className="max-w-6xl mx-auto px-4 pt-8 pb-14">
           {/* Page Title */}
           <div className="mb-2 text-center">
             <h1
@@ -320,7 +320,7 @@ const Teams = () => {
         </div>
       </div>
 
-      <Footer />
+      <Footer topBg="bg-[var(--color-bg)]" />
     </div>
   );
 };

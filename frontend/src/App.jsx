@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 
 import Home from "./pages/Home";
@@ -12,28 +12,25 @@ import NotFound from "./pages/NotFound";
 import Donate from "./pages/Donate";
 import Contact from "./pages/Contact";
 
-const App = () => {
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
 
-    document.querySelectorAll("section").forEach((el) => {
-      observer.observe(el);
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
-  }, []);
+  }, [pathname]);
+
+  return null;
+};
+
+const App = () => {
   return (
     <>
       <Toaster position="top-right" richColors />
-
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

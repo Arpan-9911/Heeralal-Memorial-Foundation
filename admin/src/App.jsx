@@ -2,7 +2,9 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import AdminLayout from "./components/AdminLayout";
-
+import ProtectedRoute from "./middleware/ProtectedRoute";
+import useAuth from "./hooks/useAuth";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ContactSubmissions from "./pages/ContactSubmissions";
 import HeroSlides from "./pages/HeroSlides";
@@ -17,26 +19,40 @@ import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 
 const App = () => {
+  useAuth();
   return (
     <>
       <Toaster position="top-right" richColors />
       <BrowserRouter>
-        <AdminLayout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/contact-submissions" element={<ContactSubmissions />} />
-            <Route path="/hero-slides" element={<HeroSlides />} />
-            <Route path="/announcements" element={<Announcements />} />
-            <Route path="/team" element={<TeamManagement />} />
-            <Route path="/programs" element={<Programs />} />
-            <Route path="/achievements" element={<Achievements />} />
-            <Route path="/media" element={<MediaGallery />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/donations" element={<Donations />} />
-            <Route path="/stats" element={<Stats />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </AdminLayout>
+        <Routes>
+          <Route
+            path="/login"
+            element={<Login />}
+          />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/contact-submissions" element={<ContactSubmissions />} />
+                    <Route path="/hero-slides" element={<HeroSlides />} />
+                    <Route path="/announcements" element={<Announcements />} />
+                    <Route path="/team" element={<TeamManagement />} />
+                    <Route path="/programs" element={<Programs />} />
+                    <Route path="/achievements" element={<Achievements />} />
+                    <Route path="/media" element={<MediaGallery />} />
+                    <Route path="/news" element={<News />} />
+                    <Route path="/donations" element={<Donations />} />
+                    <Route path="/stats" element={<Stats />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Routes>
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </BrowserRouter>
     </>
   );

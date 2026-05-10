@@ -190,7 +190,7 @@ const Media = () => {
 
       {/* Page Content */}
       <div className="bg-[var(--color-bg)] min-h-[60vh]">
-        <div className="max-w-5xl mx-auto px-4 pt-8 pb-14">
+        <div className="max-w-6xl mx-auto px-4 pt-8 pb-14">
           {/* Page Title */}
           <div className="mb-6">
             <h1
@@ -215,7 +215,7 @@ const Media = () => {
         </div>
       </div>
 
-      <Footer />
+      <Footer topBg="bg-[var(--color-bg)]" />
     </div>
   );
 };

@@ -444,8 +444,8 @@ const TabBar = ({ activeTab, setActiveTab }) => {
 
   return (
     <div className="bg-white border-b border-gray-200 sticky top-[44px] z-40 mt-2">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-center gap-1 overflow-x-auto py-2 scrollbar-hide">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex flex-wrap items-center justify-center gap-1 overflow-x-auto py-2 scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -492,13 +492,13 @@ const About = () => {
       <div className="h-[3px] bg-[var(--color-primary)]" />
 
       {/* Tab Content */}
-      <section className="px-4 py-10 bg-[var(--color-primary-light)] min-h-[60vh] show">
-        <div className="max-w-5xl mx-auto">
+      <section className="bg-[var(--color-primary-light)] min-h-[60vh] show">
+        <div className="max-w-6xl mx-auto px-4 md:py-10 py-4">
           <ActiveComponent />
         </div>
       </section>
 
-      <Footer />
+      <Footer topBg="bg-[var(--color-primary-light)]" />
     </div>
   );
 };

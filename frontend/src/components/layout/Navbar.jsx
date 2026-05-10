@@ -10,7 +10,7 @@ const Topbar = () => {
   return (
     <div>
       <div className="bg-[var(--color-secondary)]">
-        <div className="max-w-7xl mx-auto text-white text-xs px-4 py-1 flex justify-between items-center max-md:hidden">
+        <div className="max-w-6xl mx-auto text-white text-xs px-4 py-1 flex justify-between items-center max-md:hidden">
           <div>
             <span className="font-semibold text-[var(--color-primary)]">
               {lang === "en" ? "LATEST:" : "अधिसूचना:"}
@@ -38,7 +38,7 @@ const Topbar = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white p-4 flex items-center justify-between max-w-7xl mx-auto">
+      <div className="bg-white p-4 flex items-center justify-between max-w-6xl mx-auto">
         <Link to={"/"} className="flex items-center gap-4">
           <div className="min-h-12 min-w-12 h-12 w-12 rounded-full bg-[var(--color-secondary)]" />
           <div>

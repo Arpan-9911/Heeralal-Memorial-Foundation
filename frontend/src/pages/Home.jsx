@@ -2,6 +2,7 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import Image from "../assets/image.png"
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -339,7 +340,7 @@ const Hero = () => {
                   alt="Image"
                 />
                 <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/50 to-black/30" />
-                <div className="relative z-10 h-full flex flex-col justify-center max-w-7xl mx-auto">
+                <div className="relative z-10 h-full flex flex-col justify-center max-w-6xl mx-auto">
                   <h1 className="text-white text-2xl md:text-5xl font-semibold tracking-wide">
                     {stripText(slide.title[lang])}
                   </h1>
@@ -373,7 +374,7 @@ const UpcomingEvents = () => {
 
   return (
     <section className="bg-[var(--color-primary)] border-y border-gray-200 text-black py-2 px-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
         {/* Left: Label + Slider */}
         <div className="flex items-center gap-2 flex-1 items-center overflow-hidden">
           <Button
@@ -424,8 +425,8 @@ const SacredMemory = () => {
 
   return (
     <section className="px-4 py-10">
-      <div className="border-3 border-[var(--color-primary)] bg-white shadow-sm max-w-7xl mx-auto md:p-10 p-4 rounded">
-        <div className="flex max-md:flex-col md:gap-10 gap-4 max-w-5xl mx-auto">
+      <div className="border-3 border-[var(--color-primary)] bg-white shadow-sm max-w-6xl mx-auto md:p-10 p-4 rounded">
+        <div className="flex max-md:flex-col md:gap-10 gap-4 max-w-6xl mx-auto">
           <img
             src={sacredMemoryText.img}
             alt="Sacred Memory"
@@ -452,7 +453,7 @@ const FormalCommendation = () => {
 
   return (
     <section className="bg-[var(--color-primary-light)] px-4 py-10">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <span className="block text-center uppercase text-[var(--color-primary-dark)] text-xs font-semibold">
           {commendation.subtitle[lang]}
         </span>
@@ -462,7 +463,7 @@ const FormalCommendation = () => {
         <div className="w-20 h-1 bg-[var(--color-primary-dark)] my-4 mx-auto rounded"></div>
         <div className="bg-white md:p-6 p-3 rounded border border-gray-200 shadow-md max-w-2xl mx-auto">
           <img
-            src="/commendation-letter.jpg"
+            src={Image}
             alt={lang === "en" ? "Formal Commendation Letter" : "औपचारिक प्रशंसा पत्र"}
             className="w-full h-auto rounded object-contain"
           />
@@ -477,8 +478,8 @@ const MessageOfHope = () => {
 
   return (
     <section className="px-4 py-10">
-      <div className="max-w-7xl mx-auto bg-[image:var(--gradient-secondary)] md:p-10 p-4 rounded border-t-4 border-[var(--color-primary)]">
-        <div className="flex max-md:flex-col md:gap-10 gap-4 items-center justify-center max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto bg-[image:var(--gradient-secondary)] md:p-10 p-4 rounded border-t-4 border-[var(--color-primary)]">
+        <div className="flex max-md:flex-col md:gap-10 gap-4 items-center justify-center max-w-6xl mx-auto">
           <div className="flex flex-col items-center text-center">
             <div className="w-40 h-40 rounded-full border-4 border-yellow-600 overflow-hidden">
               <img
@@ -520,7 +521,7 @@ const InstitutionalProgress = () => {
 
   return (
     <section className="px-4 py-10 bg-[var(--color-primary-light)]">
-      <div className="max-w-7xl mx-auto border border-gray-200 rounded-lg bg-white md:p-10 p-6 shadow-sm">
+      <div className="max-w-6xl mx-auto border border-gray-200 rounded-lg bg-white md:p-10 p-6 shadow-sm">
         {/* Heading */}
         <div className="text-center mb-10">
           <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
@@ -563,7 +564,7 @@ const InstitutionalPillars = () => {
 
   return (
     <section className="px-4 py-10 bg-[var(--color-primary-light)]">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-10">
           <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
@@ -614,7 +615,7 @@ const LatestFromField = () => {
 
   return (
     <section className="px-4 py-10">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
         {/* LEFT: POSTS */}
         <div className="md:col-span-2">
           <div className="flex items-center justify-between mb-6">
@@ -696,7 +697,7 @@ const Home = () => {
       <InstitutionalProgress />
       <InstitutionalPillars />
       <LatestFromField />
-      <Footer />
+      <Footer topBg="bg-white" />
     </div>
   );
 };

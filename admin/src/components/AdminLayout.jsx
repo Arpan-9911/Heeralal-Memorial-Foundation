@@ -1,5 +1,20 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  logoutAdmin,
+} from "../api/auth.api";
+
+import useAuthStore from "../store/authStore";
 
 /* ──────── SIDEBAR NAV ITEMS ──────── */
 
@@ -83,13 +98,108 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
 /* ──────── TOP BAR ──────── */
 
 const TopBar = ({ title }) => {
+  const [open, setOpen] =
+    useState(false);
+
+  const dropdownRef = useRef();
+
+  const navigate = useNavigate();
+
+  const { admin, logout } =
+    useAuthStore();
+
+  // Close dropdown outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(
+          e.target
+        )
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener(
+      "mousedown",
+      handler
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handler
+      );
+    };
+  }, []);
+
+  const handleLogout =
+    async () => {
+      try {
+        await logoutAdmin();
+
+        logout();
+
+        navigate("/login");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-[var(--admin-border)] px-6 py-3 flex items-center justify-between">
-      <h2 className="text-base font-bold text-[var(--admin-text)]">{title}</h2>
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-[var(--admin-maroon)] flex items-center justify-center text-white text-xs font-bold">
-          A
-        </div>
+      <h2 className="text-base font-bold text-[var(--admin-text)]">
+        {title}
+      </h2>
+
+      <div
+        className="relative"
+        ref={dropdownRef}
+      >
+        <button
+          onClick={() =>
+            setOpen(!open)
+          }
+          className="flex items-center gap-3 cursor-pointer rounded-xl hover:bg-gray-100 transition-colors"
+        >
+          <div className="w-9 h-9 rounded-full bg-[var(--admin-maroon)] flex items-center justify-center text-white text-sm font-bold">
+            {admin?.username
+              ?.charAt(0)
+              ?.toUpperCase() ||
+              "A"}
+          </div>
+        </button>
+
+        {/* Dropdown */}
+        {open && (
+          <div className="absolute right-0 mt-2 w-52 bg-white border border-[var(--admin-border)] rounded-xl shadow-lg overflow-hidden">
+            <div className="px-4 py-3 border-b border-[var(--admin-border)]">
+              <p className="text-xs text-[var(--admin-muted)]">
+                Secure admin session
+              </p>
+            </div>
+
+            <Link
+              to="/settings"
+              onClick={() =>
+                setOpen(false)
+              }
+              className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
+            >
+              ⚙️ Profile Settings
+            </Link>
+
+            <button
+              onClick={
+                handleLogout
+              }
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+            >
+              🚪 Logout
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );

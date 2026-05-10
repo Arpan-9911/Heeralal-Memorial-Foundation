@@ -1,123 +1,421 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const mockSlides = [
-  { id: 1, image: "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=400", titleEn: "Build Something Amazing", titleHi: "एक अद्भुत बनायें", subtitleEn: "Create modern, scalable web experiences", subtitleHi: "मॉडर्न, स्केलेबल वेब अनुभव", active: true },
-  { id: 2, image: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?q=80&w=400", titleEn: "The Future of Web Development", titleHi: "वेब डेवलपमेंट के भविष्य", subtitleEn: "Innovating for a better tomorrow", subtitleHi: "बेहतर कल के लिए नवाचार", active: true },
-  { id: 3, image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=400", titleEn: "Sustainable Social Change", titleHi: "स्वतंत्र सामाजिक बदलाव", subtitleEn: "Building resilient communities across India", subtitleHi: "भारत भर में लचीले समुदाय बनाना", active: false },
-];
+import {
+  createSlide,
+  deleteSlide,
+  getSlides,
+  updateSlide,
+} from "../api/hero.api";
 
 const HeroSlides = () => {
-  const [slides, setSlides] = useState(mockSlides);
+  const [slides, setSlides] = useState([]);
+
   const [editing, setEditing] = useState(null);
+
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ titleEn: "", titleHi: "", subtitleEn: "", subtitleHi: "", image: "", active: true });
+
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    title: {
+      en: "",
+      hi: "",
+    },
+
+    subtitle: {
+      en: "",
+      hi: "",
+    },
+
+    image: null,
+
+    active: true,
+  });
+
+  /* ───────────────── FETCH ───────────────── */
+
+  const fetchSlides = async () => {
+    try {
+      const res = await getSlides();
+
+      setSlides(res.slides || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchSlides();
+  }, []);
+
+  /* ───────────────── RESET ───────────────── */
 
   const resetForm = () => {
-    setForm({ titleEn: "", titleHi: "", subtitleEn: "", subtitleHi: "", image: "", active: true });
+    setForm({
+      title: {
+        en: "",
+        hi: "",
+      },
+
+      subtitle: {
+        en: "",
+        hi: "",
+      },
+
+      image: null,
+
+      active: true,
+    });
+
     setEditing(null);
+
     setShowForm(false);
   };
 
+  /* ───────────────── EDIT ───────────────── */
+
   const handleEdit = (slide) => {
-    setForm(slide);
-    setEditing(slide.id);
+    setEditing(slide._id);
+
     setShowForm(true);
+
+    setForm({
+      title: {
+        en: slide.title?.en || "",
+
+        hi: slide.title?.hi || "",
+      },
+
+      subtitle: {
+        en: slide.subtitle?.en || "",
+
+        hi: slide.subtitle?.hi || "",
+      },
+
+      image: null,
+
+      active: slide.active,
+    });
   };
 
-  const handleSave = () => {
-    if (editing) {
-      setSlides((prev) => prev.map((s) => (s.id === editing ? { ...form, id: editing } : s)));
-    } else {
-      setSlides((prev) => [...prev, { ...form, id: Date.now() }]);
+  /* ───────────────── SAVE ───────────────── */
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+
+      formData.append("titleEn", form.title.en);
+
+      formData.append("titleHi", form.title.hi);
+
+      formData.append("subtitleEn", form.subtitle.en);
+
+      formData.append("subtitleHi", form.subtitle.hi);
+
+      formData.append("active", form.active);
+
+      if (form.image) {
+        formData.append("image", form.image);
+      }
+
+      if (editing) {
+        await updateSlide(editing, formData);
+      } else {
+        await createSlide(formData);
+      }
+
+      await fetchSlides();
+
+      resetForm();
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
-    resetForm();
   };
 
-  const handleDelete = (id) => {
-    setSlides((prev) => prev.filter((s) => s.id !== id));
+  /* ───────────────── DELETE ───────────────── */
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteSlide(id);
+
+      fetchSlides();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const toggleActive = (id) => {
-    setSlides((prev) => prev.map((s) => (s.id === id ? { ...s, active: !s.active } : s)));
+  /* ───────────────── ACTIVE ───────────────── */
+
+  const toggleActive = async (slide) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("titleEn", slide.title?.en || "");
+
+      formData.append("titleHi", slide.title?.hi || "");
+
+      formData.append("subtitleEn", slide.subtitle?.en || "");
+
+      formData.append("subtitleHi", slide.subtitle?.hi || "");
+
+      formData.append("active", !slide.active);
+
+      await updateSlide(slide._id, formData);
+
+      fetchSlides();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
+    <div className="space-y-6">
+      {/* HEADER */}
+
       <div className="flex items-center justify-between">
-        <p className="text-xs text-[var(--admin-muted)]">{slides.length} slide{slides.length !== 1 && "s"} configured</p>
+        <div>
+          <h1 className="text-xl font-bold">Hero Slides</h1>
+
+          <p className="text-sm text-[var(--admin-muted)] mt-1">
+            Manage homepage hero section
+          </p>
+        </div>
+
         <button
-          onClick={() => { resetForm(); setShowForm(true); }}
-          className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--admin-maroon)] text-white hover:bg-[var(--admin-maroon-light)] transition-colors"
+          onClick={() => {
+            resetForm();
+
+            setShowForm(true);
+          }}
+          className="px-5 py-2.5 rounded-xl bg-[var(--admin-maroon)] text-white text-sm font-semibold hover:opacity-90"
         >
           + Add Slide
         </button>
       </div>
 
-      {/* Form Modal */}
+      {/* FORM */}
+
       {showForm && (
-        <div className="bg-white rounded-xl border border-[var(--admin-border)] p-5 space-y-4">
-          <h3 className="text-sm font-bold">{editing ? "Edit Slide" : "Add New Slide"}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-[var(--admin-muted)]">Title (English)</label>
-              <input value={form.titleEn} onChange={(e) => setForm({ ...form, titleEn: e.target.value })} className="w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)]" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-[var(--admin-muted)]">Title (Hindi)</label>
-              <input value={form.titleHi} onChange={(e) => setForm({ ...form, titleHi: e.target.value })} className="w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)]" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-[var(--admin-muted)]">Subtitle (English)</label>
-              <input value={form.subtitleEn} onChange={(e) => setForm({ ...form, subtitleEn: e.target.value })} className="w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)]" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-[var(--admin-muted)]">Subtitle (Hindi)</label>
-              <input value={form.subtitleHi} onChange={(e) => setForm({ ...form, subtitleHi: e.target.value })} className="w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)]" />
-            </div>
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-[var(--admin-muted)]">Image URL</label>
-            <input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." className="w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)]" />
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={handleSave} className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--admin-accent)] text-black hover:bg-[var(--admin-accent-dark)] hover:text-white transition-colors">
-              {editing ? "Update Slide" : "Add Slide"}
+        <div className="bg-white border border-[var(--admin-border)] rounded-2xl p-6 space-y-5">
+          <div className="flex items-center justify-between">
+            <h2 className="font-bold">
+              {editing ? "Edit Slide" : "Create Slide"}
+            </h2>
+
+            <button
+              onClick={resetForm}
+              className="text-sm text-gray-500 hover:text-black"
+            >
+              ✕
             </button>
-            <button onClick={resetForm} className="px-4 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+          </div>
+
+          {/* INPUTS */}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              placeholder="Title English"
+              value={form.title.en}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+
+                  title: {
+                    ...form.title,
+
+                    en: e.target.value,
+                  },
+                })
+              }
+              className="w-full px-4 py-3 rounded-xl border border-[var(--admin-border)] outline-none focus:border-[var(--admin-accent)]"
+            />
+
+            <input
+              placeholder="Title Hindi"
+              value={form.title.hi}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+
+                  title: {
+                    ...form.title,
+
+                    hi: e.target.value,
+                  },
+                })
+              }
+              className="w-full px-4 py-3 rounded-xl border border-[var(--admin-border)] outline-none focus:border-[var(--admin-accent)]"
+            />
+
+            <input
+              placeholder="Subtitle English"
+              value={form.subtitle.en}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+
+                  subtitle: {
+                    ...form.subtitle,
+
+                    en: e.target.value,
+                  },
+                })
+              }
+              className="w-full px-4 py-3 rounded-xl border border-[var(--admin-border)] outline-none focus:border-[var(--admin-accent)]"
+            />
+
+            <input
+              placeholder="Subtitle Hindi"
+              value={form.subtitle.hi}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+
+                  subtitle: {
+                    ...form.subtitle,
+
+                    hi: e.target.value,
+                  },
+                })
+              }
+              className="w-full px-4 py-3 rounded-xl border border-[var(--admin-border)] outline-none focus:border-[var(--admin-accent)]"
+            />
+          </div>
+
+          {/* FILE */}
+
+          <div>
+            <label className="text-sm font-medium block mb-2">
+              Upload Image
+            </label>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setForm({
+                  ...form,
+
+                  image: e.target.files?.[0] || null,
+                })
+              }
+              className="w-full border border-[var(--admin-border)] rounded-xl px-4 py-3"
+            />
+          </div>
+
+          {/* ACTIONS */}
+
+          <div className="flex gap-3">
+            <button
+              disabled={loading}
+              onClick={handleSave}
+              className="px-5 py-2.5 rounded-xl bg-[var(--admin-accent)] text-black font-semibold hover:bg-[var(--admin-accent-dark)] hover:text-white transition-all"
+            >
+              {loading
+                ? "Saving..."
+                : editing
+                  ? "Update Slide"
+                  : "Create Slide"}
+            </button>
+
+            <button
+              onClick={resetForm}
+              className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200"
+            >
               Cancel
             </button>
           </div>
         </div>
       )}
 
-      {/* Slides Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* GRID */}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {slides.map((slide, idx) => (
-          <div key={slide.id} className={`bg-white rounded-xl border overflow-hidden transition-all duration-200 ${slide.active ? "border-[var(--admin-border)]" : "border-dashed border-gray-300 opacity-60"}`}>
-            <div className="relative h-40">
-              <img src={slide.image} alt="" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/40" />
-              <div className="absolute bottom-3 left-3 right-3">
-                <p className="text-white text-sm font-bold truncate">{slide.titleEn}</p>
-                <p className="text-gray-300 text-xs truncate">{slide.subtitleEn}</p>
+          <div
+            key={slide._id}
+            className={`bg-white rounded-2xl overflow-hidden border transition-all ${
+              slide.active
+                ? "border-[var(--admin-border)]"
+                : "border-dashed border-gray-300 opacity-60"
+            }`}
+          >
+            {/* IMAGE */}
+
+            <div className="relative h-56">
+              <img
+                src={`${import.meta.env.VITE_BACKEND_URL}/uploads/heroslides/${slide.image}`}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+
+              <div className="absolute top-3 left-3">
+                <span className="bg-black/50 text-white text-[10px] px-2 py-1 rounded-full font-bold">
+                  Slide #{idx + 1}
+                </span>
               </div>
-              <span className="absolute top-2 left-2 text-[10px] font-bold bg-black/50 text-white px-2 py-0.5 rounded">
-                #{idx + 1}
-              </span>
+
+              <div className="absolute bottom-4 left-4 right-4">
+                {/* English */}
+
+                <div>
+                  <h3 className="text-white text-base font-bold leading-tight">
+                    {slide.title?.en}
+                  </h3>
+
+                  <p className="text-gray-200 text-xs leading-relaxed">
+                    {slide.subtitle?.en}
+                  </p>
+                </div>
+
+                {/* Hindi */}
+
+                <div className="mt-1">
+                  <h4 className="text-white text-base font-semibold leading-tight">
+                    {slide.title?.hi}
+                  </h4>
+
+                  <p className="text-gray-300 text-xs leading-relaxed">
+                    {slide.subtitle?.hi}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="p-3 flex items-center justify-between">
+
+            {/* FOOTER */}
+
+            <div className="p-4 flex items-center justify-between">
               <button
-                onClick={() => toggleActive(slide.id)}
-                className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-full ${
-                  slide.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                onClick={() => toggleActive(slide)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase ${
+                  slide.active
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-100 text-gray-500"
                 }`}
               >
                 {slide.active ? "Active" : "Inactive"}
               </button>
-              <div className="flex gap-1.5">
-                <button onClick={() => handleEdit(slide)} className="px-2.5 py-1 text-xs rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">Edit</button>
-                <button onClick={() => handleDelete(slide.id)} className="px-2.5 py-1 text-xs rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Delete</button>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(slide)}
+                  className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => handleDelete(slide._id)}
+                  className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </div>
