@@ -30,6 +30,9 @@ const navItems = [
   { path: "/news", label: "News / Press", icon: "📰" },
   { path: "/donations", label: "Donations", icon: "💰" },
   { path: "/stats", label: "Impact Stats", icon: "📈" },
+  { path: "/join-requests", label: "Join Requests", icon: "📋" },
+  { path: "/commendation", label: "Commendation", icon: "📜" },
+  { path: "/social-links", label: "Social Links", icon: "🔗" },
   { path: "/settings", label: "Site Settings", icon: "⚙️" },
 ];
 

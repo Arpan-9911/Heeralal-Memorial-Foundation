@@ -32,20 +32,27 @@ const Sidebar = ({ open, setOpen }) => {
           </button>
         </div>
 
-        {/* Links */}
+        {/* Links — Same order as desktop navbar */}
         <div className="flex flex-col p-4 gap-4 text-sm font-medium">
           <Link to="/" onClick={() => setOpen(false)}>{lang === "en" ? "HOME" : "होम"}</Link>
           <Link to="/about" onClick={() => setOpen(false)}>{lang === "en" ? "ABOUT US" : "हमारे बारे में"}</Link>
+          <Link to="/achievements" onClick={() => setOpen(false)}>{lang === "en" ? "ACHIEVEMENTS" : "उपलब्धियाँ"}</Link>
+          <Link to="/programs" onClick={() => setOpen(false)}>{lang === "en" ? "PROGRAMS" : "प्रोग्राम"}</Link>
           <Link to="/media" onClick={() => setOpen(false)}>{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
-          <Link to="/achievements" onClick={() => setOpen(false)}>{lang === "en" ? "ACHIEVEMENTS" : "उत्पादन" }</Link>
-          <Link to="/programs" onClick={() => setOpen(false)}>{lang === "en" ? "PROGRAMS" : "प्रोग्राम" }</Link>
-          <Link to="/teams" onClick={() => setOpen(false)}>{lang === "en" ? "TEAM" : "टीम" }</Link>
+          <Link to="/join-us" onClick={() => setOpen(false)}>{lang === "en" ? "JOIN US" : "जुड़ें"}</Link>
+          <Link to="/teams" onClick={() => setOpen(false)}>{lang === "en" ? "TEAM" : "टीम"}</Link>
+          <Link to="/contact" onClick={() => setOpen(false)}>{lang === "en" ? "CONTACT US" : "संपर्क करें"}</Link>
 
           {/* Donate Button */}
           <Link
             to="/donate"
             onClick={() => setOpen(false)}
-            className="mt-4 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-center"
+            className="mt-4 px-4 py-2 rounded-lg text-center font-bold text-sm"
+            style={{
+              background: "linear-gradient(135deg, #d4a017 0%, #f7e98e 30%, #c9952c 60%, #d4a017 100%)",
+              color: "#4a120e",
+              boxShadow: "0 3px 0 #8b6914, 0 4px 8px rgba(0,0,0,0.2)",
+            }}
           >
             {lang === "en" ? "SUPPORT & DONATE" : "समर्थन एवं दान"}
           </Link>

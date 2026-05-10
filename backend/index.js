@@ -16,6 +16,10 @@ import achievementRoutes from "./routes/achievement.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
 import newsRoutes from "./routes/news.routes.js";
 import statsRoutes from "./routes/stats.routes.js";
+import commendationRoutes from "./routes/commendation.routes.js";
+import joinRequestRoutes from "./routes/joinRequest.routes.js";
+import donationRoutes from "./routes/donation.routes.js";
+import socialLinksRoutes from "./routes/socialLinks.routes.js";
 
 import errorMiddleware from "./middleware/error.middleware.js";
 
@@ -77,6 +81,10 @@ app.use("/api/achievements", achievementRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/commendation", commendationRoutes);
+app.use("/api/join-requests", joinRequestRoutes);
+app.use("/api/donations", donationRoutes);
+app.use("/api/social-links", socialLinksRoutes);
 
 /* ───────────────── ERROR HANDLER ───────────────── */
 

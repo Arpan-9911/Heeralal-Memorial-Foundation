@@ -11,6 +11,8 @@ import Teams from "./pages/Teams";
 import NotFound from "./pages/NotFound";
 import Donate from "./pages/Donate";
 import Contact from "./pages/Contact";
+import JoinUs from "./pages/JoinUs";
+import FloatingSocials from "./components/common/FloatingSocials";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -31,6 +33,7 @@ const App = () => {
       <Toaster position="top-right" richColors />
       <BrowserRouter>
         <ScrollToTop />
+        <FloatingSocials />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -40,6 +43,7 @@ const App = () => {
           <Route path="/teams" element={<Teams />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/join-us" element={<JoinUs />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

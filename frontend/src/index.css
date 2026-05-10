@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  /* PRIMARY (Elegant Gold) */
-  --color-primary: #e4af2b;
+  /* PRIMARY (Rich Shiny Gold) */
+  --color-primary: #c9952c;
   --color-primary-light: #f6eeda;
-  --color-primary-dark: #9c7a10;
+  --color-primary-dark: #8b6914;
 
   /* SECONDARY (Deep Maroon) */
   --color-secondary: #6b1f1a;
@@ -17,7 +17,7 @@
   --color-muted: #6b7280;
 
   /* GRADIENTS */
-  --gradient-primary: linear-gradient(135deg, #d4a017, #f0c94d);
+  --gradient-primary: linear-gradient(135deg, #9c7a10, #d4a017, #f7e98e, #c9952c);
   --gradient-secondary: linear-gradient(135deg, #6b1f1a, #a9443a);
 
   /* SHADOWS */
@@ -25,7 +25,7 @@
   --shadow-medium: 0 8px 30px rgba(0,0,0,0.08);
   --shadow-strong: 0 10px 40px rgba(0,0,0,0.12);
 
-  --color-ring: rgba(212, 160, 23, 0.25);
+  --color-ring: rgba(201, 149, 44, 0.25);
 }
 
 * {
@@ -34,8 +34,19 @@
 
 body {
   background-color: var(--color-bg);
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
   color: #1f2937;
+}
+
+/* Headings use the serif font, nav/buttons use Poppins */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+}
+
+/* Small UI text — labels, nav, buttons — use Poppins */
+nav, button, input, textarea, select, label,
+a[class*="hover:text"], span[class*="uppercase"] {
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Swiper arrows */

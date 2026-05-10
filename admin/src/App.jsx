@@ -17,6 +17,9 @@ import News from "./pages/News";
 import Donations from "./pages/Donations";
 import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
+import Commendation from "./pages/Commendation";
+import JoinRequests from "./pages/JoinRequests";
+import SocialLinks from "./pages/SocialLinks";
 
 const App = () => {
   useAuth();
@@ -47,6 +50,9 @@ const App = () => {
                     <Route path="/donations" element={<Donations />} />
                     <Route path="/stats" element={<Stats />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/commendation" element={<Commendation />} />
+                    <Route path="/join-requests" element={<JoinRequests />} />
+                    <Route path="/social-links" element={<SocialLinks />} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>

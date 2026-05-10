@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -110,57 +111,7 @@ const sacredMemoryText = {
   },
 };
 
-const commendation = {
-  subtitle: {
-    en: "Institutional Patronage",
-    hi: "संस्थागत संरक्षण",
-  },
-  title: {
-    en: "Formal Commendation",
-    hi: "औपचारिक प्रशंसा",
-  },
-  letter: {
-    address: {
-      en: "Office of Dr. Arpan Kumar,<br />Director, Heeralal Memorial Foundation",
-      hi: "डॉ. अर्पन कुमार कार्यालय,<br />निदेशक, हीरालाल मेमोरियल फाउंडेशन",
-    },
-    date: "2024-06-01",
-    body: {
-      en: "Dear [Recipient's Name],<br /><br />I am writing to formally commend [Organization/Individual Name] for their outstanding contributions to our community. Your dedication and hard work have made a significant impact, and I want to express my sincere appreciation for your efforts.<br /><br />Your commitment to [specific achievements or initiatives] has not only benefited those directly involved but has also inspired others to get involved and make a difference. Your leadership and vision are truly commendable.<br /><br />On behalf of the Heeralal Memorial Foundation, I extend my heartfelt gratitude for your invaluable contributions. We look forward to continuing our collaboration and working together towards a brighter future.<br /><br />Sincerely,<br />Dr. Arpan Kumar<br />Director, Heeralal Memorial Foundation",
-      hi: "प्रिय [प्राप्तकर्ता का नाम],<br /><br />मैं [संगठन/व्यक्ति का नाम] को हमारे समुदाय में उनके उत्कृष्ट योगदान के लिए औपचारिक रूप से प्रशंसा करने के लिए लिख रहा हूँ। आपकी समर्पण और कड़ी मेहनत ने एक महत्वपूर्ण प्रभाव डाला है, और मैं आपके प्रयासों के लिए अपनी सच्ची प्रशंसा व्यक्त करना चाहता हूँ।<br /><br />[विशिष्ट उपलब्धियों या पहलों] के प्रति आपकी प्रतिबद्धता ने न केवल सीधे शामिल लोगों को लाभ पहुंचाया है बल्कि दूसरों को भी शामिल होने और फर्क डालने के लिए प्रेरित किया है। आपका नेतृत्व और दृष्टि वास्तव में प्रशंसनीय है।<br /><br />हीरालाल मेमोरियल फाउंडेशन की ओर से, मैं आपके अमूल्य योगदान के लिए अपनी हार्दिक कृतज्ञता व्यक्त करता हूँ। हम सहयोग जारी रखने और एक उज्जवल भविष्य की ओर मिलकर काम करने की आशा करते हैं।<br /><br />सादर,<br />डॉ. अर्पन कुमार<br />निदेशक, हीरालाल मेमोरियल फाउंडेशन",
-    },
-    name: {
-      en: "Dr. Arpan Kumar",
-      hi: "डॉ. अर्पन कुमार",
-    },
-    post: {
-      en: "Director, Heeralal Memorial Foundation",
-      hi: "निदेशक, हीरालाल मेमोरियल फाउंडेशन",
-    },
-    sign: "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974",
-  },
-};
 
-const hopeMessage = {
-  title: {
-    en: "Message of Hope",
-    hi: "आशा का संदेश",
-  },
-  description: {
-    en: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur molestiae maiores repudiandae. Perspiciatis ratione ipsa necessitatibus deserunt placeat voluptatibus doloribus? Qui quasi quos eius, nobis quod eaque laborum consequuntur est?",
-    hi: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur molestiae maiores repudiandae. Perspiciatis ratione ipsa necessitatibus deserunt placeat voluptatibus doloribus? Qui quasi quos eius, nobis quod eaque laborum consequuntur est?",
-  },
-  name: {
-    en: "Dr. Arpan Kumar",
-    hi: "डॉ. अर्पन कुमार",
-  },
-  post: {
-    en: "Director, Heeralal Memorial Foundation",
-    hi: "निदेशक, हीरालाल मेमोरियल फाउंडेशन",
-  },
-  photo:
-    "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974",
-};
 
 const stats = [
   {
@@ -448,70 +399,145 @@ const SacredMemory = () => {
   );
 };
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const FormalCommendation = () => {
   const { lang } = useLanguage();
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/commendation`)
+      .then((res) => {
+        if (res.data?.commendation) {
+          setData(res.data.commendation);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fallback data if API hasn't loaded or backend is down
+  const sectionSubtitle = data?.sectionSubtitle?.[lang] || (lang === "en" ? "Institutional Patronage" : "संस्थागत संरक्षण");
+  const sectionTitle = data?.sectionTitle?.[lang] || (lang === "en" ? "Formal Commendation" : "औपचारिक प्रशंसा");
+  const messageTitle = data?.messageTitle?.[lang] || (lang === "en" ? "Message of Hope" : "आशा का संदेश");
+  const messageBody = data?.messageBody?.[lang] || "";
+  const directorName = data?.directorName?.[lang] || (lang === "en" ? "Dr. Arpan Kumar" : "डॉ. अर्पन कुमार");
+  const directorPost = data?.directorPost?.[lang] || (lang === "en" ? "Director, Heeralal Memorial Foundation" : "निदेशक, हीरालाल मेमोरियल फाउंडेशन");
+
+  const directorPhotoSrc = data?.directorPhoto
+    ? `${BACKEND_URL}/uploads/commendation/${data.directorPhoto}`
+    : "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974";
+
+  const letterImageSrc = data?.letterImage
+    ? `${BACKEND_URL}/uploads/commendation/${data.letterImage}`
+    : null;
 
   return (
-    <section className="bg-[var(--color-primary-light)] px-4 py-10">
-      <div className="max-w-6xl mx-auto">
-        <span className="block text-center uppercase text-[var(--color-primary-dark)] text-xs font-semibold">
-          {commendation.subtitle[lang]}
+    <section className="px-4 py-14">
+      {/* Section Header */}
+      <div className="max-w-6xl mx-auto text-center mb-10">
+        <span className="block uppercase text-[var(--color-primary-dark)] text-xs font-semibold tracking-widest">
+          {sectionSubtitle}
         </span>
-        <h2 className="text-2xl font-bold md:text-3xl uppercase text-center text-[var(--color-secondary)]">
-          {commendation.title[lang]}
+        <h2 className="text-2xl font-bold md:text-3xl uppercase text-[var(--color-secondary)] mt-1">
+          {sectionTitle}
         </h2>
         <div className="w-20 h-1 bg-[var(--color-primary-dark)] my-4 mx-auto rounded"></div>
-        <div className="bg-white md:p-6 p-3 rounded border border-gray-200 shadow-md max-w-2xl mx-auto">
-          <img
-            src={Image}
-            alt={lang === "en" ? "Formal Commendation Letter" : "औपचारिक प्रशंसा पत्र"}
-            className="w-full h-auto rounded object-contain"
-          />
-        </div>
       </div>
-    </section>
-  );
-};
 
-const MessageOfHope = () => {
-  const { lang } = useLanguage();
+      {/* Golden Glittery Container */}
+      <div
+        className="max-w-6xl mx-auto rounded-2xl p-[3px]"
+        style={{
+          background: "linear-gradient(135deg, #d4a017 0%, #f7e98e 20%, #c9952c 35%, #fffbe6 50%, #d4a017 65%, #f0c94d 80%, #9c7a10 100%)",
+          backgroundSize: "200% 200%",
+          animation: "goldenShimmer 4s ease-in-out infinite",
+          boxShadow: "0 0 20px rgba(212, 160, 23, 0.3), 0 0 40px rgba(212, 160, 23, 0.1)",
+        }}
+      >
+        <div className="bg-[var(--color-primary-light)] rounded-2xl md:p-10 p-5">
+          <div className="flex max-md:flex-col md:gap-10 gap-8">
 
-  return (
-    <section className="px-4 py-10">
-      <div className="max-w-6xl mx-auto bg-[image:var(--gradient-secondary)] md:p-10 p-4 rounded border-t-4 border-[var(--color-primary)]">
-        <div className="flex max-md:flex-col md:gap-10 gap-4 items-center justify-center max-w-6xl mx-auto">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-40 h-40 rounded-full border-4 border-yellow-600 overflow-hidden">
-              <img
-                src={hopeMessage.photo}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h2 className="mt-4 text-xl md:text-2xl font-bold text-white">
-              {hopeMessage.name[lang]}
-            </h2>
-          </div>
-          <div className="flex-1 p-4 md:p-10 rounded shadow-lg bg-white">
-            <p className="text-lg font-semibold border-b-2 border-[var(--color-secondary)] text-[var(--color-secondary)] mb-4">
-              {hopeMessage.title[lang]}
-            </p>
-            <p className="text-sm italic text-gray-600 leading-relaxed mb-6">
-              "{hopeMessage.description[lang]}"
-            </p>
-            <div className="flex justify-end">
-              <div className="text-right">
-                <p className="text-sm font-semibold text-[var(--color-secondary)]">
-                  — {hopeMessage.name[lang]}
+            {/* LEFT COLUMN — Director Photo + Message of Hope */}
+            <div className="md:w-[40%] flex flex-col items-center">
+              {/* Director Photo with decorative golden border */}
+              <div
+                className="relative w-44 h-44 md:w-52 md:h-52 rounded-full p-[4px] flex-shrink-0"
+                style={{
+                  background: "linear-gradient(135deg, #d4a017 0%, #f7e98e 25%, #c9952c 50%, #fffbe6 75%, #d4a017 100%)",
+                  backgroundSize: "200% 200%",
+                  animation: "goldenShimmer 3s ease-in-out infinite",
+                  boxShadow: "0 0 24px rgba(212, 160, 23, 0.35)",
+                }}
+              >
+                {/* Inner decorative ring */}
+                <div className="w-full h-full rounded-full p-[3px] bg-white">
+                  <img
+                    src={directorPhotoSrc}
+                    alt={directorName}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Name */}
+              <h3 className="mt-5 text-lg md:text-xl font-bold text-[var(--color-secondary)] text-center">
+                {directorName}
+              </h3>
+              <p className="text-xs text-[var(--color-primary-dark)] italic text-center">
+                {directorPost}
+              </p>
+
+              {/* Message of Hope */}
+              <div className="mt-6 w-full bg-white rounded-xl p-5 shadow-sm border border-[var(--color-primary)]">
+                <p
+                  className="text-base font-semibold text-[var(--color-secondary)] mb-3 pb-2"
+                  style={{ borderBottom: "2px solid var(--color-primary)" }}
+                >
+                  {messageTitle}
                 </p>
-                <p className="text-xs text-gray-500 italic">
-                  {hopeMessage.post[lang]}
-                </p>
+                {messageBody && (
+                  <p className="text-sm italic text-gray-600 leading-relaxed">
+                    "{messageBody}"
+                  </p>
+                )}
+                <div className="flex justify-end mt-4">
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-[var(--color-secondary)]">
+                      — {directorName}
+                    </p>
+                    <p className="text-xs text-gray-500 italic">
+                      {directorPost}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* RIGHT COLUMN — Letter Image */}
+            <div className="md:w-[60%] flex items-center justify-center">
+              <div className="bg-white p-3 md:p-5 rounded-xl shadow-md border border-gray-200 w-full">
+                <img
+                  src={letterImageSrc || Image}
+                  alt={lang === "en" ? "Formal Commendation Letter" : "औपचारिक प्रशंसा पत्र"}
+                  className="w-full h-auto rounded-lg object-contain"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
+
+      {/* Shimmer Animation */}
+      <style>{`
+        @keyframes goldenShimmer {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
     </section>
   );
 };
@@ -693,7 +719,6 @@ const Home = () => {
       <UpcomingEvents />
       <SacredMemory />
       <FormalCommendation />
-      <MessageOfHope />
       <InstitutionalProgress />
       <InstitutionalPillars />
       <LatestFromField />

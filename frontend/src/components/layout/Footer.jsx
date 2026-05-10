@@ -84,27 +84,8 @@ const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
 
   return (
     <footer id="site-footer">
-      {/* Decorative Wave Separator */}
-      <div className={`relative overflow-hidden ${topBg}`}>
-        <svg
-          viewBox="0 0 1440 80"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full block"
-          preserveAspectRatio="none"
-          style={{ height: "60px" }}
-        >
-          <path
-            d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z"
-            fill="var(--color-secondary-dark)"
-          />
-          {/* <path
-            d="M0,50 C240,80 480,20 720,50 C960,80 1200,20 1440,50 L1440,80 L0,80 Z"
-            fill="var(--color-secondary)"
-            opacity="0.6"
-          /> */}
-        </svg>
-      </div>
+      {/* Straight Top Border */}
+      <div className="h-1 bg-[var(--color-primary)]"></div>
 
       {/* Main Footer Content */}
       <div className="bg-[var(--color-secondary-dark)] text-gray-300">

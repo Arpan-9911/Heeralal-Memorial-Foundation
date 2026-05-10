@@ -172,11 +172,6 @@ const Achievements = () => {
             <div className="w-full h-[2px] bg-[var(--color-primary)] mt-3 rounded" />
           </div>
 
-          {/* Stats Row */}
-          <section className="mb-10 show">
-            <StatsBar />
-          </section>
-
           {/* Achievement Cards */}
           <div className="space-y-8">
             {achievements.map((item, i) => (
@@ -185,6 +180,11 @@ const Achievements = () => {
               </section>
             ))}
           </div>
+
+          {/* Stats Row */}
+          <section className="mt-10 show">
+            <StatsBar />
+          </section>
         </div>
       </div>
 
