@@ -6,6 +6,7 @@ import {
   updateStat,
   deleteStat,
 } from "../api/stats.api";
+import { toast } from "sonner";
 
 const Stats = () => {
   const [stats, setStats] = useState([]);
@@ -85,8 +86,10 @@ const Stats = () => {
       }
 
       reset();
+      toast.success(`Stat ${editing ? "updated" : "created"}`);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to save stat");
     } finally {
       setSaving(false);
     }
@@ -102,8 +105,10 @@ const Stats = () => {
       await deleteStat(id);
 
       setStats((prev) => prev.filter((i) => i._id !== id));
+      toast.success("Stat deleted");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to delete stat");
     }
   };
 

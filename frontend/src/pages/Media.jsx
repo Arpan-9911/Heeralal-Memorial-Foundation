@@ -1,73 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
-/* ──────────────────────────────────── DATA ──────────────────────────────────── */
-
-const galleryImages = [
-  {
-    id: 1,
-    src: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=1974",
-    alt: "City skyline",
-  },
-  {
-    id: 2,
-    src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1974",
-    alt: "Nature landscape",
-  },
-  {
-    id: 3,
-    src: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1974",
-    alt: "Urban architecture",
-  },
-  {
-    id: 4,
-    src: "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974",
-    alt: "Road through mountains",
-  },
-];
-
-const videoData = {
-  thumbnail:
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1974",
-  caption: {
-    en: "Documentary: Journey of Change (2023-24)",
-    hi: "डॉक्यूमेंट्री: बदलाव की यात्रा (2023-24)",
-  },
-};
-
-const announcements = [
-  {
-    id: 1,
-    date: "Nov 14, 2024",
-    title: {
-      en: "HLMF signs MOU with Central Delhi Education Department for Vocational Training",
-      hi: "HLMF ने व्यावसायिक प्रशिक्षण के लिए मध्य दिल्ली शिक्षा विभाग के साथ MOU पर हस्ताक्षर किए",
-    },
-    excerpt: {
-      en: "New Delhi: The Heeralal Memorial Foundation has formally entered into a partnership aimed at enhancing the employability of urban youth...",
-      hi: "नई दिल्ली: हीरालाल मेमोरियल फाउंडेशन ने औपचारिक रूप से शहरी युवाओं की रोजगार क्षमता बढ़ाने के उद्देश्य से एक साझेदारी में प्रवेश किया है...",
-    },
-  },
-  {
-    id: 2,
-    date: "Oct 29, 2024",
-    title: {
-      en: "Successful completion of 'Swasthya Seva' phase 1 in Outer Delhi Clusters",
-      hi: "'स्वास्थ्य सेवा' चरण 1 का बाहरी दिल्ली क्लस्टरों में सफल समापन",
-    },
-    excerpt: {
-      en: "Outer Delhi: Over 5,000 residents were provided free health screenings and primary consultation under the foundation's healthcare wing...",
-      hi: "बाहरी दिल्ली: फाउंडेशन के स्वास्थ्य सेवा विंग के तहत 5,000 से अधिक निवासियों को मुफ्त स्वास्थ्य जांच और प्राथमिक परामर्श प्रदान किया गया...",
-    },
-  },
-];
+import { getMedia, getAnnouncements } from "../api";
 
 /* ────────────────────────── SECTION COMPONENTS ───────────────────────────── */
 
-const PressGallery = () => {
+const PressGallery = ({ galleryImages }) => {
   const { lang } = useLanguage();
+  if (!galleryImages || galleryImages.length === 0) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex items-center justify-center">
+        <p className="text-sm text-gray-600">
+          {lang === "en" ? "No Press Gallery Found" : "प्रेस गैलरी नहीं मिला"}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
@@ -83,11 +33,11 @@ const PressGallery = () => {
       <div className="grid grid-cols-2 gap-3">
         {galleryImages.map((img) => (
           <div
-            key={img.id}
+            key={img._id}
             className="overflow-hidden rounded-lg border border-gray-100 group cursor-pointer"
           >
             <img
-              src={img.src}
+              src={import.meta.env.VITE_BACKEND_URL + "/uploads/media/images/" + img.image}
               alt={img.alt}
               className="w-full h-36 object-cover group-hover:scale-110 transition-transform duration-500"
             />
@@ -98,9 +48,17 @@ const PressGallery = () => {
   );
 };
 
-const VideoResources = () => {
+const VideoResources = ({ videoData }) => {
   const { lang } = useLanguage();
-
+  if (!videoData) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex items-center justify-center">
+        <p className="text-sm text-gray-600">
+          {lang === "en" ? "No Video Resources Found" : "कोई वीडियो संसाधन नहीं मिला"}
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       {/* Section Title */}
@@ -113,38 +71,18 @@ const VideoResources = () => {
 
       {/* Video Thumbnail */}
       <div className="relative rounded-lg overflow-hidden group cursor-pointer">
-        <img
-          src={videoData.thumbnail}
-          alt="Documentary thumbnail"
-          className="w-full h-60 object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-        />
-
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-all duration-300" />
-
-        {/* Play Button */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-14 h-14 rounded-full bg-[var(--color-secondary)] bg-opacity-90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-            <svg
-              className="w-5 h-5 text-white ml-1"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
-        </div>
+        <video src={import.meta.env.VITE_BACKEND_URL + "/uploads/media/video/" + videoData.file} controls className="w-full h-60 object-cover" />
       </div>
 
       {/* Caption */}
       <p className="text-xs text-gray-600 mt-3 italic">
-        {videoData.caption[lang]}
+        {videoData.caption[lang] || (lang === "en" ? "No caption available." : "कोई कैप्शन उपलब्ध नहीं है।")}
       </p>
     </div>
   );
 };
 
-const LatestAnnouncements = () => {
+const LatestAnnouncements = ({ announcements }) => {
   const { lang } = useLanguage();
 
   return (
@@ -160,17 +98,17 @@ const LatestAnnouncements = () => {
       <div className="bg-white divide-y divide-gray-100">
         {announcements.map((item) => (
           <div
-            key={item.id}
+            key={item._id}
             className="px-6 py-5 hover:bg-[var(--color-primary-light)] transition-colors duration-200 cursor-pointer group"
           >
             <p className="text-[11px] text-[var(--color-secondary)] font-semibold uppercase tracking-wider mb-1">
-              {item.date}
+              {new Date(item.date).toLocaleDateString()}
             </p>
             <h4 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-[var(--color-secondary)] transition-colors duration-200">
-              {item.title[lang]}
+              {item.title[lang] || (lang === "en" ? "No title available." : "कोई शीर्षक उपलब्ध नहीं है।")}
             </h4>
             <p className="text-xs text-gray-500 leading-relaxed">
-              {item.excerpt[lang]}
+              {item.excerpt[lang] || (lang === "en" ? "No excerpt available." : "कोई सारांश उपलब्ध नहीं है।")}
             </p>
           </div>
         ))}
@@ -183,6 +121,26 @@ const LatestAnnouncements = () => {
 
 const Media = () => {
   const { lang } = useLanguage();
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [videoData, setVideoData] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
+  useEffect(() => {
+    // Fetch media data from API
+    const fetchMediaData = async () => {
+      try {
+        const mediaResponse = await getMedia();
+        const announcementsResponse = await getAnnouncements();
+        setGalleryImages(mediaResponse.media.images);
+        setVideoData(mediaResponse.media.video);
+        setAnnouncements(announcementsResponse.announcements);
+        console.log("Announcements data fetched successfully:", announcementsResponse);
+      } catch (error) {
+        console.error("Error fetching media data:", error);
+      }
+    };
+
+    fetchMediaData();
+  }, []);
 
   return (
     <div>
@@ -204,13 +162,13 @@ const Media = () => {
 
           {/* Press Gallery + Video Resources */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 show">
-            <PressGallery />
-            <VideoResources />
+            <PressGallery galleryImages={galleryImages} />
+            <VideoResources videoData={videoData} />
           </section>
 
           {/* Latest Announcements */}
           <section className="show">
-            <LatestAnnouncements />
+            <LatestAnnouncements announcements={announcements} />
           </section>
         </div>
       </div>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import Image from "../assets/image.png"
+import Image from "../assets/image.png";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -15,142 +15,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
 
-const slides = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974",
-    title: {
-      en: "Build Something Amazing",
-      hi: "एक अद्भुत बनायें",
-    },
-    subtitle: {
-      en: "Create modern, scalable web experiences",
-      hi: "मॉडर्न, स्केलेबल वेब अनुभव",
-    },
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1492724441997-5dc865305da7?q=80&w=1974",
-    title: {
-      en: "The Future of Web Development",
-      hi: "वेब डेवलपमेंट के भविष्य",
-    },
-    subtitle: {
-      en: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae, autem.",
-      hi: "लोरेम इप्सम डोलर सिट amet consectetur adipisicing elit. Quae, autem.",
-    },
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1972",
-    title: {
-      en: "Sustainable social change",
-      hi: "स्वतंत्र सामाजिक बदलाव",
-    },
-    subtitle: {
-      en: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur molestiae maiores repudiandae. Perspiciatis ratione ipsa necessitatibus deserunt placeat voluptatibus doloribus? Qui quasi quos eius, nobis quod eaque laborum consequuntur est?",
-      hi: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur molestiae maiores repudiandae. Perspiciatis ratione ipsa necessitatibus deserunt placeat voluptatibus doloribus? Qui quasi quos eius, nobis quod eaque laborum consequuntur est?",
-    },
-  },
-];
-
-const events = [
-  {
-    id: 1,
-    title: {
-      en: "Free Health Camp - April 10",
-      hi: "मुफ्त स्वास्थ्य शिविर - 10 अप्रैल",
-    },
-  },
-  {
-    id: 2,
-    title: {
-      en: "Women Empowerment Workshop - April 15",
-      hi: "महिला सशक्तिकरण कार्यशाला - 15 अप्रैल",
-    },
-  },
-  {
-    id: 3,
-    title: {
-      en: "Education Drive in Rural Areas - April 20",
-      hi: "ग्रामीण क्षेत्रों में शिक्षा अभियान - 20 अप्रैल",
-    },
-  },
-  {
-    id: 4,
-    title: {
-      en: "Food Donation Program - April 25",
-      hi: "भोजन दान कार्यक्रम - 25 अप्रैल",
-    },
-  },
-  {
-    id: 5,
-    title: {
-      en: "Blood Donation Camp - April 30",
-      hi: "रक्तदान शिविर - 30 अप्रैल",
-    },
-  },
-];
-
-const sacredMemoryText = {
-  img: "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974",
-  title: {
-    en: "In sacred memory of shri heeralal ji",
-    hi: "श्री हीरालाल जी की पावन स्मृति में",
-  },
-  subtitle: {
-    en: "The Grandfather and Eternal Guide of our Director",
-    hi: "हमारे निदेशक के दादा और शाश्वत मार्गदर्शक",
-  },
-  description: {
-    en: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iusto at tempora provident fugiat excepturi, odit labore quo soluta, voluptatum ab saepe cum possimus dolor amet vero reprehenderit, laboriosam veritatis ullam impedit nemo aperiam sequi minus? Eveniet hic rerum cum voluptatibus quas? Ut, incidunt totam hic assumenda voluptate fuga architecto! Veniam debitis officia repellendus quidem voluptatibus assumenda, cupiditate nihil. Corrupti qui optio sunt, unde debitis magni aliquam maxime, deleniti tempore quidem alias quae rem natus nesciunt recusandae incidunt dignissimos aut dolore. Rem maiores possimus doloremque neque velit eveniet nobis perferendis officia, doloribus cupiditate culpa amet deserunt quasi repudiandae in ipsam esse!",
-    hi: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iusto at tempora provident fugiat excepturi, odit labore quo soluta, voluptatum ab saepe cum possimus dolor amet vero reprehenderit, laboriosam veritatis ullam impedit nemo aperiam sequi minus? Eveniet hic rerum cum voluptatibus quas? Ut, incidunt totam hic assumenda voluptate fuga architecto! Veniam debitis officia repellendus quidem voluptatibus assumenda, cupiditate nihil. Corrupti qui optio sunt, unde debitis magni aliquam maxime, deleniti tempore quidem alias quae rem natus nesciunt recusandae incidunt dignissimos aut dolore. Rem maiores possimus doloremque neque velit eveniet nobis perferendis officia, doloribus cupiditate culpa amet deserunt quasi repudiandae in ipsam esse!",
-  },
-};
-
-
-
-const stats = [
-  {
-    id: 1,
-    icon: "🎓",
-    value: "15,000+",
-    label: {
-      en: "Students Empowered",
-      hi: "छात्र सशक्त",
-    },
-  },
-  {
-    id: 2,
-    icon: "🏡",
-    value: "25+",
-    label: {
-      en: "Rural Villages Reached",
-      hi: "ग्रामीण गांव पहुंचे",
-    },
-  },
-  {
-    id: 3,
-    icon: "🏥",
-    value: "5,000+",
-    label: {
-      en: "Medical Consultations",
-      hi: "चिकित्सा परामर्श",
-    },
-  },
-  {
-    id: 4,
-    icon: "🤝",
-    value: "12+",
-    label: {
-      en: "MoU Partners",
-      hi: "एमओयू साझेदार",
-    },
-  },
-];
+import { getHomeData } from "../api";
 
 const pillars = [
   {
@@ -203,31 +68,6 @@ const pillars = [
   },
 ];
 
-const posts = [
-  {
-    id: 1,
-    tag: "Press Release",
-    date: "Nov 26, 2024",
-    title: {
-      en: "HLMF Inaugurates New Digital Learning Center in Rural Delhi",
-      hi: "ग्रामीण दिल्ली में डिजिटल लर्निंग सेंटर का उद्घाटन",
-    },
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1974",
-  },
-  {
-    id: 2,
-    tag: "Event",
-    date: "Nov 18, 2024",
-    title: {
-      en: "Success: 500+ Trees Planted in Annual Reforestation Drive",
-      hi: "वार्षिक वृक्षारोपण अभियान में 500+ पेड़ लगाए गए",
-    },
-    image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1974",
-  },
-];
-
 const compliancePoints = [
   {
     title: {
@@ -268,59 +108,79 @@ const stripText = (text, maxLength = 200) => {
   return text;
 };
 
-const Hero = () => {
+const fallbackImage =
+  "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1974";
+const languageFallback = (textObj, lang) => {
+  return textObj[lang] || textObj["en"] || textObj["hi"] || "N/A";
+};
+
+const Hero = ({ slides }) => {
   const { lang } = useLanguage();
   return (
     <section>
       <div>
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay, EffectFade]}
-          effect="fade"
-          loop={true}
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
-          navigation
-          pagination={{ clickable: true }}
-          className="h-full"
-        >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.id}>
-              <div className="relative md:h-120 h-72 w-full px-4">
-                <img
-                  src={slide.image}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  alt="Image"
-                />
-                <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/50 to-black/30" />
-                <div className="relative z-10 h-full flex flex-col justify-center max-w-6xl mx-auto">
-                  <h1 className="text-white text-2xl md:text-5xl font-semibold tracking-wide">
-                    {stripText(slide.title[lang])}
-                  </h1>
-                  <p className="text-gray-300 md:mt-4 mt-1 md:text-lg text-sm max-w-2xl leading-relaxed">
-                    {stripText(slide.subtitle[lang])}
-                  </p>
-                  <div className="flex gap-4 md:mt-8 mt-2">
-                    <Button className="max-md:text-xs" to="/about">
-                      {lang === "en" ? "Learn More" : "अधिक जानें"}
-                    </Button>
-                    <Button
-                      className="max-md:text-xs"
-                      variant="outline"
-                      to="/contact"
-                    >
-                      {lang === "en" ? "Contact Us" : "संपर्क करें"}
-                    </Button>
+        {slides.length === 0 ? (
+          <div className="relative md:h-120 h-72 w-full">
+            <img
+              src={fallbackImage}
+              className="absolute inset-0 w-full h-full object-cover"
+              alt="Fallback Image"
+            />
+          </div>
+        ) : (
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay, EffectFade]}
+            effect="fade"
+            loop={slides.length > 2}
+            autoplay={{ delay: 4000, disableOnInteraction: false }}
+            navigation
+            pagination={{ clickable: true }}
+            className="h-full"
+          >
+            {slides.map((slide) => (
+              <SwiperSlide key={slide.id}>
+                <div className="relative md:h-120 h-72 w-full px-4">
+                  <img
+                    src={
+                      import.meta.env.VITE_BACKEND_URL +
+                      "/uploads/heroSlides/" +
+                      slide.image
+                    }
+                    className="absolute inset-0 w-full h-full object-cover"
+                    alt="Image"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/50 to-black/30" />
+                  <div className="relative z-10 h-full flex flex-col justify-center max-w-6xl mx-auto">
+                    <h1 className="text-white text-2xl md:text-5xl font-semibold tracking-wide">
+                      {languageFallback(stripText(slide.title), lang)}
+                    </h1>
+                    <p className="text-gray-300 md:mt-4 mt-1 md:text-lg text-sm max-w-2xl leading-relaxed">
+                      {languageFallback(stripText(slide.subtitle), lang)}
+                    </p>
+                    <div className="flex gap-4 md:mt-8 mt-2">
+                      <Button className="max-md:text-xs" to="/about">
+                        {lang === "en" ? "Learn More" : "अधिक जानें"}
+                      </Button>
+                      <Button
+                        className="max-md:text-xs"
+                        variant="outline"
+                        to="/contact"
+                      >
+                        {lang === "en" ? "Contact Us" : "संपर्क करें"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </div>
     </section>
   );
 };
 
-const UpcomingEvents = () => {
+const UpcomingEvents = ({ events }) => {
   const { lang } = useLanguage();
 
   return (
@@ -336,25 +196,31 @@ const UpcomingEvents = () => {
             {lang === "en" ? "Upcoming" : "आगामी"}
           </Button>
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            slidesPerView={1}
-            loop={true}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
-            navigation={{
-              prevEl: ".event-prev",
-              nextEl: ".event-next",
-            }}
-            className="w-full"
-          >
-            {events.map((event) => (
-              <SwiperSlide key={event.id}>
-                <p className="md:text-sm text-xs font-medium truncate">
-                  {event.title[lang]}
-                </p>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {events.length === 0 ? (
+            <p className="text-sm italic font-bold">
+              {lang === "en" ? "No Upcoming Events" : "कोई आगामी घटना नहीं"}
+            </p>
+          ) : (
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              slidesPerView={1}
+              loop={events.length > 2}
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              navigation={{
+                prevEl: ".event-prev",
+                nextEl: ".event-next",
+              }}
+              className="w-full"
+            >
+              {events.map((event) => (
+                <SwiperSlide key={event.id}>
+                  <p className="md:text-sm text-xs font-medium truncate">
+                    {event.title[lang]}
+                  </p>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </div>
 
         {/* Right: Controls */}
@@ -371,27 +237,33 @@ const UpcomingEvents = () => {
   );
 };
 
-const SacredMemory = () => {
+const SacredMemory = ({ sacredMemoryText }) => {
   const { lang } = useLanguage();
+
+  if (!sacredMemoryText) return null;
+  const title = {
+    en: "In Sacred Memory of " + (sacredMemoryText.name.en || "Our Founder"),
+    hi: (sacredMemoryText.name.hi || "हमारे संस्थापक") + " की पवित्र स्मृति में",
+  };
 
   return (
     <section className="px-4 py-10">
       <div className="border-3 border-[var(--color-primary)] bg-white shadow-sm max-w-6xl mx-auto md:p-10 p-4 rounded">
         <div className="flex max-md:flex-col md:gap-10 gap-4 max-w-6xl mx-auto">
           <img
-            src={sacredMemoryText.img}
+            src={sacredMemoryText.photo ? `${import.meta.env.VITE_BACKEND_URL}/uploads/team/${sacredMemoryText.photo}` : fallbackImage}
             alt="Sacred Memory"
             className="max-w-80 object-cover border-2 border-gray-500 p-1"
           />
           <div>
             <h2 className="text-2xl font-bold md:text-3xl uppercase text-[var(--color-secondary)]">
-              {sacredMemoryText.title[lang]}
+              {languageFallback(title, lang)}
             </h2>
             <p className="text-[var(--color-primary-dark)] italic">
-              {sacredMemoryText.subtitle[lang]}
+              {languageFallback(sacredMemoryText.role, lang)}
             </p>
             <div className="w-16 h-0.5 bg-[var(--color-primary)] my-6 rounded"></div>
-            <p className="text-sm">{sacredMemoryText.description[lang]}</p>
+            <p className="text-sm">{languageFallback(sacredMemoryText.quote, lang)}</p>
           </div>
         </div>
       </div>
@@ -399,49 +271,20 @@ const SacredMemory = () => {
   );
 };
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
-const FormalCommendation = () => {
+const FormalCommendation = ({ commendation }) => {
   const { lang } = useLanguage();
-  const [data, setData] = useState(null);
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/commendation`)
-      .then((res) => {
-        if (res.data?.commendation) {
-          setData(res.data.commendation);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  // Fallback data if API hasn't loaded or backend is down
-  const sectionSubtitle = data?.sectionSubtitle?.[lang] || (lang === "en" ? "Institutional Patronage" : "संस्थागत संरक्षण");
-  const sectionTitle = data?.sectionTitle?.[lang] || (lang === "en" ? "Formal Commendation" : "औपचारिक प्रशंसा");
-  const messageTitle = data?.messageTitle?.[lang] || (lang === "en" ? "Message of Hope" : "आशा का संदेश");
-  const messageBody = data?.messageBody?.[lang] || "";
-  const directorName = data?.directorName?.[lang] || (lang === "en" ? "Dr. Arpan Kumar" : "डॉ. अर्पन कुमार");
-  const directorPost = data?.directorPost?.[lang] || (lang === "en" ? "Director, Heeralal Memorial Foundation" : "निदेशक, हीरालाल मेमोरियल फाउंडेशन");
-
-  const directorPhotoSrc = data?.directorPhoto
-    ? `${BACKEND_URL}/uploads/commendation/${data.directorPhoto}`
-    : "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974";
-
-  const letterImageSrc = data?.letterImage
-    ? `${BACKEND_URL}/uploads/commendation/${data.letterImage}`
-    : null;
+  if (!commendation) return null;
 
   return (
     <section className="px-4 py-14">
       {/* Section Header */}
       <div className="max-w-6xl mx-auto text-center mb-10">
         <span className="block uppercase text-[var(--color-primary-dark)] text-xs font-semibold tracking-widest">
-          {sectionSubtitle}
+          {languageFallback(commendation.sectionSubtitle, lang) || (lang === "en" ? "Institutional Patronage" : "संस्थागत संरक्षण")}
         </span>
         <h2 className="text-2xl font-bold md:text-3xl uppercase text-[var(--color-secondary)] mt-1">
-          {sectionTitle}
+          {languageFallback(commendation.sectionTitle, lang) || (lang === "en" ? "Formal Commendation" : "औपचारिक प्रशंसा")}
         </h2>
         <div className="w-20 h-1 bg-[var(--color-primary-dark)] my-4 mx-auto rounded"></div>
       </div>
@@ -474,8 +317,8 @@ const FormalCommendation = () => {
                 {/* Inner decorative ring */}
                 <div className="w-full h-full rounded-full p-[3px] bg-white">
                   <img
-                    src={directorPhotoSrc}
-                    alt={directorName}
+                    src={commendation.directorPhoto ? `${import.meta.env.VITE_BACKEND_URL}/uploads/commendation/${commendation.directorPhoto}` : fallbackImage}
+                    alt={lang === "en" ? "Director's Photo" : "निदेशक की फोटो"}
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
@@ -483,10 +326,10 @@ const FormalCommendation = () => {
 
               {/* Name */}
               <h3 className="mt-5 text-lg md:text-xl font-bold text-[var(--color-secondary)] text-center">
-                {directorName}
+                {languageFallback(commendation.directorName, lang) || (lang === "en" ? "Director's Name" : "निदेशक का नाम")}
               </h3>
               <p className="text-xs text-[var(--color-primary-dark)] italic text-center">
-                {directorPost}
+                {languageFallback(commendation.directorPost, lang) || (lang === "en" ? "Director's Position" : "निदेशक का पद")}
               </p>
 
               {/* Message of Hope */}
@@ -495,20 +338,20 @@ const FormalCommendation = () => {
                   className="text-base font-semibold text-[var(--color-secondary)] mb-3 pb-2"
                   style={{ borderBottom: "2px solid var(--color-primary)" }}
                 >
-                  {messageTitle}
+                  {languageFallback(commendation.messageTitle, lang) || (lang === "en" ? "Message of Hope" : "आशा का संदेश")}
                 </p>
-                {messageBody && (
+                {commendation.messageBody && (
                   <p className="text-sm italic text-gray-600 leading-relaxed">
-                    "{messageBody}"
+                    "{languageFallback(commendation.messageBody, lang)}"
                   </p>
                 )}
                 <div className="flex justify-end mt-4">
                   <div className="text-right">
                     <p className="text-sm font-semibold text-[var(--color-secondary)]">
-                      — {directorName}
+                      — {languageFallback(commendation.directorName, lang) || (lang === "en" ? "Director's Name" : "निदेशक का नाम")}
                     </p>
                     <p className="text-xs text-gray-500 italic">
-                      {directorPost}
+                      {languageFallback(commendation.directorPost, lang) || (lang === "en" ? "Director's Position" : "निदेशक का पद")}
                     </p>
                   </div>
                 </div>
@@ -519,7 +362,7 @@ const FormalCommendation = () => {
             <div className="md:w-[60%] flex items-center justify-center">
               <div className="bg-white p-3 md:p-5 rounded-xl shadow-md border border-gray-200 w-full">
                 <img
-                  src={letterImageSrc || Image}
+                  src={commendation.letterImage ? `${import.meta.env.VITE_BACKEND_URL}/uploads/commendation/${commendation.letterImage}` : fallbackImage}
                   alt={lang === "en" ? "Formal Commendation Letter" : "औपचारिक प्रशंसा पत्र"}
                   className="w-full h-auto rounded-lg object-contain"
                 />
@@ -542,8 +385,10 @@ const FormalCommendation = () => {
   );
 };
 
-const InstitutionalProgress = () => {
+const InstitutionalProgress = ({ stats }) => {
   const { lang } = useLanguage();
+
+  if (!stats) return null;
 
   return (
     <section className="px-4 py-10 bg-[var(--color-primary-light)]">
@@ -565,7 +410,7 @@ const InstitutionalProgress = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {stats.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="bg-[var(--color-primary-light)] hover:shadow-md transition rounded-md p-6 flex flex-col items-center justify-center text-center hover:-translate-y-1"
             >
               <div className="text-3xl mb-3">{item.icon}</div>
@@ -575,7 +420,7 @@ const InstitutionalProgress = () => {
               </h3>
 
               <p className="text-xs md:text-sm text-gray-600 mt-1">
-                {item.label[lang]}
+                {languageFallback(item.label, lang)}
               </p>
             </div>
           ))}
@@ -636,7 +481,7 @@ const InstitutionalPillars = () => {
   );
 };
 
-const LatestFromField = () => {
+const LatestFromField = ({ posts }) => {
   const { lang } = useLanguage();
 
   return (
@@ -657,12 +502,12 @@ const LatestFromField = () => {
           <div className="grid sm:grid-cols-2 gap-6">
             {posts.map((post) => (
               <div
-                key={post.id}
+                key={post._id}
                 className="bg-white rounded border border-gray-200 overflow-hidden hover:shadow-lg group"
               >
                 <div className="relative overflow-hidden">
                   <img
-                    src={post.image}
+                    src={import.meta.env.VITE_BACKEND_URL + "/uploads/news/" + post.image}
                     alt=""
                     className="h-48 w-full object-cover group-hover:scale-110 transition duration-500"
                   />
@@ -677,7 +522,7 @@ const LatestFromField = () => {
                   </p>
 
                   <h3 className="text-sm font-semibold text-gray-800 group-hover:text-[var(--color-secondary)]">
-                    {post.title[lang]}
+                    {languageFallback(post.title, lang)}
                   </h3>
                 </div>
               </div>
@@ -695,9 +540,7 @@ const LatestFromField = () => {
             <ul className="space-y-4 list-disc pl-5 marker:text-[var(--color-primary)]">
               {compliancePoints.map((item, i) => (
                 <li key={i}>
-                  <p className="text-sm font-semibold">
-                    {item.title[lang]}
-                  </p>
+                  <p className="text-sm font-semibold">{item.title[lang]}</p>
                   <p className="text-xs text-gray-200 leading-relaxed mt-1">
                     {item.desc[lang]}
                   </p>
@@ -712,16 +555,40 @@ const LatestFromField = () => {
 };
 
 const Home = () => {
+  const [slides, setSlides] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [sacredMemoryText, setSacredMemoryText] = useState(null);
+  const [commendation, setCommendation] = useState(null);
+  const [stats, setStats] = useState([]);
+  // const [pillars, setPillars] = useState([]);
+  const [posts, setPosts] = useState([]);
+  // const [compliancePoints, setCompliancePoints] = useState([]);
+
+  useEffect(() => {
+    getHomeData()
+      .then((res) => {
+        setSlides(res.data.heroSlides || []);
+        setEvents(res.data.events || []);
+        setSacredMemoryText(res.data.team.find((member) => member.tier === "founder") || null);
+        setCommendation(res.data.commendation || null);
+        setStats(res.data.stats);
+        // setPillars(res.data.pillars);
+        setPosts(res.data.news);
+        // setCompliancePoints(res.data.compliancePoints);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <div>
       <Navbar />
-      <Hero />
-      <UpcomingEvents />
-      <SacredMemory />
-      <FormalCommendation />
-      <InstitutionalProgress />
+      <Hero slides={slides} />
+      <UpcomingEvents events={events} />
+      <SacredMemory sacredMemoryText={sacredMemoryText} />
+      <FormalCommendation commendation={commendation} />
+      <InstitutionalProgress stats={stats} />
       <InstitutionalPillars />
-      <LatestFromField />
+      <LatestFromField posts={posts} />
       <Footer topBg="bg-white" />
     </div>
   );

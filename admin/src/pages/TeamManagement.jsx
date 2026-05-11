@@ -6,6 +6,7 @@ import {
   updateMember,
   deleteMember,
 } from "../api/team.api";
+import { toast } from "sonner";
 
 const tierLabels = {
   founder: "Founder",
@@ -150,8 +151,10 @@ const TeamManagement = () => {
       }
 
       resetForm();
+      toast.success(`Member ${editing ? "updated" : "created"}`);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to save member");
     } finally {
       setSaving(false);
     }
@@ -166,8 +169,10 @@ const TeamManagement = () => {
       await deleteMember(id);
 
       setMembers((prev) => prev.filter((m) => m._id !== id));
+      toast.success("Member deleted");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to delete member");
     }
   };
 

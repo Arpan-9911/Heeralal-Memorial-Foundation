@@ -6,6 +6,7 @@ import {
   getSlides,
   updateSlide,
 } from "../api/hero.api";
+import { toast } from "sonner";
 
 const HeroSlides = () => {
   const [slides, setSlides] = useState([]);
@@ -129,8 +130,10 @@ const HeroSlides = () => {
       await fetchSlides();
 
       resetForm();
+      toast.success(`Slide ${editing ? "updated" : "created"}`);
     } catch (err) {
       console.log(err);
+      toast.error("Failed to save slide");
     } finally {
       setLoading(false);
     }
@@ -143,8 +146,10 @@ const HeroSlides = () => {
       await deleteSlide(id);
 
       fetchSlides();
+      toast.success("Slide deleted");
     } catch (err) {
       console.log(err);
+      toast.error("Failed to delete slide");
     }
   };
 
@@ -167,8 +172,10 @@ const HeroSlides = () => {
       await updateSlide(slide._id, formData);
 
       fetchSlides();
+      toast.success("Slide updated");
     } catch (err) {
       console.log(err);
+      toast.error("Failed to update slide");
     }
   };
 

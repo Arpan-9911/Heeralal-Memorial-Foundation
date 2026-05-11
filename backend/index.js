@@ -20,6 +20,9 @@ import commendationRoutes from "./routes/commendation.routes.js";
 import joinRequestRoutes from "./routes/joinRequest.routes.js";
 import donationRoutes from "./routes/donation.routes.js";
 import socialLinksRoutes from "./routes/socialLinks.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
+
+import homeRoutes from "./routes/home.routes.js";
 
 import errorMiddleware from "./middleware/error.middleware.js";
 
@@ -39,8 +42,10 @@ app.use(
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-
+    origin: [
+      process.env.CLIENT_URL,
+      process.env.CLIENT_URL_2,
+    ],
     credentials: true,
   }),
 );
@@ -85,6 +90,9 @@ app.use("/api/commendation", commendationRoutes);
 app.use("/api/join-requests", joinRequestRoutes);
 app.use("/api/donations", donationRoutes);
 app.use("/api/social-links", socialLinksRoutes);
+app.use("/api/contact", contactRoutes);
+
+app.use("/api/home", homeRoutes);
 
 /* ───────────────── ERROR HANDLER ───────────────── */
 

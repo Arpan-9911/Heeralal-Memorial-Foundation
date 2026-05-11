@@ -6,6 +6,7 @@ import {
   updateProgram,
   deleteProgram,
 } from "../api/program.api";
+import { toast } from "sonner";
 
 const initialForm = {
   categoryEn: "",
@@ -134,8 +135,11 @@ const Programs = () => {
       }
 
       resetForm();
+
+      toast.success(`Programme ${editing ? "updated" : "created"}`);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to save programme");
     } finally {
       setSaving(false);
     }
@@ -150,8 +154,10 @@ const Programs = () => {
       await deleteProgram(id);
 
       setPrograms((prev) => prev.filter((p) => p._id !== id));
+      toast.success("Programme deleted");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to delete programme");
     }
   };
 
@@ -178,8 +184,11 @@ const Programs = () => {
       setPrograms((prev) =>
         prev.map((p) => (p._id === program._id ? data.program : p)),
       );
+
+      toast.success("Programme status updated");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to update status");
     }
   };
 

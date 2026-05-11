@@ -6,6 +6,7 @@ import {
   updateNewsPost,
   deleteNewsPost,
 } from "../api/news.api";
+import { toast } from "sonner";
 
 const News = () => {
   const [items, setItems] = useState([]);
@@ -94,8 +95,10 @@ const News = () => {
       }
 
       reset();
+      toast.success(`Post ${editing ? "updated" : "created"}`);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to save post");
     } finally {
       setUploading(false);
     }
@@ -111,8 +114,10 @@ const News = () => {
       await deleteNewsPost(id);
 
       setItems((prev) => prev.filter((i) => i._id !== id));
+      toast.success("Post deleted");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to delete post");
     }
   };
 

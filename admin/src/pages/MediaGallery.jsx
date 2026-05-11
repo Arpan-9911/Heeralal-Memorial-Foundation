@@ -8,6 +8,8 @@ import {
   deleteGalleryVideo,
 } from "../api/media.api";
 
+import { toast } from "sonner";
+
 const MediaGallery = () => {
   const [images, setImages] = useState([]);
 
@@ -87,8 +89,11 @@ const MediaGallery = () => {
       });
 
       setShowImgForm(false);
+
+      toast.success("Image uploaded");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to upload image");
     } finally {
       setUploading(false);
     }
@@ -103,8 +108,10 @@ const MediaGallery = () => {
       await deleteGalleryImage(id);
 
       setImages((prev) => prev.filter((i) => i._id !== id));
+      toast.success("Image deleted");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to delete image");
     }
   };
 
@@ -135,8 +142,11 @@ const MediaGallery = () => {
       setVideo(data.video);
 
       setEditingVideo(false);
+
+      toast.success("Video saved");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to save video");
     } finally {
       setUploading(false);
     }
@@ -151,8 +161,10 @@ const MediaGallery = () => {
       await deleteGalleryVideo();
 
       setVideo(null);
+      toast.success("Video deleted");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to delete video");
     }
   };
 

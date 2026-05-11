@@ -3,9 +3,7 @@ import Team from "../models/Team.js";
 
 export const getMembers = async (req, res) => {
   try {
-    const members = await Team.find().sort({
-      createdAt: -1,
-    });
+    const members = await Team.find();
 
     res.json({
       success: true,

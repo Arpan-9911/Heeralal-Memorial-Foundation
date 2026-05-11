@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import { getPrograms } from "../api";
 
 /* ──────────────────────────────────── DATA ──────────────────────────────────── */
 
@@ -92,6 +93,19 @@ const ProgramCard = ({ data }) => {
 
 const Programs = () => {
   const { lang } = useLanguage();
+  const [programs, setPrograms] = useState([]);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const data = await getPrograms();
+        setPrograms(data.programs);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchPrograms();
+  }, []);
 
   return (
     <div>
@@ -114,7 +128,7 @@ const Programs = () => {
           <section className="show">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {programs.map((program) => (
-                <ProgramCard key={program.id} data={program} />
+                <ProgramCard key={program._id} data={program} />
               ))}
             </div>
           </section>

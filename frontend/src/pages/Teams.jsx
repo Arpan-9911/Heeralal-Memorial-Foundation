@@ -1,94 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
-/* ──────────────────────────────────── DATA ──────────────────────────────────── */
-
-const founder = {
-  name: { en: "Late Shri Heeralal Ji", hi: "स्वर्गीय श्री हीरालाल जी" },
-  role: { en: "Institutional Founder", hi: "संस्थागत संस्थापक" },
-  photo:
-    "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=1974",
-  quote: {
-    en: '"The foundation of any society rests upon the strength of its character and the depth of its compassion. My life\'s mission has been to ignite hope where it is most needed."',
-    hi: '"किसी भी समाज की नींव उसके चरित्र की मजबूती और उसकी करुणा की गहराई पर टिकी होती है। मेरे जीवन का मिशन वहाँ आशा जगाना रहा है जहाँ इसकी सबसे अधिक आवश्यकता है।"',
-  },
-  quoteAttribution: {
-    en: "— The Founder's Eternal Vision",
-    hi: "— संस्थापक की शाश्वत दृष्टि",
-  },
-};
-
-const leaders = [
-  {
-    id: 1,
-    name: { en: "Dr. Preeti Singh", hi: "डॉ. प्रीति सिंह" },
-    role: { en: "Managing Director", hi: "प्रबंध निदेशक" },
-    photo:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200",
-    quote: {
-      en: '"We don\'t just provide aid, we build sustainable ecosystems for growth. Our institutional approach ensures that every contribution creates a ripple effect of empowerment."',
-      hi: '"हम केवल सहायता प्रदान नहीं करते, हम विकास के लिए टिकाऊ पारिस्थितिकी तंत्र का निर्माण करते हैं। हमारा संस्थागत दृष्टिकोण सुनिश्चित करता है कि हर योगदान सशक्तिकरण की तरंग पैदा करे।"',
-    },
-  },
-  {
-    id: 2,
-    name: { en: "Mr. Arjun Malhotra", hi: "श्री अर्जुन मल्होत्रा" },
-    role: { en: "Director of Finance", hi: "वित्त निदेशक" },
-    photo:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200",
-    quote: {
-      en: '"Innovation in social service is not an option, it is a necessity. By leveraging modern methodologies, we honor our roots while reaching for a brighter future."',
-      hi: '"सामाजिक सेवा में नवाचार एक विकल्प नहीं, एक आवश्यकता है। आधुनिक पद्धतियों का लाभ उठाकर, हम अपनी जड़ों का सम्मान करते हुए एक उज्जवल भविष्य की ओर बढ़ते हैं।"',
-    },
-  },
-];
-
-const executionTeam = [
-  {
-    id: 1,
-    name: { en: "Mr. Rajesh Gupta", hi: "श्री राजेश गुप्ता" },
-    role: { en: "Chief Technical Officer", hi: "मुख्य तकनीकी अधिकारी" },
-    photo:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600",
-  },
-  {
-    id: 2,
-    name: { en: "Ms. Anjali Sharma", hi: "सुश्री अंजलि शर्मा" },
-    role: { en: "Head of Education", hi: "शिक्षा प्रमुख" },
-    photo:
-      "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=600",
-  },
-  {
-    id: 3,
-    name: { en: "Dr. Vivek Mehra", hi: "डॉ. विवेक मेहरा" },
-    role: { en: "Medical Coordinator", hi: "चिकित्सा समन्वयक" },
-    photo:
-      "https://images.unsplash.com/photo-1506765515384-028b60a970df?q=80&w=600",
-  },
-  {
-    id: 4,
-    name: { en: "Ms. Sunita Rao", hi: "सुश्री सुनीता राव" },
-    role: { en: "Field Operations Head", hi: "क्षेत्र संचालन प्रमुख" },
-    photo:
-      "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=600",
-  },
-  {
-    id: 5,
-    name: { en: "Mr. Vikram Sethi", hi: "श्री विक्रम सेठी" },
-    role: { en: "Operations Lead", hi: "संचालन प्रमुख" },
-    photo:
-      "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=600",
-  },
-  {
-    id: 6,
-    name: { en: "Ms. Kavita Jain", hi: "सुश्री कविता जैन" },
-    role: { en: "Legal Advisor", hi: "विधि सलाहकार" },
-    photo:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600",
-  },
-];
+import { getTeams } from "../api";
 
 /* ────────────────────── VERTICAL CONNECTOR ────────────────────────────────── */
 
@@ -100,8 +15,9 @@ const VerticalConnector = () => (
 
 /* ────────────────────── FOUNDER SECTION ───────────────────────────────────── */
 
-const FounderSection = () => {
+const FounderSection = ({ founder }) => {
   const { lang } = useLanguage();
+  if(!founder) return null;
 
   return (
     <div className="bg-[image:var(--gradient-secondary)] rounded-lg p-6 md:p-8 shadow-lg">
@@ -110,8 +26,8 @@ const FounderSection = () => {
         <div className="flex-shrink-0">
           <div className="w-28 h-28 rounded-full border-4 border-gray-400 overflow-hidden grayscale">
             <img
-              src={founder.photo}
-              alt={founder.name[lang]}
+              src={import.meta.env.VITE_BACKEND_URL + "/uploads/team/" + founder.photo}
+              alt={founder.name[lang] + " photo"}
               className="w-full h-full object-cover"
             />
           </div>
@@ -123,10 +39,7 @@ const FounderSection = () => {
             className="text-gray-200 text-sm italic leading-relaxed mb-3"
             style={{ fontFamily: "'Georgia', serif" }}
           >
-            {founder.quote[lang]}
-          </p>
-          <p className="text-[var(--color-primary)] text-xs font-semibold uppercase tracking-wider text-right">
-            {founder.quoteAttribution[lang]}
+            {founder.quote[lang] || (lang === "en" ? "No quote available." : "कोई उद्धरण उपलब्ध नहीं है।")}
           </p>
         </div>
       </div>
@@ -134,10 +47,10 @@ const FounderSection = () => {
       {/* Name + Role */}
       <div className="mt-4 md:ml-0">
         <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">
-          {founder.role[lang]}
+          {founder.role[lang] || (lang === "en" ? "Founder" : "संस्थापक")}
         </p>
         <h3 className="text-white font-bold text-base">
-          {founder.name[lang]}
+          {founder.name[lang] || (lang === "en" ? "No name available." : "कोई नाम उपलब्ध नहीं है।")}
         </h3>
       </div>
     </div>
@@ -146,31 +59,32 @@ const FounderSection = () => {
 
 /* ────────────────────── LEADERSHIP CARDS ──────────────────────────────────── */
 
-const LeadershipSection = () => {
+const LeadershipSection = ({ leaders }) => {
   const { lang } = useLanguage();
+  if(!leaders) return null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {leaders.map((leader) => (
         <div
-          key={leader.id}
+          key={leader._id}
           className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
         >
           {/* Header: Photo + Name */}
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full border-2 border-[var(--color-primary)] overflow-hidden flex-shrink-0">
               <img
-                src={leader.photo}
+                src={import.meta.env.VITE_BACKEND_URL + "/uploads/team/" + leader.photo}
                 alt={leader.name[lang]}
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary-dark)] font-semibold">
-                {leader.role[lang]}
+                {leader.role[lang] || (lang === "en" ? "Role not available." : "कोई भूमिका उपलब्ध नहीं है।")}
               </p>
               <h3 className="text-sm font-bold text-gray-900">
-                {leader.name[lang]}
+                {leader.name[lang] || (lang === "en" ? "Name not available." : "कोई नाम उपलब्ध नहीं है।")}
               </h3>
             </div>
           </div>
@@ -180,7 +94,7 @@ const LeadershipSection = () => {
             className="text-xs text-gray-600 italic leading-relaxed"
             style={{ fontFamily: "'Georgia', serif" }}
           >
-            {leader.quote[lang]}
+            {leader.quote[lang] || (lang === "en" ? "No quote available." : "कोई उद्धरण उपलब्ध नहीं है।")}
           </p>
         </div>
       ))}
@@ -190,8 +104,9 @@ const LeadershipSection = () => {
 
 /* ────────────────────── EXECUTION TEAM GRID ───────────────────────────────── */
 
-const ExecutionTeamSection = () => {
+const ExecutionTeamSection = ({ executionTeam }) => {
   const { lang } = useLanguage();
+  if(!executionTeam) return null;
 
   return (
     <div>
@@ -206,13 +121,13 @@ const ExecutionTeamSection = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {executionTeam.map((member) => (
           <div
-            key={member.id}
+            key={member._id}
             className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
           >
             {/* Background Image */}
             <img
-              src={member.photo}
-              alt={member.name[lang]}
+              src={import.meta.env.VITE_BACKEND_URL + "/uploads/team/" + member.photo}
+              alt={member.name[lang] + " photo"}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
 
@@ -222,10 +137,10 @@ const ExecutionTeamSection = () => {
             {/* Name + Role */}
             <div className="absolute bottom-0 left-0 right-0 p-4">
               <h4 className="text-white font-bold text-sm">
-                {member.name[lang]}
+                {member.name[lang] || (lang === "en" ? "Name not available." : "कोई नाम उपलब्ध नहीं है।")}
               </h4>
               <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
-                {member.role[lang]}
+                {member.role[lang] || (lang === "en" ? "Role not available." : "कोई भूमिका उपलब्ध नहीं है।")}
               </p>
             </div>
           </div>
@@ -269,6 +184,26 @@ const JoinCTA = () => {
 
 const Teams = () => {
   const { lang } = useLanguage();
+  const [founder, setFounder] = useState(null);
+  const [leaders, setLeaders] = useState([]);
+  const [executionTeam, setExecutionTeam] = useState([]);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const data = await getTeams();
+        setFounder(data.find((member) => member.tier === "founder"));
+        setLeaders(data.filter((member) => member.tier === "leader"));
+        setExecutionTeam(data.filter((member) => member.tier === "execution"));
+      } catch (error) {
+        console.error("Error fetching teams data:", error);
+      }
+    };
+
+    fetchTeam();
+  }, []);
+
+  if (!founder || !leaders || !executionTeam) return null;
 
   return (
     <div>
@@ -296,21 +231,21 @@ const Teams = () => {
 
           {/* Founder */}
           <section className="show mt-6">
-            <FounderSection />
+            <FounderSection founder={founder} />
           </section>
 
           <VerticalConnector />
 
           {/* Leadership */}
           <section className="show">
-            <LeadershipSection />
+            <LeadershipSection leaders={leaders} />
           </section>
 
           <VerticalConnector />
 
           {/* Execution Team */}
           <section className="show">
-            <ExecutionTeamSection />
+            <ExecutionTeamSection executionTeam={executionTeam} />
           </section>
 
           {/* CTA */}

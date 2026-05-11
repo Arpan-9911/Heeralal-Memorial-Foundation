@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+
+import { getAchievements, getStats } from "../api";
 
 /* ──────────────────────────────────── DATA ──────────────────────────────────── */
 
@@ -69,16 +71,32 @@ const achievements = [
   },
 ];
 
+const languageFallback = (textObj, lang) => {
+  return textObj[lang] || textObj["en"] || textObj["hi"] || "N/A";
+}
+
 /* ────────────────────────── SECTION COMPONENTS ───────────────────────────── */
 
 const StatsBar = () => {
   const { lang } = useLanguage();
+  const [stats, setStats] = useState([]);
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getStats();
+        setStats(data.stats);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {stats.map((item) => (
         <div
-          key={item.id}
+          key={item._id}
           className="bg-white border border-gray-200 rounded-lg p-5 flex flex-col items-center justify-center text-center hover:shadow-md hover:-translate-y-1 transition-all duration-300"
         >
           <div className="text-3xl mb-2">{item.icon}</div>
@@ -86,7 +104,7 @@ const StatsBar = () => {
             {item.value}
           </h3>
           <p className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold mt-1">
-            {item.label[lang]}
+            {languageFallback(item.label, lang)}
           </p>
         </div>
       ))}
@@ -100,8 +118,8 @@ const AchievementCard = ({ data, reverse }) => {
   const imageBlock = (
     <div className="overflow-hidden rounded-lg">
       <img
-        src={data.image}
-        alt={data.title[lang]}
+        src={import.meta.env.VITE_BACKEND_URL + "/uploads/achievements/" + data.image}
+        alt={languageFallback(data.title, lang)}
         className="w-full h-56 md:h-64 object-cover grayscale hover:grayscale-0 transition-all duration-500"
       />
     </div>
@@ -110,16 +128,16 @@ const AchievementCard = ({ data, reverse }) => {
   const textBlock = (
     <div className="flex flex-col justify-center">
       <h3 className="text-sm md:text-base uppercase tracking-wider font-bold text-[var(--color-secondary)] mb-4">
-        {data.title[lang]}
+        {languageFallback(data.title, lang)}
       </h3>
       <p
         className="text-sm text-gray-600 italic leading-relaxed mb-4"
         style={{ fontFamily: "'Georgia', serif" }}
       >
-        {data.description[lang]}
+        {languageFallback(data.description, lang)}
       </p>
       <p className="text-xs text-[var(--color-secondary)] font-medium">
-        {data.presentedBy[lang]}
+        {languageFallback(data.presentedBy, lang)}
       </p>
     </div>
   );
@@ -151,6 +169,19 @@ const AchievementCard = ({ data, reverse }) => {
 
 const Achievements = () => {
   const { lang } = useLanguage();
+  const [achievements, setAchievements] = useState([]);
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const data = await getAchievements();
+        setAchievements(data.achievements);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchAchievements();
+  }, []);
 
   return (
     <div>
@@ -175,7 +206,7 @@ const Achievements = () => {
           {/* Achievement Cards */}
           <div className="space-y-8">
             {achievements.map((item, i) => (
-              <section key={item.id} className="show">
+              <section key={item._id} className="show">
                 <AchievementCard data={item} reverse={i % 2 !== 0} />
               </section>
             ))}
