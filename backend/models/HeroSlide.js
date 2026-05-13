@@ -6,7 +6,7 @@ const heroSlideSchema =
       title: {
         en: {
           type: String,
-          required: true,
+          default: "",
         },
 
         hi: {

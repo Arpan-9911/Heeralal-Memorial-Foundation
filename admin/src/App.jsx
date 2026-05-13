@@ -55,6 +55,7 @@ const App = () => {
                     <Route path="/join-requests" element={<JoinRequests />} />
                     <Route path="/social-links" element={<SocialLinks />} />
                     <Route path="/about-us" element={<AboutUsAdmin />} />
+                    <Route path="/sacred-memory" element={<SacredMemory />} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>

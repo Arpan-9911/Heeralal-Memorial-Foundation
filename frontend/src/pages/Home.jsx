@@ -16,7 +16,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
 
-import { getHomeData } from "../api";
+import { getHomeData, getSacredMemory } from "../api";
 
 const pillars = [
   {
@@ -160,7 +160,7 @@ const Hero = ({ slides }) => {
                     </p>
                     <div className="flex gap-4 md:mt-8 mt-2">
                       <Button className="max-md:text-xs" to="/about">
-                        {lang === "en" ? "Learn More" : "अधिक जानें"}
+                        {lang === "en" ? "About Us" : "हमारे बारे में"}
                       </Button>
                       <Button
                         className="max-md:text-xs"
@@ -238,42 +238,76 @@ const UpcomingEvents = ({ events }) => {
   );
 };
 
-const SacredMemory = () => {
+const SacredMemory = ({ data }) => {
   const { lang } = useLanguage();
 
-  const title = {
-    en: "In Loving Memory of Late Shree Heeralal Yadav",
-    hi: "स्वर्गीय श्री हीरालाल यादव की प्रेमपूर्ण स्मृति में",
+  const title = data?.heading || {
+    en: "Late Heeralal Yadav",
+    hi: "स्वर्गीय हीरालाल यादव",
   };
 
-  const role = {
-    en: "Founding Inspiration",
-    hi: "संस्थापक प्रेरणा",
+  const lifespan = data?.lifespan || {
+    en: "1926 - 1991",
+    hi: "1926 - 1991",
   };
 
-  const quote = {
-    en: "His life was dedicated to community service and educational welfare through data driven and sustainable interventions. Since our inception, we carry forward his legacy of selfless service, equality, and empowerment — touching lives across rural India with dignity and compassion.",
-    hi: "उनका जीवन डेटा संचालित और टिकाऊ हस्तक्षेपों के माध्यम से सामुदायिक सेवा और शैक्षिक कल्याण के लिए समर्पित था। अपनी स्थापना के बाद से, हम उनकी निःस्वार्थ सेवा, समानता और सशक्तिकरण की विरासत को आगे बढ़ा रहे हैं — गरिमा और करुणा के साथ ग्रामीण भारत में जीवन को छू रहे हैं।",
+  const description = data?.description || {
+    en: "This organization is a living tribute to the late Heeralal Yadav Ji, created to honor his memory and carry forward his enduring legacy.",
+    hi: "यह संगठन स्वर्गीय हीरालाल यादव जी को एक जीवंत श्रद्धांजलि है, जिसे उनकी स्मृति का सम्मान करने और उनकी स्थायी विरासत को आगे बढ़ाने के लिए बनाया गया है।",
   };
 
   return (
     <section className="px-4 py-10">
-      <div className="border-3 border-[var(--color-primary)] bg-white shadow-sm max-w-6xl mx-auto md:p-10 p-4 rounded">
-        <div className="flex max-md:flex-col md:gap-10 gap-4 max-w-6xl mx-auto items-center">
-          <img
-            src={MemoryPhoto}
-            alt="Late Shree Heeralal Yadav"
-            className="max-w-80 object-cover border-2 border-gray-500 p-1"
-          />
-          <div>
-            <h2 className="text-2xl font-bold md:text-3xl uppercase text-[var(--color-secondary)]">
-              {languageFallback(title, lang)}
-            </h2>
-            <p className="text-[var(--color-primary-dark)] italic">
-              {languageFallback(role, lang)}
-            </p>
-            <div className="w-16 h-0.5 bg-[var(--color-primary)] my-6 rounded"></div>
-            <p className="text-sm">{languageFallback(quote, lang)}</p>
+      <div
+        className="max-w-6xl mx-auto rounded-2xl p-[3px]"
+        style={{
+          background: "linear-gradient(135deg, #d4a017 0%, #f7e98e 20%, #c9952c 35%, #fffbe6 50%, #d4a017 65%, #f0c94d 80%, #9c7a10 100%)",
+          backgroundSize: "200% 200%",
+          animation: "goldenShimmer 4s ease-in-out infinite",
+          boxShadow: "0 0 20px rgba(212, 160, 23, 0.3), 0 0 40px rgba(212, 160, 23, 0.1)",
+        }}
+      >
+        <div className="bg-[#EDE7DD] rounded-2xl md:p-10 p-6 shadow-inner">
+          <div className="flex max-md:flex-col md:gap-14 gap-8 items-center">
+            
+            {/* Left Side: Photo, Name, Lifespan */}
+            <div className="flex flex-col items-center flex-shrink-0 text-center">
+              {/* Photo */}
+              <div className="relative w-56 h-56 md:w-64 md:h-64 mb-5 rounded-full overflow-hidden shadow-md">
+                <img
+                  src={MemoryPhoto}
+                  alt="Late Shree Heeralal Yadav"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Name */}
+              <h2 className="text-xl md:text-2xl font-bold uppercase text-[var(--color-secondary)] tracking-wide">
+                {languageFallback(title, lang)}
+              </h2>
+
+              {/* Lifespan */}
+              <div className="flex items-center gap-3 w-48 mt-3 mb-1 opacity-80">
+                <div className="flex-1 h-[1px] bg-[var(--color-secondary)]"></div>
+                <p className="text-[var(--color-secondary)] font-bold tracking-widest text-sm">
+                  {languageFallback(lifespan, lang)}
+                </p>
+                <div className="flex-1 h-[1px] bg-[var(--color-secondary)]"></div>
+              </div>
+            </div>
+
+            {/* Right Side: Message */}
+            <div className="flex-1 max-md:text-center max-w-2xl">
+              <h3 className="text-lg md:text-xl font-bold text-[var(--color-primary-dark)] uppercase tracking-wider mb-4">
+                {lang === "en" ? "In the memory of Late Heeralal Yadav Ji" : "स्वर्गीय हीरालाल यादव जी की स्मृति में"}
+              </h3>
+              
+              <div className="w-16 h-1 bg-[var(--color-primary)] rounded mb-6 max-md:mx-auto"></div>
+
+              <p className="text-base md:text-xl leading-relaxed text-gray-800 italic font-medium" style={{ fontFamily: "'Georgia', serif" }}>
+                "{languageFallback(description, lang)}"
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -407,7 +441,7 @@ const InstitutionalProgress = ({ stats }) => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
           {stats.map((item) => (
             <div
               key={item._id}
@@ -557,6 +591,7 @@ const LatestFromField = ({ posts }) => {
 const Home = () => {
   const [slides, setSlides] = useState([]);
   const [events, setEvents] = useState([]);
+  const [sacredMemory, setSacredMemory] = useState(null);
 
   const [commendation, setCommendation] = useState(null);
   const [stats, setStats] = useState([]);
@@ -577,6 +612,12 @@ const Home = () => {
         // setCompliancePoints(res.data.compliancePoints);
       })
       .catch((err) => console.log(err));
+
+    getSacredMemory()
+      .then((res) => {
+        if (res.memory) setSacredMemory(res.memory);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   return (
@@ -584,7 +625,7 @@ const Home = () => {
       <Navbar />
       <Hero slides={slides} />
       <UpcomingEvents events={events} />
-      <SacredMemory />
+      <SacredMemory data={sacredMemory} />
       <FormalCommendation commendation={commendation} />
       <InstitutionalProgress stats={stats} />
       <InstitutionalPillars />

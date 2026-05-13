@@ -34,6 +34,7 @@ const navItems = [
   { path: "/commendation", label: "Commendation", icon: "📜" },
   { path: "/social-links", label: "Social Links", icon: "🔗" },
   { path: "/about-us", label: "About Us Page", icon: "ℹ️" },
+  { path: "/sacred-memory", label: "In Loving Memory", icon: "🕊️" },
   { path: "/settings", label: "Site Settings", icon: "⚙️" },
 ];
 
