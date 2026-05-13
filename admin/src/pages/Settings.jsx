@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
+import { updateCredentials } from "../api/auth.api";
+import { FiEye, FiEyeOff, FiLock, FiUser, FiShield } from "react-icons/fi";
 
 const initialSettings = {
   general: [
@@ -27,6 +30,189 @@ const initialSettings = {
 
 const sectionLabels = { general: "General", registration: "Institutional Identity", contact: "Contact Information" };
 
+/* ─────────────────── Credentials Change Section ─────────────────── */
+
+const CredentialsSection = () => {
+  const [form, setForm] = useState({
+    currentPassword: "",
+    newUsername: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.currentPassword) {
+      return toast.error("Current password is required");
+    }
+
+    if (!form.newUsername && !form.newPassword) {
+      return toast.error("Enter a new username or password to update");
+    }
+
+    if (form.newUsername && form.newUsername.trim().length < 3) {
+      return toast.error("New username must be at least 3 characters");
+    }
+
+    if (form.newPassword) {
+      if (form.newPassword.length < 6) {
+        return toast.error("New password must be at least 6 characters");
+      }
+      if (form.newPassword !== form.confirmPassword) {
+        return toast.error("New passwords do not match");
+      }
+    }
+
+    try {
+      setSaving(true);
+      const res = await updateCredentials({
+        currentPassword: form.currentPassword,
+        newUsername: form.newUsername || undefined,
+        newPassword: form.newPassword || undefined,
+      });
+      toast.success(res.message || "Credentials updated successfully");
+      setForm({ currentPassword: "", newUsername: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update credentials");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const inp =
+    "w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)] bg-white";
+
+  return (
+    <div className="bg-white rounded-xl border border-[var(--admin-border)]">
+      <div className="px-5 py-4 border-b border-[var(--admin-border)] flex items-center gap-2">
+        <FiShield className="text-[var(--admin-accent)]" size={16} />
+        <h3 className="text-sm font-bold">Account Credentials</h3>
+      </div>
+
+      <form onSubmit={handleSubmit} className="p-5 space-y-5">
+        {/* Current Password (required to authorize any change) */}
+        <div className="space-y-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-[var(--admin-muted)]">
+            <FiLock size={12} />
+            Current Password <span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <input
+              type={showCurrent ? "text" : "password"}
+              name="currentPassword"
+              value={form.currentPassword}
+              onChange={handleChange}
+              placeholder="Enter your current password"
+              className={inp + " pr-10"}
+            />
+            <button
+              type="button"
+              onClick={() => setShowCurrent(!showCurrent)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showCurrent ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+            </button>
+          </div>
+        </div>
+
+        <div className="border-t border-dashed border-[var(--admin-border)]" />
+
+        {/* New Username */}
+        <div className="space-y-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-[var(--admin-muted)]">
+            <FiUser size={12} />
+            New Username <span className="text-[10px] font-normal">(leave blank to keep current)</span>
+          </label>
+          <input
+            type="text"
+            name="newUsername"
+            value={form.newUsername}
+            onChange={handleChange}
+            placeholder="Enter new username (min 3 characters)"
+            className={inp}
+          />
+        </div>
+
+        {/* New Password */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-[var(--admin-muted)]">
+              <FiLock size={12} />
+              New Password <span className="text-[10px] font-normal">(leave blank to keep current)</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showNew ? "text" : "password"}
+                name="newPassword"
+                value={form.newPassword}
+                onChange={handleChange}
+                placeholder="Min 6 characters"
+                className={inp + " pr-10"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowNew(!showNew)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showNew ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-[var(--admin-muted)]">
+              <FiLock size={12} />
+              Confirm New Password
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirm ? "text" : "password"}
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                placeholder="Re-enter new password"
+                className={inp + " pr-10"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showConfirm ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit */}
+        <div className="flex items-center gap-3 pt-2">
+          <button
+            type="submit"
+            disabled={saving}
+            className="px-5 py-2 text-sm font-semibold rounded-lg bg-[var(--admin-accent)] text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {saving ? "Updating..." : "Update Credentials"}
+          </button>
+          <p className="text-[11px] text-[var(--admin-muted)] italic">
+            You will need to re-login after changing your password.
+          </p>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+/* ────────────────────────── Main Settings Page ────────────────────────── */
+
 const Settings = () => {
   const [settings, setSettings] = useState(initialSettings);
   const [editSection, setEditSection] = useState(null);
@@ -42,6 +228,10 @@ const Settings = () => {
 
   return (
     <div className="space-y-6 max-w-3xl">
+      {/* Account Credentials Section */}
+      <CredentialsSection />
+
+      {/* Existing Settings Sections */}
       {Object.entries(settings).map(([section, fields]) => (
         <div key={section} className="bg-white rounded-xl border border-[var(--admin-border)]">
           <div className="px-5 py-4 border-b border-[var(--admin-border)] flex items-center justify-between">

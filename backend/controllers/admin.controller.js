@@ -111,3 +111,46 @@ export const refreshAccessToken = asyncHandler(
     });
   }
 );
+
+export const updateCredentials = asyncHandler(async (req, res) => {
+  const { currentPassword, newUsername, newPassword } = req.body;
+
+  const admin = await Admin.findById(req.admin.id);
+  if (!admin) {
+    return res.status(404).json({
+      success: false,
+      message: "Admin not found",
+    });
+  }
+
+  // Verify current password
+  const isMatch = await bcrypt.compare(currentPassword, admin.password);
+  if (!isMatch) {
+    return res.status(401).json({
+      success: false,
+      message: "Current password is incorrect",
+    });
+  }
+
+  // Update username if provided
+  if (newUsername && newUsername.trim().length >= 3) {
+    admin.username = newUsername.trim();
+  }
+
+  // Update password if provided
+  if (newPassword && newPassword.length >= 6) {
+    const salt = await bcrypt.genSalt(10);
+    admin.password = await bcrypt.hash(newPassword, salt);
+  }
+
+  await admin.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Credentials updated successfully",
+    admin: {
+      id: admin._id,
+      username: admin.username,
+    },
+  });
+});

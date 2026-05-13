@@ -5,6 +5,7 @@ import {
   logoutAdmin,
   getAdminProfile,
   refreshAccessToken,
+  updateCredentials,
 } from "../controllers/admin.controller.js";
 import protectAdmin from "../middleware/auth.middleware.js";
 import validate from "../middleware/validate.middleware.js";
@@ -25,6 +26,12 @@ router.get(
   "/me",
   protectAdmin,
   getAdminProfile
+);
+
+router.put(
+  "/update-credentials",
+  protectAdmin,
+  updateCredentials
 );
 
 export default router;

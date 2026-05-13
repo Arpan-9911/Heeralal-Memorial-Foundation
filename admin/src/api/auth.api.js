@@ -24,3 +24,12 @@ export const getCurrentAdmin = async () => {
 
   return response.data;
 };
+
+export const updateCredentials = async (data) => {
+  const response = await API.put(
+    "/admin/update-credentials",
+    data
+  );
+
+  return response.data;
+};
