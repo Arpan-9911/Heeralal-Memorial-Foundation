@@ -90,7 +90,7 @@ const FloatingSocials = () => {
   return (
     <>
       <div
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col"
+        className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] flex flex-col"
         style={{
           transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
           transform: show

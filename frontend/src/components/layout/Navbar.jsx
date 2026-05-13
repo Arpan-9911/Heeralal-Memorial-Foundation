@@ -41,9 +41,9 @@ const Topbar = () => {
       </div>
       <div className="bg-white p-4 flex items-center justify-between max-w-6xl mx-auto">
         <Link to={"/"} className="flex items-center gap-4">
-          <img src={Logo} alt="HLMF Logo" className="min-h-12 min-w-12 h-12 w-12 rounded-full object-cover" />
+          <img src={Logo} alt="HLMF Logo" className="min-h-14 min-w-14 h-14 w-14 rounded-full object-cover" />
           <div>
-            <h1 className="text-lg font-bold text-[var(--color-secondary)] tracking-wide">
+            <h1 className="text-xl font-bold text-[var(--color-secondary)] tracking-wide">
               {lang === "en"
                 ? "Heeralal Memorial Foundation"
                 : "हीरलल मेमोरियल फाउंडेशन"}

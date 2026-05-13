@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Image from "../assets/image.png";
+import MemoryPhoto from "../assets/memory.jpeg";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -237,22 +238,31 @@ const UpcomingEvents = ({ events }) => {
   );
 };
 
-const SacredMemory = ({ sacredMemoryText }) => {
+const SacredMemory = () => {
   const { lang } = useLanguage();
 
-  if (!sacredMemoryText) return null;
   const title = {
-    en: "In Sacred Memory of " + (sacredMemoryText.name.en || "Our Founder"),
-    hi: (sacredMemoryText.name.hi || "हमारे संस्थापक") + " की पवित्र स्मृति में",
+    en: "In Loving Memory of Late Shree Heeralal Yadav",
+    hi: "स्वर्गीय श्री हीरालाल यादव की प्रेमपूर्ण स्मृति में",
+  };
+
+  const role = {
+    en: "Founding Inspiration",
+    hi: "संस्थापक प्रेरणा",
+  };
+
+  const quote = {
+    en: "His life was dedicated to community service and educational welfare through data driven and sustainable interventions. Since our inception, we carry forward his legacy of selfless service, equality, and empowerment — touching lives across rural India with dignity and compassion.",
+    hi: "उनका जीवन डेटा संचालित और टिकाऊ हस्तक्षेपों के माध्यम से सामुदायिक सेवा और शैक्षिक कल्याण के लिए समर्पित था। अपनी स्थापना के बाद से, हम उनकी निःस्वार्थ सेवा, समानता और सशक्तिकरण की विरासत को आगे बढ़ा रहे हैं — गरिमा और करुणा के साथ ग्रामीण भारत में जीवन को छू रहे हैं।",
   };
 
   return (
     <section className="px-4 py-10">
       <div className="border-3 border-[var(--color-primary)] bg-white shadow-sm max-w-6xl mx-auto md:p-10 p-4 rounded">
-        <div className="flex max-md:flex-col md:gap-10 gap-4 max-w-6xl mx-auto">
+        <div className="flex max-md:flex-col md:gap-10 gap-4 max-w-6xl mx-auto items-center">
           <img
-            src={sacredMemoryText.photo ? `${import.meta.env.VITE_BACKEND_URL}/uploads/team/${sacredMemoryText.photo}` : fallbackImage}
-            alt="Sacred Memory"
+            src={MemoryPhoto}
+            alt="Late Shree Heeralal Yadav"
             className="max-w-80 object-cover border-2 border-gray-500 p-1"
           />
           <div>
@@ -260,10 +270,10 @@ const SacredMemory = ({ sacredMemoryText }) => {
               {languageFallback(title, lang)}
             </h2>
             <p className="text-[var(--color-primary-dark)] italic">
-              {languageFallback(sacredMemoryText.role, lang)}
+              {languageFallback(role, lang)}
             </p>
             <div className="w-16 h-0.5 bg-[var(--color-primary)] my-6 rounded"></div>
-            <p className="text-sm">{languageFallback(sacredMemoryText.quote, lang)}</p>
+            <p className="text-sm">{languageFallback(quote, lang)}</p>
           </div>
         </div>
       </div>
@@ -557,7 +567,7 @@ const LatestFromField = ({ posts }) => {
 const Home = () => {
   const [slides, setSlides] = useState([]);
   const [events, setEvents] = useState([]);
-  const [sacredMemoryText, setSacredMemoryText] = useState(null);
+
   const [commendation, setCommendation] = useState(null);
   const [stats, setStats] = useState([]);
   // const [pillars, setPillars] = useState([]);
@@ -569,7 +579,7 @@ const Home = () => {
       .then((res) => {
         setSlides(res.data.heroSlides || []);
         setEvents(res.data.events || []);
-        setSacredMemoryText(res.data.team.find((member) => member.tier === "founder") || null);
+
         setCommendation(res.data.commendation || null);
         setStats(res.data.stats);
         // setPillars(res.data.pillars);
@@ -584,7 +594,7 @@ const Home = () => {
       <Navbar />
       <Hero slides={slides} />
       <UpcomingEvents events={events} />
-      <SacredMemory sacredMemoryText={sacredMemoryText} />
+      <SacredMemory />
       <FormalCommendation commendation={commendation} />
       <InstitutionalProgress stats={stats} />
       <InstitutionalPillars />

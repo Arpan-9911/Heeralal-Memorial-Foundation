@@ -120,7 +120,7 @@ const AchievementCard = ({ data, reverse }) => {
       <img
         src={import.meta.env.VITE_BACKEND_URL + "/uploads/achievements/" + data.image}
         alt={languageFallback(data.title, lang)}
-        className="w-full h-56 md:h-64 object-cover grayscale hover:grayscale-0 transition-all duration-500"
+        className="w-full h-56 md:h-64 object-cover"
       />
     </div>
   );

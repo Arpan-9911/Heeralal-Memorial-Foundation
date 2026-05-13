@@ -177,6 +177,29 @@ const PaymentSection = () => {
           <div className="w-16 h-1 bg-[var(--color-primary)] mx-auto mt-3 rounded" />
         </div>
 
+        {/* Axis Bank Header Banner */}
+        <div
+          className="rounded-lg overflow-hidden mb-8"
+          style={{
+            background: "linear-gradient(135deg, #97144d 0%, #97144d 60%, #b8276e 100%)",
+          }}
+        >
+          <div className="flex items-center justify-between px-6 py-4 md:px-10 md:py-5">
+            <div className="flex items-center gap-3">
+              {/* Axis Bank Logo Mark */}
+              <div className="flex items-center gap-2">
+                <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                  <polygon points="20,2 38,38 2,38" fill="white" />
+                  <polygon points="20,12 30,34 10,34" fill="#97144d" />
+                </svg>
+                <span className="text-white text-xl md:text-2xl font-bold tracking-wide" style={{ fontFamily: "'Arial', sans-serif" }}>
+                  AXIS BANK
+                </span>
+              </div>
+            </div>
+            <div className="h-6 w-20 md:w-28 rounded" style={{ background: "linear-gradient(90deg, #0072bc, #00a4e4)" }} />
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* QR Code */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8 flex flex-col items-center">
