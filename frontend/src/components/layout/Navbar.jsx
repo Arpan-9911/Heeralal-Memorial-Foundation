@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../../LanguageContext";
 import { FiMenu } from "react-icons/fi";
 import Sidebar from "./Sidebar";
+import { useSocialLinks, SocialIconsBar } from "../common/FloatingSocials";
 
 const Topbar = () => {
   const { lang, changeLanguage } = useLanguage();
+  const socialLinks = useSocialLinks();
 
   return (
     <div>
@@ -55,10 +57,15 @@ const Topbar = () => {
             </p>
           </div>
         </Link>
-        <div className="text-xs text-gray-600 text-right space-y-1 max-md:hidden">
-          <div>NGO Reg No: DL/2023/...</div>
-          <div>ESTD: 29, 2023</div>
-          <div>CIN: U88900DL2023...</div>
+        <div className="flex items-center gap-5 max-md:hidden">
+          {/* Social Icons — to the left of NGO info */}
+          <SocialIconsBar links={socialLinks} size={13} gap="5px" variant="header" />
+          {/* NGO Registration Info */}
+          <div className="text-xs text-gray-600 text-right space-y-1">
+            <div>NGO Reg No: DL/2023/...</div>
+            <div>ESTD: 29, 2023</div>
+            <div>CIN: U88900DL2023...</div>
+          </div>
         </div>
       </div>
     </div>

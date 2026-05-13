@@ -33,6 +33,7 @@ const navItems = [
   { path: "/join-requests", label: "Join Requests", icon: "📋" },
   { path: "/commendation", label: "Commendation", icon: "📜" },
   { path: "/social-links", label: "Social Links", icon: "🔗" },
+  { path: "/about-us", label: "About Us Page", icon: "ℹ️" },
   { path: "/settings", label: "Site Settings", icon: "⚙️" },
 ];
 

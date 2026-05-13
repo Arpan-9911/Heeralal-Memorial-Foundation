@@ -41,4 +41,9 @@ export const getTeams = async () => {
   return response.data.members;
 }
 
+export const getAboutUs = async () => {
+  const response = await API.get("/about-us");
+  return response.data;
+}
+
 export default API;

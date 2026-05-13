@@ -64,9 +64,12 @@ const iconConfig = [
   },
 ];
 
-const FloatingSocials = () => {
+/**
+ * Custom hook to fetch social links from the API.
+ * Returns the links object (or null if not yet loaded).
+ */
+export const useSocialLinks = () => {
   const [links, setLinks] = useState(null);
-  const [show, setShow] = useState(false);
 
   useEffect(() => {
     axios
@@ -75,81 +78,84 @@ const FloatingSocials = () => {
         if (res.data?.links) setLinks(res.data.links);
       })
       .catch(() => {});
-
-    // Show after a small delay for entrance animation
-    const t = setTimeout(() => setShow(true), 800);
-    return () => clearTimeout(t);
   }, []);
 
-  const visibleIcons = iconConfig.filter(
-    (item) => links && links[item.key]
-  );
+  return links;
+};
 
-  if (!links || visibleIcons.length === 0) return null;
+/**
+ * Inline social-icon bar (non-floating).
+ * Renders a horizontal row of social icons.
+ *
+ * @param {object}  links      – social links object from useSocialLinks()
+ * @param {number}  [size=14]  – icon pixel size
+ * @param {string}  [gap="6px"] – gap between icons
+ * @param {string}  [variant="header"] – "header" (light bg) | "footer" (dark bg)
+ */
+export const SocialIconsBar = ({
+  links,
+  size = 14,
+  gap = "6px",
+  variant = "header",
+}) => {
+  if (!links) return null;
+
+  const visibleIcons = iconConfig.filter((item) => links[item.key]);
+  if (visibleIcons.length === 0) return null;
 
   return (
-    <>
-      <div
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] flex flex-col"
-        style={{
-          transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
-          transform: show
-            ? "translateX(0) translateY(-50%)"
-            : "translateX(100%) translateY(-50%)",
-        }}
-      >
-        {visibleIcons.map((item, i) => {
-          const Icon = item.icon;
-          const rawValue = links[item.key];
+    <div
+      className="social-icons-bar"
+      style={{ display: "flex", alignItems: "center", gap, flexWrap: "wrap" }}
+    >
+      {visibleIcons.map((item) => {
+        const Icon = item.icon;
+        const rawValue = links[item.key];
 
-          // Build the href
-          let href = rawValue;
-          if (item.key === "whatsapp" && !rawValue.startsWith("http")) {
-            href = `https://wa.me/${rawValue.replace(/[^0-9]/g, "")}`;
-          } else if (item.key === "phone" && !rawValue.startsWith("tel:")) {
-            href = `tel:${rawValue}`;
-          }
-
-          const isGradient = item.bg.includes("gradient");
-
-          return (
-            <a
-              key={item.key}
-              href={href}
-              target={item.key === "phone" ? "_self" : "_blank"}
-              rel="noopener noreferrer"
-              aria-label={item.label}
-              className="group relative flex items-center justify-center w-10 h-10 text-white transition-all duration-300 hover:w-12 hover:shadow-lg"
-              style={{
-                background: item.bg,
-                transitionDelay: `${i * 40}ms`,
-                borderRadius: "6px 0 0 6px",
-              }}
-              title={item.label}
-            >
-              <Icon size={18} />
-
-              {/* Tooltip */}
-              <span
-                className="absolute right-full mr-2 px-2 py-1 text-[10px] font-bold text-white rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
-                style={{
-                  background: isGradient ? "#cc2366" : item.bg,
-                }}
-              >
-                {item.label}
-              </span>
-            </a>
-          );
-        })}
-      </div>
-
-      <style>{`
-        .fixed a:hover {
-          filter: brightness(1.15);
+        let href = rawValue;
+        if (item.key === "whatsapp" && !rawValue.startsWith("http")) {
+          href = `https://wa.me/${rawValue.replace(/[^0-9]/g, "")}`;
+        } else if (item.key === "phone" && !rawValue.startsWith("tel:")) {
+          href = `tel:${rawValue}`;
         }
-      `}</style>
-    </>
+
+        return (
+          <a
+            key={item.key}
+            href={href}
+            target={item.key === "phone" ? "_self" : "_blank"}
+            rel="noopener noreferrer"
+            aria-label={item.label}
+            title={item.label}
+            className="social-icon-link"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: size + 14,
+              height: size + 14,
+              borderRadius: "50%",
+              background: item.bg,
+              color: "#fff",
+              transition: "transform 0.2s, filter 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.18)";
+              e.currentTarget.style.filter = "brightness(1.15)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.filter = "none";
+            }}
+          >
+            <Icon size={size} />
+          </a>
+        );
+      })}
+    </div>
   );
 };
 
+// Keep a default export for backward-compatibility (renders nothing now)
+const FloatingSocials = () => null;
 export default FloatingSocials;

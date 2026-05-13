@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../../LanguageContext";
+import { useSocialLinks, SocialIconsBar } from "../common/FloatingSocials";
 
 const footerData = {
   foundation: {
@@ -81,6 +82,7 @@ const footerData = {
 
 const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
   const { lang } = useLanguage();
+  const socialLinks = useSocialLinks();
 
   return (
     <footer id="site-footer">
@@ -152,6 +154,10 @@ const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
                     {footerData.contactRegistry.phone}
                   </a>
                 </p>
+              </div>
+              {/* Social Icons beneath Contact Registry */}
+              <div className="mt-4">
+                <SocialIconsBar links={socialLinks} size={13} gap="6px" variant="footer" />
               </div>
             </div>
 

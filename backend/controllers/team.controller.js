@@ -37,6 +37,26 @@ export const createMember = async (req, res, next) => {
         hi: req.body.quoteHi,
       },
 
+      shortDescription: {
+        en: req.body.shortDescEn || "",
+        hi: req.body.shortDescHi || "",
+      },
+
+      message: {
+        en: req.body.messageEn || "",
+        hi: req.body.messageHi || "",
+      },
+
+      displayName: {
+        en: req.body.displayNameEn || "",
+        hi: req.body.displayNameHi || "",
+      },
+
+      displayDesignation: {
+        en: req.body.displayDesignationEn || "",
+        hi: req.body.displayDesignationHi || "",
+      },
+
       photo: req.file?.filename,
     });
 
@@ -88,6 +108,26 @@ export const updateMember = async (req, res, next) => {
     member.quote = {
       en: req.body.quoteEn,
       hi: req.body.quoteHi,
+    };
+
+    member.shortDescription = {
+      en: req.body.shortDescEn || "",
+      hi: req.body.shortDescHi || "",
+    };
+
+    member.message = {
+      en: req.body.messageEn || "",
+      hi: req.body.messageHi || "",
+    };
+
+    member.displayName = {
+      en: req.body.displayNameEn || "",
+      hi: req.body.displayNameHi || "",
+    };
+
+    member.displayDesignation = {
+      en: req.body.displayDesignationEn || "",
+      hi: req.body.displayDesignationHi || "",
     };
 
     await member.save();

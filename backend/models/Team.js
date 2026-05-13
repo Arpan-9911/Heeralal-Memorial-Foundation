@@ -34,6 +34,26 @@ const teamSchema = new mongoose.Schema(
       hi: String,
     },
 
+    shortDescription: {
+      en: String,
+      hi: String,
+    },
+
+    message: {
+      en: String,
+      hi: String,
+    },
+
+    displayName: {
+      en: String,
+      hi: String,
+    },
+
+    displayDesignation: {
+      en: String,
+      hi: String,
+    },
+
     photo: {
       type: String,
       required: true,

@@ -355,16 +355,6 @@ const FormalCommendation = ({ commendation }) => {
                     "{languageFallback(commendation.messageBody, lang)}"
                   </p>
                 )}
-                <div className="flex justify-end mt-4">
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-[var(--color-secondary)]">
-                      — {languageFallback(commendation.directorName, lang) || (lang === "en" ? "Director's Name" : "निदेशक का नाम")}
-                    </p>
-                    <p className="text-xs text-gray-500 italic">
-                      {languageFallback(commendation.directorPost, lang) || (lang === "en" ? "Director's Position" : "निदेशक का पद")}
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
 

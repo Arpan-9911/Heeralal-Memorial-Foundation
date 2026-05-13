@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-
 import { getTeams } from "../api";
+
+const BACKEND = import.meta.env.VITE_BACKEND_URL;
+const t = (obj, lang) => (obj && (obj[lang] || obj.en || obj.hi)) || "";
 
 /* ────────────────────── VERTICAL CONNECTOR ────────────────────────────────── */
 
@@ -13,134 +15,222 @@ const VerticalConnector = () => (
   </div>
 );
 
-/* ────────────────────── FOUNDER SECTION ───────────────────────────────────── */
+/* ────────────────────── READ MORE MODAL ───────────────────────────────────── */
 
-const FounderSection = ({ founder }) => {
-  const { lang } = useLanguage();
-  if(!founder) return null;
+const ReadMoreModal = ({ open, onClose, member, lang }) => {
+  if (!open || !member) return null;
+
+  const designation = t(member.role, lang);
+  const messageBody = t(member.message, lang);
+  const signatureName = t(member.displayName, lang) || t(member.name, lang);
+  const signatureDesignation = t(member.displayDesignation, lang) || designation;
 
   return (
-    <div className="bg-[image:var(--gradient-secondary)] rounded-lg p-6 md:p-8 shadow-lg">
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-        {/* Founder Photo */}
-        <div className="flex-shrink-0">
-          <div className="w-28 h-28 rounded-full border-4 border-gray-400 overflow-hidden grayscale">
-            <img
-              src={import.meta.env.VITE_BACKEND_URL + "/uploads/team/" + founder.photo}
-              alt={founder.name[lang] + " photo"}
-              className="w-full h-full object-cover"
-            />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+
+      {/* Modal */}
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto animate-[fadeIn_0.3s_ease]">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 text-sm font-bold transition z-10"
+        >
+          ✕
+        </button>
+
+        {/* Header */}
+        <div className="bg-[image:var(--gradient-secondary)] p-6 md:p-8 rounded-t-2xl">
+          <p className="text-[var(--color-primary)] text-xs uppercase tracking-widest font-bold mb-1">
+            {lang === "en" ? "Message from" : "संदेश"} {designation}
+          </p>
+          <h2 className="text-white text-lg md:text-xl font-bold">
+            {t(member.name, lang)}
+          </h2>
+        </div>
+
+        {/* Body */}
+        <div className="p-6 md:p-8">
+          {messageBody ? (
+            <p
+              className="text-sm text-gray-700 leading-relaxed italic whitespace-pre-line"
+              style={{ fontFamily: "'Georgia', serif" }}
+            >
+              "{messageBody}"
+            </p>
+          ) : (
+            <p className="text-sm text-gray-400 italic">
+              {lang === "en" ? "No message available." : "कोई संदेश उपलब्ध नहीं है।"}
+            </p>
+          )}
+
+          {/* Signature */}
+          <div className="flex justify-end mt-8 pt-4 border-t border-gray-200">
+            <div className="text-right">
+              <p className="text-sm font-bold text-[var(--color-secondary)]">
+                — {signatureName}
+              </p>
+              <p className="text-xs text-[var(--color-primary-dark)] italic">
+                {signatureDesignation}
+              </p>
+            </div>
           </div>
         </div>
-
-        {/* Quote */}
-        <div className="flex-1">
-          <p
-            className="text-gray-200 text-sm italic leading-relaxed mb-3"
-            style={{ fontFamily: "'Georgia', serif" }}
-          >
-            {founder.quote[lang] || (lang === "en" ? "No quote available." : "कोई उद्धरण उपलब्ध नहीं है।")}
-          </p>
-        </div>
       </div>
 
-      {/* Name + Role */}
-      <div className="mt-4 md:ml-0">
-        <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">
-          {founder.role[lang] || (lang === "en" ? "Founder" : "संस्थापक")}
-        </p>
-        <h3 className="text-white font-bold text-base">
-          {founder.name[lang] || (lang === "en" ? "No name available." : "कोई नाम उपलब्ध नहीं है।")}
-        </h3>
-      </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
 
-/* ────────────────────── LEADERSHIP CARDS ──────────────────────────────────── */
+/* ────────────────────── FOUNDING BODY CARD ─────────────────────────────────── */
 
-const LeadershipSection = ({ leaders }) => {
+const FoundingBodyCard = ({ member }) => {
   const { lang } = useLanguage();
-  if(!leaders) return null;
+  const [showModal, setShowModal] = useState(false);
+
+  if (!member) return null;
+
+  const quote = t(member.quote, lang);
+  const shortDesc = t(member.shortDescription, lang);
+  const hasMessage = member.message?.en || member.message?.hi;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {leaders.map((leader) => (
-        <div
-          key={leader._id}
-          className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
-        >
-          {/* Header: Photo + Name */}
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-full border-2 border-[var(--color-primary)] overflow-hidden flex-shrink-0">
+    <>
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+        <div className="flex flex-col md:flex-row">
+          {/* Left — Photo */}
+          <div className="md:w-[280px] flex-shrink-0 bg-[var(--color-primary-light)] flex items-center justify-center p-6">
+            <div
+              className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white shadow-lg"
+              style={{ boxShadow: "0 0 0 4px var(--color-primary), 0 8px 24px rgba(0,0,0,0.12)" }}
+            >
               <img
-                src={import.meta.env.VITE_BACKEND_URL + "/uploads/team/" + leader.photo}
-                alt={leader.name[lang]}
+                src={`${BACKEND}/uploads/team/${member.photo}`}
+                alt={t(member.name, lang)}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary-dark)] font-semibold">
-                {leader.role[lang] || (lang === "en" ? "Role not available." : "कोई भूमिका उपलब्ध नहीं है।")}
-              </p>
-              <h3 className="text-sm font-bold text-gray-900">
-                {leader.name[lang] || (lang === "en" ? "Name not available." : "कोई नाम उपलब्ध नहीं है।")}
-              </h3>
-            </div>
           </div>
 
-          {/* Quote */}
-          <p
-            className="text-xs text-gray-600 italic leading-relaxed"
-            style={{ fontFamily: "'Georgia', serif" }}
-          >
-            {leader.quote[lang] || (lang === "en" ? "No quote available." : "कोई उद्धरण उपलब्ध नहीं है।")}
-          </p>
+          {/* Right — Content */}
+          <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
+            {/* Name & Role */}
+            <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary-dark)] font-bold mb-1">
+              {t(member.role, lang)}
+            </p>
+            <h3 className="text-xl font-bold text-[var(--color-secondary)] mb-4">
+              {t(member.name, lang)}
+            </h3>
+
+            {/* Quote */}
+            {quote && (
+              <div className="border-l-3 border-[var(--color-primary)] pl-4 mb-4">
+                <p
+                  className="text-sm text-gray-600 italic leading-relaxed"
+                  style={{ fontFamily: "'Georgia', serif" }}
+                >
+                  "{quote}"
+                </p>
+              </div>
+            )}
+
+            {/* Short Description */}
+            {shortDesc && (
+              <p className="text-xs text-gray-500 leading-relaxed mb-4">
+                {shortDesc}
+              </p>
+            )}
+
+            {/* Read More Button */}
+            {hasMessage && (
+              <div>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] border border-[var(--color-secondary)] px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] hover:text-white transition-colors duration-200"
+                >
+                  {lang === "en" ? "Read More" : "और पढ़ें"}
+                  <span className="text-sm">→</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      ))}
+      </div>
+
+      <ReadMoreModal open={showModal} onClose={() => setShowModal(false)} member={member} lang={lang} />
+    </>
+  );
+};
+
+/* ────────────────────── FOUNDING BODY SECTION ─────────────────────────────── */
+
+const FoundingBodySection = ({ members }) => {
+  const { lang } = useLanguage();
+  if (!members || members.length === 0) return null;
+
+  return (
+    <div>
+      <div className="text-center mb-8">
+        <h2 className="text-sm uppercase tracking-[0.25em] font-bold text-gray-800">
+          {lang === "en" ? "Founding Body" : "संस्थापक निकाय"}
+        </h2>
+      </div>
+      <div className="space-y-6">
+        {members.map((member) => (
+          <FoundingBodyCard key={member._id} member={member} />
+        ))}
+      </div>
     </div>
   );
 };
 
 /* ────────────────────── EXECUTION TEAM GRID ───────────────────────────────── */
 
-const ExecutionTeamSection = ({ executionTeam }) => {
+const ExecutionTeamSection = ({ executionTeam, gridCols }) => {
   const { lang } = useLanguage();
-  if(!executionTeam) return null;
+  if (!executionTeam || executionTeam.length === 0) return null;
+
+  // Map gridCols to tailwind classes
+  const gridClass = {
+    2: "grid-cols-1 sm:grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+    5: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
+  }[gridCols] || "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
 
   return (
     <div>
-      {/* Section Heading */}
       <div className="text-center mb-8">
         <h2 className="text-sm uppercase tracking-[0.25em] font-bold text-gray-800">
           {lang === "en" ? "Our Execution Team" : "हमारी कार्यकारी टीम"}
         </h2>
       </div>
 
-      {/* Team Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className={`grid ${gridClass} gap-5`}>
         {executionTeam.map((member) => (
           <div
             key={member._id}
             className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
           >
-            {/* Background Image */}
             <img
-              src={import.meta.env.VITE_BACKEND_URL + "/uploads/team/" + member.photo}
-              alt={member.name[lang] + " photo"}
+              src={`${BACKEND}/uploads/team/${member.photo}`}
+              alt={t(member.name, lang)}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
-
-            {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-            {/* Name + Role */}
             <div className="absolute bottom-0 left-0 right-0 p-4">
               <h4 className="text-white font-bold text-sm">
-                {member.name[lang] || (lang === "en" ? "Name not available." : "कोई नाम उपलब्ध नहीं है।")}
+                {t(member.name, lang)}
               </h4>
               <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
-                {member.role[lang] || (lang === "en" ? "Role not available." : "कोई भूमिका उपलब्ध नहीं है।")}
+                {t(member.role, lang)}
               </p>
             </div>
           </div>
@@ -184,26 +274,28 @@ const JoinCTA = () => {
 
 const Teams = () => {
   const { lang } = useLanguage();
-  const [founder, setFounder] = useState(null);
-  const [leaders, setLeaders] = useState([]);
+  const [foundingBody, setFoundingBody] = useState([]);
   const [executionTeam, setExecutionTeam] = useState([]);
+  const [execGridCols, setExecGridCols] = useState(3);
 
   useEffect(() => {
     const fetchTeam = async () => {
       try {
         const data = await getTeams();
-        setFounder(data.find((member) => member.tier === "founder"));
-        setLeaders(data.filter((member) => member.tier === "leader"));
-        setExecutionTeam(data.filter((member) => member.tier === "execution"));
+        // Founding body = founders + leaders combined
+        setFoundingBody(data.filter((m) => m.tier === "founder" || m.tier === "leader"));
+        setExecutionTeam(data.filter((m) => m.tier === "execution"));
       } catch (error) {
         console.error("Error fetching teams data:", error);
       }
     };
 
     fetchTeam();
-  }, []);
 
-  if (!founder || !leaders || !executionTeam) return null;
+    // Read grid cols from localStorage (synced with admin setting)
+    const stored = parseInt(localStorage.getItem("hlmf_exec_grid_cols") || "3", 10);
+    setExecGridCols(stored);
+  }, []);
 
   return (
     <div>
@@ -229,23 +321,16 @@ const Teams = () => {
             </p>
           </div>
 
-          {/* Founder */}
+          {/* Founding Body */}
           <section className="show mt-6">
-            <FounderSection founder={founder} />
-          </section>
-
-          <VerticalConnector />
-
-          {/* Leadership */}
-          <section className="show">
-            <LeadershipSection leaders={leaders} />
+            <FoundingBodySection members={foundingBody} />
           </section>
 
           <VerticalConnector />
 
           {/* Execution Team */}
           <section className="show">
-            <ExecutionTeamSection executionTeam={executionTeam} />
+            <ExecutionTeamSection executionTeam={executionTeam} gridCols={execGridCols} />
           </section>
 
           {/* CTA */}
