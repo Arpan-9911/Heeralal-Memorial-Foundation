@@ -21,6 +21,7 @@ import Commendation from "./pages/Commendation";
 import JoinRequests from "./pages/JoinRequests";
 import SocialLinks from "./pages/SocialLinks";
 import AboutUsAdmin from "./pages/AboutUs";
+import SacredMemory from "./pages/SacredMemory";
 
 const App = () => {
   useAuth();
