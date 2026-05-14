@@ -51,4 +51,9 @@ export const getSacredMemory = async () => {
   return response.data;
 };
 
+export const getSettings = async () => {
+  const response = await API.get("/settings");
+  return response.data;
+};
+
 export default API;

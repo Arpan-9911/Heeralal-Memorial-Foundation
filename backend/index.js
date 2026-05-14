@@ -23,6 +23,7 @@ import socialLinksRoutes from "./routes/socialLinks.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import aboutUsRoutes from "./routes/aboutUs.routes.js";
 import sacredMemoryRoutes from "./routes/sacredMemory.routes.js";
+import settingsRoutes from "./routes/settings.routes.js";
 
 import homeRoutes from "./routes/home.routes.js";
 
@@ -95,6 +96,7 @@ app.use("/api/social-links", socialLinksRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/about-us", aboutUsRoutes);
 app.use("/api/sacred-memory", sacredMemoryRoutes);
+app.use("/api/settings", settingsRoutes);
 
 app.use("/api/home", homeRoutes);
 

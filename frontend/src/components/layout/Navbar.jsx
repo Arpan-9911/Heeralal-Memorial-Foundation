@@ -5,10 +5,27 @@ import { useLanguage } from "../../LanguageContext";
 import { FiMenu } from "react-icons/fi";
 import Sidebar from "./Sidebar";
 import { useSocialLinks, SocialIconsBar } from "../common/FloatingSocials";
+import { getSettings } from "../../api";
 
 const Topbar = () => {
   const { lang, changeLanguage } = useLanguage();
   const socialLinks = useSocialLinks();
+  const [settings, setSettings] = useState(null);
+
+  React.useEffect(() => {
+    getSettings().then((res) => {
+      if (res.settings && res.settings.registration) {
+        setSettings(res.settings);
+      }
+    }).catch(console.error);
+  }, []);
+
+  const getRegValue = (key) => {
+    if (!settings || !settings.registration) return "...";
+    const item = settings.registration.find((i) => i.key === key);
+    return item ? item.value : "...";
+  };
+
 
   return (
     <div>
@@ -62,9 +79,9 @@ const Topbar = () => {
           <SocialIconsBar links={socialLinks} size={13} gap="5px" variant="header" />
           {/* NGO Registration Info */}
           <div className="text-xs text-gray-600 text-right space-y-1">
-            <div>NGO Reg No: DL/2023/...</div>
-            <div>ESTD: 29, 2023</div>
-            <div>CIN: U88900DL2023...</div>
+            <div>NGO Reg No: {getRegValue("ngoReg")}</div>
+            <div>ESTD: {getRegValue("regDate")}</div>
+            <div>CIN: {getRegValue("cin")}</div>
           </div>
         </div>
       </div>

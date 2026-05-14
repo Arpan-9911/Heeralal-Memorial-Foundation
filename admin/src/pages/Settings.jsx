@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { updateCredentials } from "../api/auth.api";
-import { FiEye, FiEyeOff, FiLock, FiUser, FiShield } from "react-icons/fi";
+import { getSettings, updateSettings } from "../api/settings.api";
+import { FiEye, FiEyeOff, FiLock, FiUser, FiShield, FiSave } from "react-icons/fi";
 
 const initialSettings = {
   general: [
@@ -216,6 +217,36 @@ const CredentialsSection = () => {
 const Settings = () => {
   const [settings, setSettings] = useState(initialSettings);
   const [editSection, setEditSection] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await getSettings();
+      if (res.settings) {
+        // Merge fetched data with initial keys in case of missing keys
+        const mergedSettings = { ...initialSettings };
+        for (const key of ["general", "registration", "contact"]) {
+          if (res.settings[key] && res.settings[key].length > 0) {
+            mergedSettings[key] = mergedSettings[key].map(initialItem => {
+              const fetchedItem = res.settings[key].find(i => i.key === initialItem.key);
+              return fetchedItem ? { ...initialItem, value: fetchedItem.value } : initialItem;
+            });
+          }
+        }
+        setSettings(mergedSettings);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load settings from server");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateVal = (section, key, newVal) => {
     setSettings(prev => ({
@@ -224,10 +255,28 @@ const Settings = () => {
     }));
   };
 
+  const handleSaveSettings = async () => {
+    try {
+      setSaving(true);
+      await updateSettings(settings);
+      toast.success("Settings saved successfully!");
+      setEditSection(null);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to save settings");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const inp = "w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)]";
 
+  if (loading) {
+    return <div className="text-[var(--admin-muted)]">Loading settings...</div>;
+  }
+
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl pb-10">
       {/* Account Credentials Section */}
       <CredentialsSection />
 
@@ -261,9 +310,18 @@ const Settings = () => {
           </div>
         </div>
       ))}
-      <p className="text-[11px] text-[var(--admin-muted)] italic">
-        Changes will take effect after backend integration is completed.
-      </p>
+      
+      {/* Global Save Button */}
+      <div className="flex justify-end pt-4">
+        <button
+          onClick={handleSaveSettings}
+          disabled={saving}
+          className="flex items-center gap-2 px-6 py-2.5 bg-[var(--admin-accent)] text-white font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
+        >
+          <FiSave size={16} />
+          {saving ? "Saving..." : "Save Configuration"}
+        </button>
+      </div>
     </div>
   );
 };
