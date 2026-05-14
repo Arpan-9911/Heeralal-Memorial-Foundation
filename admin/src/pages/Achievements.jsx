@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cropper from "react-easy-crop";
 import {
   getAchievements,
   createAchievement,
@@ -17,18 +18,74 @@ const initialForm = {
   image: null,
 };
 
+const createImage = (url) =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener("load", () => resolve(image));
+    image.addEventListener("error", (error) => reject(error));
+    image.setAttribute("crossOrigin", "anonymous");
+    image.src = url;
+  });
+
+async function getCroppedImg(imageSrc, cropPixels) {
+  const image = await createImage(imageSrc);
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = cropPixels.width;
+  canvas.height = cropPixels.height;
+
+  ctx.drawImage(
+    image,
+    cropPixels.x,
+    cropPixels.y,
+    cropPixels.width,
+    cropPixels.height,
+    0,
+    0,
+    cropPixels.width,
+    cropPixels.height,
+  );
+
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+
+      const file = new File([blob], "cropped-image.jpg", {
+        type: "image/jpeg",
+      });
+
+      resolve({
+        file,
+        preview: URL.createObjectURL(blob),
+      });
+    }, "image/jpeg");
+  });
+}
+
 const Achievements = () => {
   const [items, setItems] = useState([]);
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
   const [form, setForm] = useState(initialForm);
+
+  // Crop States
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [cropPixels, setCropPixels] = useState(null);
+  const [cropImage, setCropImage] = useState("");
+  const [preview, setPreview] = useState("");
 
   const fetchAchievements = async () => {
     try {
       setLoading(true);
+
       const data = await getAchievements();
+
       setItems(data?.achievements || []);
     } catch (err) {
       console.error(err);
@@ -45,6 +102,11 @@ const Achievements = () => {
     setForm(initialForm);
     setEditing(null);
     setShowForm(false);
+
+    setCropImage("");
+    setPreview("");
+    setZoom(1);
+    setCrop({ x: 0, y: 0 });
   };
 
   const handleEdit = (achievement) => {
@@ -58,8 +120,36 @@ const Achievements = () => {
       image: null,
     });
 
+    setPreview(
+      `${import.meta.env.VITE_BACKEND_URL}/uploads/achievements/${
+        achievement.image
+      }`,
+    );
+
     setEditing(achievement._id);
     setShowForm(true);
+  };
+
+  const onCropComplete = (_, croppedAreaPixels) => {
+    setCropPixels(croppedAreaPixels);
+  };
+
+  const handleCropSave = async () => {
+    try {
+      const cropped = await getCroppedImg(cropImage, cropPixels);
+
+      setForm((prev) => ({
+        ...prev,
+        image: cropped.file,
+      }));
+
+      setPreview(cropped.preview);
+
+      toast.success("Image cropped successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to crop image");
+    }
   };
 
   const handleSave = async () => {
@@ -68,37 +158,47 @@ const Achievements = () => {
         alert("Please enter title");
         return;
       }
+
       if (!editing && !form.image) {
         alert("Please select image");
         return;
       }
 
       setSaving(true);
+
       const formData = new FormData();
+
       formData.append("titleEn", form.titleEn);
       formData.append("titleHi", form.titleHi);
+
       formData.append("descEn", form.descEn);
       formData.append("descHi", form.descHi);
+
       formData.append("presentedByEn", form.presentedByEn);
       formData.append("presentedByHi", form.presentedByHi);
+
       if (form.image) {
         formData.append("image", form.image);
       }
 
       if (editing) {
         const data = await updateAchievement(editing, formData);
+
         setItems((prev) =>
           prev.map((i) => (i._id === editing ? data.achievement : i)),
         );
       } else {
         const data = await createAchievement(formData);
+
         setItems((prev) => [data.achievement, ...prev]);
       }
 
       reset();
+
       toast.success("Achievement saved");
     } catch (err) {
       console.error(err);
+
       toast.error("Failed to save achievement");
     } finally {
       setSaving(false);
@@ -107,13 +207,18 @@ const Achievements = () => {
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Delete this achievement?");
+
     if (!confirmDelete) return;
+
     try {
       await deleteAchievement(id);
+
       setItems((prev) => prev.filter((i) => i._id !== id));
+
       toast.success("Achievement deleted");
     } catch (err) {
       console.error(err);
+
       toast.error("Failed to delete achievement");
     }
   };
@@ -127,6 +232,7 @@ const Achievements = () => {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-lg font-bold text-gray-900">Achievements</h2>
+
           <p className="text-xs text-[var(--admin-muted)]">
             {items.length} total achievements
           </p>
@@ -150,18 +256,98 @@ const Achievements = () => {
             {editing ? "Edit Achievement" : "Add Achievement"}
           </h3>
 
-          {/* Image */}
-          <div className="space-y-2">
+          {/* Image Upload */}
+          <div className="space-y-3">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Upload Image
+              Upload Landscape Image
             </label>
 
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
+              onChange={(e) => {
+                const file = e.target.files[0];
+
+                if (file) {
+                  const reader = new FileReader();
+
+                  reader.onload = () => {
+                    setCropImage(reader.result);
+                  };
+
+                  reader.readAsDataURL(file);
+                }
+              }}
               className={inputClass}
             />
+
+            {/* Crop + Preview Grid */}
+{cropImage && (
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    {/* Cropper */}
+    <div className="bg-gray-50 border border-[var(--admin-border)] rounded-2xl p-3">
+      <div className="relative w-full h-[260px] rounded-xl overflow-hidden bg-black">
+        <Cropper
+          image={cropImage}
+          crop={crop}
+          zoom={zoom}
+          aspect={4 / 3}
+          onCropChange={setCrop}
+          onZoomChange={setZoom}
+          onCropComplete={onCropComplete}
+        />
+      </div>
+
+      {/* Zoom */}
+      <div className="mt-3">
+        <div className="flex items-center justify-between mb-1">
+          <label className="text-xs text-gray-500">Zoom</label>
+
+          <span className="text-xs font-medium text-gray-700">
+            {zoom.toFixed(1)}x
+          </span>
+        </div>
+
+        <input
+          type="range"
+          min={1}
+          max={3}
+          step={0.1}
+          value={zoom}
+          onChange={(e) => setZoom(Number(e.target.value))}
+          className="w-full"
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={handleCropSave}
+        className="w-full mt-3 px-4 py-2 text-xs font-semibold rounded-xl bg-[var(--admin-accent)] text-white hover:opacity-90 transition-all"
+      >
+        Apply Crop
+      </button>
+    </div>
+
+    {/* Preview */}
+    <div className="bg-gray-50 border border-[var(--admin-border)] rounded-2xl p-3 flex flex-col">
+      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">
+        Preview
+      </p>
+
+      <div className="flex-1 rounded-xl overflow-hidden border border-[var(--admin-border)] bg-white flex items-center justify-center min-h-[260px]">
+        {preview ? (
+          <img
+            src={preview}
+            alt="Preview"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <p className="text-sm text-gray-400">No preview</p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
           </div>
 
           {/* Titles */}
@@ -173,7 +359,12 @@ const Achievements = () => {
 
               <input
                 value={form.titleEn}
-                onChange={(e) => setForm({ ...form, titleEn: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    titleEn: e.target.value,
+                  })
+                }
                 className={inputClass}
               />
             </div>
@@ -185,7 +376,12 @@ const Achievements = () => {
 
               <input
                 value={form.titleHi}
-                onChange={(e) => setForm({ ...form, titleHi: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    titleHi: e.target.value,
+                  })
+                }
                 className={inputClass}
               />
             </div>
@@ -201,7 +397,10 @@ const Achievements = () => {
               <input
                 value={form.presentedByEn}
                 onChange={(e) =>
-                  setForm({ ...form, presentedByEn: e.target.value })
+                  setForm({
+                    ...form,
+                    presentedByEn: e.target.value,
+                  })
                 }
                 className={inputClass}
               />
@@ -269,7 +468,7 @@ const Achievements = () => {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-5 py-2.5 text-xs font-semibold rounded-xl bg-[var(--admin-accent)] hover:opacity-90 transition-all"
+              className="px-5 py-2.5 text-xs font-semibold rounded-xl bg-[var(--admin-accent)] text-white hover:opacity-90 transition-all"
             >
               {saving ? "Saving..." : editing ? "Update" : "Add"}
             </button>
@@ -308,7 +507,7 @@ const Achievements = () => {
             >
               <div className="flex gap-3">
                 {/* Image */}
-                <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+                <div className="w-32 h-20 rounded-xl overflow-hidden flex-shrink-0">
                   <img
                     src={`${import.meta.env.VITE_BACKEND_URL}/uploads/achievements/${a.image}`}
                     alt={a.title?.en}
@@ -318,7 +517,6 @@ const Achievements = () => {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0 pr-24">
-                  {/* Top Right Presented By */}
                   <div className="absolute top-3 right-3 text-right max-w-[180px]">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-gray-400">
                       Presented By
@@ -333,7 +531,6 @@ const Achievements = () => {
                     </p>
                   </div>
 
-                  {/* Titles */}
                   <div>
                     <h3 className="text-sm font-bold text-gray-900 leading-snug pr-2">
                       {a.title?.en}
@@ -344,12 +541,12 @@ const Achievements = () => {
                     </p>
                   </div>
 
-                  {/* Description */}
                   <div className="mt-2 space-y-2">
                     <div>
                       <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">
                         {a.description?.en}
                       </p>
+
                       <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
                         {a.description?.hi}
                       </p>
