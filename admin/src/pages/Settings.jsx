@@ -22,10 +22,14 @@ const initialSettings = {
   contact: [
     { key: "email", label: "Email", value: "admin@hlmf.org.in" },
     { key: "phone", label: "Phone", value: "+91 11-2345XXXX" },
-    { key: "addressEn", label: "Address (EN)", value: "12/4B Institutional Area, New Delhi - 110001" },
-    { key: "addressHi", label: "Address (HI)", value: "12/4B संस्थागत क्षेत्र, नई दिल्ली - 110001" },
-    { key: "officeEn", label: "Office Label (EN)", value: "Central Delhi Office:" },
-    { key: "officeHi", label: "Office Label (HI)", value: "मध्य दिल्ली कार्यालय:" },
+    { key: "addressEn", label: "Address 1 (EN)", value: "12/4B Institutional Area, New Delhi - 110001" },
+    { key: "addressHi", label: "Address 1 (HI)", value: "12/4B संस्थागत क्षेत्र, नई दिल्ली - 110001" },
+    { key: "officeEn", label: "Office 1 Label (EN)", value: "Central Delhi Office:" },
+    { key: "officeHi", label: "Office 1 Label (HI)", value: "मध्य दिल्ली कार्यालय:" },
+    { key: "address2En", label: "Address 2 (EN)", value: "" },
+    { key: "address2Hi", label: "Address 2 (HI)", value: "" },
+    { key: "office2En", label: "Office 2 Label (EN)", value: "" },
+    { key: "office2Hi", label: "Office 2 Label (HI)", value: "" },
   ],
 };
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../../LanguageContext";
 import { useSocialLinks, SocialIconsBar } from "../common/FloatingSocials";
+import { getSettings } from "../../api";
 
 const footerData = {
   foundation: {
@@ -83,6 +84,19 @@ const footerData = {
 const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
   const { lang } = useLanguage();
   const socialLinks = useSocialLinks();
+  const [settings, setSettings] = React.useState(null);
+
+  React.useEffect(() => {
+    getSettings().then((res) => {
+      if (res.settings) setSettings(res.settings);
+    }).catch(console.error);
+  }, []);
+
+  const getContactVal = (key) => {
+    if (!settings || !settings.contact) return null;
+    const item = settings.contact.find(i => i.key === key);
+    return item ? item.value : null;
+  };
 
   return (
     <footer id="site-footer">
@@ -133,25 +147,35 @@ const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
               </h4>
               <div className="space-y-2 text-xs text-gray-400">
                 <p className="font-semibold text-gray-300">
-                  {footerData.contactRegistry.office[lang]}
+                  {getContactVal(lang === "en" ? "officeEn" : "officeHi") || footerData.contactRegistry.office[lang]}
                 </p>
-                <p>{footerData.contactRegistry.address[lang]}</p>
-                <p>
+                <p>{getContactVal(lang === "en" ? "addressEn" : "addressHi") || footerData.contactRegistry.address[lang]}</p>
+                
+                {getContactVal(lang === "en" ? "address2En" : "address2Hi") && (
+                  <div className="pt-2">
+                    <p className="font-semibold text-gray-300">
+                      {getContactVal(lang === "en" ? "office2En" : "office2Hi")}
+                    </p>
+                    <p>{getContactVal(lang === "en" ? "address2En" : "address2Hi")}</p>
+                  </div>
+                )}
+                
+                <p className="pt-2">
                   {lang === "en" ? "Email: " : "ईमेल: "}
                   <a
-                    href={`mailto:${footerData.contactRegistry.email}`}
+                    href={`mailto:${getContactVal("email") || footerData.contactRegistry.email}`}
                     className="hover:text-[var(--color-primary)] transition-colors duration-200"
                   >
-                    {footerData.contactRegistry.email}
+                    {getContactVal("email") || footerData.contactRegistry.email}
                   </a>
                 </p>
                 <p>
                   {lang === "en" ? "Phone: " : "फ़ोन: "}
                   <a
-                    href={`tel:${footerData.contactRegistry.phone}`}
+                    href={`tel:${getContactVal("phone") || footerData.contactRegistry.phone}`}
                     className="hover:text-[var(--color-primary)] transition-colors duration-200"
                   >
-                    {footerData.contactRegistry.phone}
+                    {getContactVal("phone") || footerData.contactRegistry.phone}
                   </a>
                 </p>
               </div>

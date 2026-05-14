@@ -3,6 +3,7 @@ import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
+import { getSettings } from "../api";
 
 /* ──────────────────────────────────── DATA ──────────────────────────────────── */
 
@@ -109,13 +110,70 @@ const ContactHero = () => {
   );
 };
 
-const ContactCards = () => {
+const ContactCards = ({ settings }) => {
   const { lang } = useLanguage();
+
+  const getContactVal = (key) => {
+    if (!settings || !settings.contact) return null;
+    const item = settings.contact.find(i => i.key === key);
+    return item ? item.value : null;
+  };
+
+  const dynamicCards = [
+    {
+      icon: "📍",
+      title: { en: "Registered Office", hi: "पंजीकृत कार्यालय" },
+      lines: [
+        { 
+          en: getContactVal("addressEn") || "12/4B Institutional Area, New Delhi - 110001", 
+          hi: getContactVal("addressHi") || "12/4B संस्थागत क्षेत्र, नई दिल्ली - 110001" 
+        },
+        ...(getContactVal("address2En") ? [
+          {
+            en: getContactVal("address2En"),
+            hi: getContactVal("address2Hi")
+          }
+        ] : []),
+      ],
+    },
+    {
+      icon: "📞",
+      title: { en: "Phone & Helpline", hi: "फ़ोन और हेल्पलाइन" },
+      lines: [
+        { 
+          en: `General: ${getContactVal("phone") || "+91 11-2345XXXX"}`, 
+          hi: `सामान्य: ${getContactVal("phone") || "+91 11-2345XXXX"}` 
+        },
+        { en: "Helpline: 1800-XXX-XXXX (Toll Free)", hi: "हेल्पलाइन: 1800-XXX-XXXX (टोल फ्री)" },
+      ],
+    },
+    {
+      icon: "✉️",
+      title: { en: "Email", hi: "ईमेल" },
+      lines: [
+        { 
+          en: `General: ${getContactVal("email") || "admin@hlmf.org.in"}`, 
+          hi: `सामान्य: ${getContactVal("email") || "admin@hlmf.org.in"}` 
+        },
+        { en: "Donations: donate@hlmf.org.in", hi: "दान: donate@hlmf.org.in" },
+        { en: "Careers: hr@hlmf.org.in", hi: "करियर: hr@hlmf.org.in" },
+      ],
+    },
+    {
+      icon: "🕐",
+      title: { en: "Office Hours", hi: "कार्यालय समय" },
+      lines: [
+        { en: "Monday – Friday: 9:30 AM – 5:30 PM", hi: "सोमवार – शुक्रवार: सुबह 9:30 – शाम 5:30" },
+        { en: "Saturday: 10:00 AM – 2:00 PM", hi: "शनिवार: सुबह 10:00 – दोपहर 2:00" },
+        { en: "Sunday & Gazetted Holidays: Closed", hi: "रविवार और राजपत्रित अवकाश: बंद" },
+      ],
+    },
+  ];
 
   return (
     <section className="px-4 py-10">
       <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {contactCards.map((card, i) => (
+        {dynamicCards.map((card, i) => (
           <div
             key={i}
             className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
@@ -139,7 +197,7 @@ const ContactCards = () => {
   );
 };
 
-const ContactForm = () => {
+const ContactForm = ({ settings }) => {
   const { lang } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
@@ -148,6 +206,13 @@ const ContactForm = () => {
     subject: "",
     message: "",
   });
+
+  const getContactVal = (key) => {
+    if (!settings || !settings.contact) return null;
+    const item = settings.contact.find(i => i.key === key);
+    return item ? item.value : null;
+  };
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -324,8 +389,8 @@ const ContactForm = () => {
             <div className="mt-8 pt-5 border-t border-[var(--color-secondary-light)]">
               <p className="text-[11px] text-gray-400 italic leading-relaxed">
                 {lang === "en"
-                  ? "For urgent matters outside business hours, please email admin@hlmf.org.in with \"URGENT\" in the subject line."
-                  : "कार्यालय समय के बाहर तत्काल मामलों के लिए, कृपया विषय पंक्ति में \"URGENT\" के साथ admin@hlmf.org.in पर ईमेल करें।"}
+                  ? `For urgent matters outside business hours, please email ${getContactVal("email") || "admin@hlmf.org.in"} with "URGENT" in the subject line.`
+                  : `कार्यालय समय के बाहर तत्काल मामलों के लिए, कृपया विषय पंक्ति में "URGENT" के साथ ${getContactVal("email") || "admin@hlmf.org.in"} पर ईमेल करें।`}
               </p>
             </div>
           </div>
@@ -377,12 +442,20 @@ const MapSection = () => {
 /* ────────────────────────────── MAIN PAGE ─────────────────────────────────── */
 
 const Contact = () => {
+  const [settings, setSettings] = useState(null);
+
+  React.useEffect(() => {
+    getSettings().then((res) => {
+      if (res.settings) setSettings(res.settings);
+    }).catch(console.error);
+  }, []);
+
   return (
     <div>
       <Navbar />
       <ContactHero />
-      <ContactCards />
-      <ContactForm />
+      <ContactCards settings={settings} />
+      <ContactForm settings={settings} />
       <MapSection />
       <Footer />
     </div>
