@@ -73,6 +73,10 @@ export const updateAboutUs = asyncHandler(async (req, res) => {
   if (body.objectiveDescEn !== undefined) doc.vision.objectiveDesc.en = body.objectiveDescEn;
   if (body.objectiveDescHi !== undefined) doc.vision.objectiveDesc.hi = body.objectiveDescHi;
 
+  if (req.files?.visionImage?.length) {
+    doc.vision.image = req.files.visionImage[0].filename;
+  }
+
   /* ────── TAB 3: Core Values ────── */
   if (body.coreValues !== undefined) {
     try {

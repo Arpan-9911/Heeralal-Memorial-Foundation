@@ -14,6 +14,7 @@ const initialForm = {
   descHi: "",
   presentedByEn: "",
   presentedByHi: "",
+  serialNumber: 0,
   image: null,
 };
 
@@ -55,6 +56,7 @@ const Achievements = () => {
       descHi: achievement.description?.hi || "",
       presentedByEn: achievement.presentedBy?.en || "",
       presentedByHi: achievement.presentedBy?.hi || "",
+      serialNumber: achievement.serialNumber || 0,
       image: null,
     });
 
@@ -81,6 +83,7 @@ const Achievements = () => {
       formData.append("descHi", form.descHi);
       formData.append("presentedByEn", form.presentedByEn);
       formData.append("presentedByHi", form.presentedByHi);
+      formData.append("serialNumber", form.serialNumber);
       if (form.image) {
         formData.append("image", form.image);
       }
@@ -160,6 +163,19 @@ const Achievements = () => {
               type="file"
               accept="image/*"
               onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
+              className={inputClass}
+            />
+          </div>
+
+          {/* Serial Number */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Serial Number / Order
+            </label>
+            <input
+              type="number"
+              value={form.serialNumber}
+              onChange={(e) => setForm({ ...form, serialNumber: e.target.value })}
               className={inputClass}
             />
           </div>
@@ -335,7 +351,8 @@ const Achievements = () => {
 
                   {/* Titles */}
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug pr-2">
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug pr-2 flex items-center gap-2">
+                      <span className="bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded text-xs">#{a.serialNumber || 0}</span>
                       {a.title?.en}
                     </h3>
 

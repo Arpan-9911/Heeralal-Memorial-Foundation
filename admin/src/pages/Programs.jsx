@@ -11,37 +11,37 @@ import { toast } from "sonner";
 const initialForm = {
   categoryEn: "",
   categoryHi: "",
-
   nameEn: "",
   nameHi: "",
-
   descEn: "",
   descHi: "",
-
+  longDescEn: "",
+  longDescHi: "",
+  locationEn: "",
+  locationHi: "",
+  centresEn: "",
+  centresHi: "",
   image: null,
-
   active: true,
 };
 
+const inputClass =
+  "w-full px-3 py-2.5 text-sm border border-[var(--admin-border)] rounded-xl outline-none focus:border-[var(--admin-accent)]";
+
+const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wide";
+
 const Programs = () => {
   const [programs, setPrograms] = useState([]);
-
   const [editing, setEditing] = useState(null);
-
   const [showForm, setShowForm] = useState(false);
-
   const [loading, setLoading] = useState(true);
-
   const [saving, setSaving] = useState(false);
-
   const [form, setForm] = useState(initialForm);
 
   const fetchPrograms = async () => {
     try {
       setLoading(true);
-
       const data = await getPrograms();
-
       setPrograms(data?.programs || []);
     } catch (err) {
       console.error(err);
@@ -56,33 +56,28 @@ const Programs = () => {
 
   const resetForm = () => {
     setForm(initialForm);
-
     setEditing(null);
-
     setShowForm(false);
   };
 
   const handleEdit = (program) => {
     setForm({
       categoryEn: program.category?.en || "",
-
       categoryHi: program.category?.hi || "",
-
       nameEn: program.name?.en || "",
-
       nameHi: program.name?.hi || "",
-
       descEn: program.description?.en || "",
-
       descHi: program.description?.hi || "",
-
+      longDescEn: program.longDescription?.en || "",
+      longDescHi: program.longDescription?.hi || "",
+      locationEn: program.location?.en || "",
+      locationHi: program.location?.hi || "",
+      centresEn: program.centres?.en || "",
+      centresHi: program.centres?.hi || "",
       image: null,
-
       active: program.active ?? true,
     });
-
     setEditing(program._id);
-
     setShowForm(true);
   };
 
@@ -90,32 +85,29 @@ const Programs = () => {
     try {
       if (!form.nameEn || !form.categoryEn) {
         alert("Please fill required fields");
-
         return;
       }
 
       if (!editing && !form.image) {
         alert("Please select image");
-
         return;
       }
 
       setSaving(true);
 
       const formData = new FormData();
-
       formData.append("categoryEn", form.categoryEn);
-
       formData.append("categoryHi", form.categoryHi);
-
       formData.append("nameEn", form.nameEn);
-
       formData.append("nameHi", form.nameHi);
-
       formData.append("descEn", form.descEn);
-
       formData.append("descHi", form.descHi);
-
+      formData.append("longDescEn", form.longDescEn);
+      formData.append("longDescHi", form.longDescHi);
+      formData.append("locationEn", form.locationEn);
+      formData.append("locationHi", form.locationHi);
+      formData.append("centresEn", form.centresEn);
+      formData.append("centresHi", form.centresHi);
       formData.append("active", form.active);
 
       if (form.image) {
@@ -124,18 +116,15 @@ const Programs = () => {
 
       if (editing) {
         const data = await updateProgram(editing, formData);
-
         setPrograms((prev) =>
           prev.map((p) => (p._id === editing ? data.program : p)),
         );
       } else {
         const data = await createProgram(formData);
-
         setPrograms((prev) => [data.program, ...prev]);
       }
 
       resetForm();
-
       toast.success(`Programme ${editing ? "updated" : "created"}`);
     } catch (err) {
       console.error(err);
@@ -147,12 +136,10 @@ const Programs = () => {
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Delete this programme?");
-
     if (!confirmDelete) return;
 
     try {
       await deleteProgram(id);
-
       setPrograms((prev) => prev.filter((p) => p._id !== id));
       toast.success("Programme deleted");
     } catch (err) {
@@ -164,27 +151,24 @@ const Programs = () => {
   const toggleStatus = async (program) => {
     try {
       const formData = new FormData();
-
       formData.append("categoryEn", program.category?.en);
-
       formData.append("categoryHi", program.category?.hi);
-
       formData.append("nameEn", program.name?.en);
-
       formData.append("nameHi", program.name?.hi);
-
       formData.append("descEn", program.description?.en);
-
       formData.append("descHi", program.description?.hi);
-
+      formData.append("longDescEn", program.longDescription?.en || "");
+      formData.append("longDescHi", program.longDescription?.hi || "");
+      formData.append("locationEn", program.location?.en || "");
+      formData.append("locationHi", program.location?.hi || "");
+      formData.append("centresEn", program.centres?.en || "");
+      formData.append("centresHi", program.centres?.hi || "");
       formData.append("active", !program.active);
 
       const data = await updateProgram(program._id, formData);
-
       setPrograms((prev) =>
         prev.map((p) => (p._id === program._id ? data.program : p)),
       );
-
       toast.success("Programme status updated");
     } catch (err) {
       console.error(err);
@@ -198,7 +182,6 @@ const Programs = () => {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-lg font-bold text-gray-900">Programmes</h2>
-
           <p className="text-xs text-[var(--admin-muted)]">
             {programs.length} total programmes
           </p>
@@ -207,7 +190,6 @@ const Programs = () => {
         <button
           onClick={() => {
             resetForm();
-
             setShowForm(true);
           }}
           className="px-4 py-2 text-xs font-semibold rounded-xl bg-[var(--admin-maroon)] text-white hover:opacity-90"
@@ -223,112 +205,149 @@ const Programs = () => {
             {editing ? "Edit Programme" : "Add Programme"}
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              placeholder="Category English"
-              value={form.categoryEn}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  categoryEn: e.target.value,
-                })
-              }
-              className="w-full px-3 py-2 text-sm border rounded-xl"
-            />
-
-            <input
-              placeholder="Category Hindi"
-              value={form.categoryHi}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  categoryHi: e.target.value,
-                })
-              }
-              className="w-full px-3 py-2 text-sm border rounded-xl"
-            />
-
-            <input
-              placeholder="Programme Name English"
-              value={form.nameEn}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  nameEn: e.target.value,
-                })
-              }
-              className="w-full px-3 py-2 text-sm border rounded-xl"
-            />
-
-            <input
-              placeholder="Programme Name Hindi"
-              value={form.nameHi}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  nameHi: e.target.value,
-                })
-              }
-              className="w-full px-3 py-2 text-sm border rounded-xl"
-            />
+          {/* Category */}
+          <div>
+            <p className={`${labelClass} mb-2`}>Category</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                placeholder="Category English"
+                value={form.categoryEn}
+                onChange={(e) => setForm({ ...form, categoryEn: e.target.value })}
+                className={inputClass}
+              />
+              <input
+                placeholder="Category Hindi"
+                value={form.categoryHi}
+                onChange={(e) => setForm({ ...form, categoryHi: e.target.value })}
+                className={inputClass}
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <textarea
-              rows={4}
-              placeholder="Description English"
-              value={form.descEn}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  descEn: e.target.value,
-                })
-              }
-              className="w-full px-3 py-2 text-sm border rounded-xl resize-none"
-            />
-
-            <textarea
-              rows={4}
-              placeholder="Description Hindi"
-              value={form.descHi}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  descHi: e.target.value,
-                })
-              }
-              className="w-full px-3 py-2 text-sm border rounded-xl resize-none"
-            />
+          {/* Name */}
+          <div>
+            <p className={`${labelClass} mb-2`}>Programme Name</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                placeholder="Name English"
+                value={form.nameEn}
+                onChange={(e) => setForm({ ...form, nameEn: e.target.value })}
+                className={inputClass}
+              />
+              <input
+                placeholder="Name Hindi"
+                value={form.nameHi}
+                onChange={(e) => setForm({ ...form, nameHi: e.target.value })}
+                className={inputClass}
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  image: e.target.files[0],
-                })
-              }
-              className="w-full px-3 py-2 text-sm border rounded-xl"
-            />
+          {/* Short Description (card view) */}
+          <div>
+            <p className={`${labelClass} mb-2`}>Short Description (shown on card)</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <textarea
+                rows={3}
+                placeholder="Short Description English"
+                value={form.descEn}
+                onChange={(e) => setForm({ ...form, descEn: e.target.value })}
+                className={`${inputClass} resize-none`}
+              />
+              <textarea
+                rows={3}
+                placeholder="Short Description Hindi"
+                value={form.descHi}
+                onChange={(e) => setForm({ ...form, descHi: e.target.value })}
+                className={`${inputClass} resize-none`}
+              />
+            </div>
+          </div>
+
+          {/* Long Description (popup) */}
+          <div>
+            <p className={`${labelClass} mb-2`}>Long Description (shown in Read More popup)</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <textarea
+                rows={5}
+                placeholder="Long Description English"
+                value={form.longDescEn}
+                onChange={(e) => setForm({ ...form, longDescEn: e.target.value })}
+                className={`${inputClass} resize-none`}
+              />
+              <textarea
+                rows={5}
+                placeholder="Long Description Hindi"
+                value={form.longDescHi}
+                onChange={(e) => setForm({ ...form, longDescHi: e.target.value })}
+                className={`${inputClass} resize-none`}
+              />
+            </div>
+          </div>
+
+          {/* Location */}
+          <div>
+            <p className={`${labelClass} mb-2`}>📍 Location (shown in popup)</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                placeholder="Location English"
+                value={form.locationEn}
+                onChange={(e) => setForm({ ...form, locationEn: e.target.value })}
+                className={inputClass}
+              />
+              <input
+                placeholder="Location Hindi"
+                value={form.locationHi}
+                onChange={(e) => setForm({ ...form, locationHi: e.target.value })}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Centres */}
+          <div>
+            <p className={`${labelClass} mb-2`}>🏢 Name of Centres (shown in popup)</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <textarea
+                rows={3}
+                placeholder="Centre names English (one per line)"
+                value={form.centresEn}
+                onChange={(e) => setForm({ ...form, centresEn: e.target.value })}
+                className={`${inputClass} resize-none`}
+              />
+              <textarea
+                rows={3}
+                placeholder="Centre names Hindi (one per line)"
+                value={form.centresHi}
+                onChange={(e) => setForm({ ...form, centresHi: e.target.value })}
+                className={`${inputClass} resize-none`}
+              />
+            </div>
+          </div>
+
+          {/* Image & Active */}
+          <div className="space-y-3">
+            <div>
+              <p className={`${labelClass} mb-2`}>Programme Image</p>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
+                className={inputClass}
+              />
+            </div>
 
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={form.active}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    active: e.target.checked,
-                  })
-                }
+                onChange={(e) => setForm({ ...form, active: e.target.checked })}
               />
               Active Programme
             </label>
           </div>
 
+          {/* Actions */}
           <div className="flex gap-2">
             <button
               onClick={handleSave}
@@ -371,7 +390,7 @@ const Programs = () => {
               className="group bg-white rounded-2xl overflow-hidden border border-[var(--admin-border)] hover:shadow-xl transition-all duration-300"
             >
               {/* Top Image Section */}
-              <div className="relative h-52 overflow-hidden">
+              <div className="relative h-44 overflow-hidden">
                 <img
                   src={`${import.meta.env.VITE_BACKEND_URL}/uploads/programs/${p.image}`}
                   alt={p.name?.en}
@@ -395,50 +414,41 @@ const Programs = () => {
 
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  {/* Category */}
-                  <div className="mb-2">
-                    <p className="text-[10px] uppercase tracking-[0.18em]">
-                      {p.category?.en}
-                    </p>
-
-                    <p className="text-[11px]">
-                      {p.category?.hi}
-                    </p>
-                  </div>
-
-                  {/* Names */}
-                  <h3 className="text-lg font-bold leading-tight line-clamp-1">
+                  <p className="text-[10px] uppercase tracking-[0.18em] mb-0.5">
+                    {p.category?.en}
+                  </p>
+                  <h3 className="text-base font-bold leading-tight line-clamp-1">
                     {p.name?.en}
                   </h3>
-
-                  <p className="text-sm mt-0.5 line-clamp-1">
+                  <p className="text-xs mt-0.5 line-clamp-1 opacity-80">
                     {p.name?.hi}
                   </p>
                 </div>
               </div>
 
               {/* Bottom */}
-              <div className="p-4 space-y-3">
-                {/* English Desc */}
-                <div>
-                  <p className="text-[10px] uppercase tracking-wide text-gray-400 mb-1">
-                    English
-                  </p>
+              <div className="p-4 space-y-2">
+                <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">
+                  {p.description?.en}
+                </p>
 
-                  <p className="text-xs text-gray-700 leading-relaxed line-clamp-3">
-                    {p.description?.en}
-                  </p>
-                </div>
-
-                {/* Hindi Desc */}
-                <div>
-                  <p className="text-[10px] uppercase tracking-wide text-gray-400 mb-1">
-                    Hindi
-                  </p>
-
-                  <p className="text-xs text-gray-700 leading-relaxed line-clamp-3">
-                    {p.description?.hi}
-                  </p>
+                {/* Info Tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {p.location?.en && (
+                    <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                      📍 {p.location.en}
+                    </span>
+                  )}
+                  {p.centres?.en && (
+                    <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">
+                      🏢 Centres added
+                    </span>
+                  )}
+                  {p.longDescription?.en && (
+                    <span className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                      📝 Long desc
+                    </span>
+                  )}
                 </div>
 
                 {/* Actions */}

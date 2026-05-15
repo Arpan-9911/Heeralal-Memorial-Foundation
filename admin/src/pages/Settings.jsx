@@ -9,6 +9,8 @@ const initialSettings = {
     { key: "orgName", label: "Organisation Name", value: "Heeralal Memorial Foundation" },
     { key: "taglineEn", label: "Tagline (EN)", value: "Committed to Equality, Empowerment, and Sustainable Change" },
     { key: "taglineHi", label: "Tagline (HI)", value: "स्वतंत्रता, उपयोगीता और संरक्षित बदलाव के लिये" },
+    { key: "latestNewsEn", label: "Latest News (EN)", value: "Heeralal Memorial Foundation expands education reach..." },
+    { key: "latestNewsHi", label: "Latest News (HI)", value: "हीरलल मेमोरियल फाउंडेशन शिक्षा पहुंच को विकसित करता है..." },
     { key: "copyright", label: "Copyright Text", value: "© 2023-2024 Heeralal Memorial Foundation. All rights reserved." },
     { key: "managedBy", label: "Managed By", value: "Website Content Managed by SurPanix" },
   ],

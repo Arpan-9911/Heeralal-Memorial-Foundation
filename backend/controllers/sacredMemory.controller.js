@@ -14,6 +14,10 @@ const defaultData = {
     en: "This organization is a living tribute to the late Heeralal Yadav Ji, created to honor his memory and carry forward his enduring legacy.",
     hi: "यह संगठन स्वर्गीय हीरालाल यादव जी को एक जीवंत श्रद्धांजलि है, जिसे उनकी स्मृति का सम्मान करने और उनकी स्थायी विरासत को आगे बढ़ाने के लिए बनाया गया है।",
   },
+  memoryLine: {
+    en: "In the memory of Late Heeralal Yadav Ji",
+    hi: "स्वर्गीय हीरालाल यादव जी की स्मृति में",
+  },
 };
 
 export const getSacredMemory = async (req, res) => {
@@ -49,6 +53,12 @@ export const updateSacredMemory = async (req, res) => {
       en: req.body.descriptionEn,
       hi: req.body.descriptionHi,
     };
+    if (req.body.memoryLineEn || req.body.memoryLineHi) {
+      memory.memoryLine = {
+        en: req.body.memoryLineEn || memory.memoryLine?.en || "In the memory of Late Heeralal Yadav Ji",
+        hi: req.body.memoryLineHi || memory.memoryLine?.hi || "स्वर्गीय हीरालाल यादव जी की स्मृति में",
+      };
+    }
 
     await memory.save();
 

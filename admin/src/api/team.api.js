@@ -23,3 +23,9 @@ export const deleteMember = async (id) => {
 
   return data;
 };
+
+export const reorderMembers = async (orderedIds) => {
+  const { data } = await API.patch("/team/reorder", { orderedIds });
+
+  return data;
+};

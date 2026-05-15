@@ -26,6 +26,12 @@ const Topbar = () => {
     return item ? item.value : "...";
   };
 
+  const getGeneralValue = (key) => {
+    if (!settings || !settings.general) return "...";
+    const item = settings.general.find((i) => i.key === key);
+    return item ? item.value : "...";
+  };
+
 
   return (
     <div>
@@ -36,24 +42,33 @@ const Topbar = () => {
               {lang === "en" ? "LATEST:" : "अधिसूचना:"}
             </span>{" "}
             {lang === "en"
-              ? "Heeralal Memorial Foundation expands education reach..."
-              : "हीरलल मेमोरियल फाउंडेशन शिक्षा पहुंच को विकसित करता है..."}
+              ? getGeneralValue("latestNewsEn") !== "..." ? getGeneralValue("latestNewsEn") : "Heeralal Memorial Foundation expands education reach..."
+              : getGeneralValue("latestNewsHi") !== "..." ? getGeneralValue("latestNewsHi") : "हीरलल मेमोरियल फाउंडेशन शिक्षा पहुंच को विकसित करता है..."}
           </div>
           <div>
             <div className="flex gap-2">
               <button
                 onClick={() => changeLanguage("en")}
-                className={lang === "en" ? "text-[var(--color-primary)]" : "cursor-pointer"}
+                className={lang === "en" ? "text-[var(--color-primary)]" : "cursor-pointer hover:text-[var(--color-primary)] transition-colors"}
               >
                 English
               </button>
               <span>|</span>
               <button
                 onClick={() => changeLanguage("hi")}
-                className={lang === "hi" ? "text-[var(--color-primary)]" : "cursor-pointer"}
+                className={lang === "hi" ? "text-[var(--color-primary)]" : "cursor-pointer hover:text-[var(--color-primary)] transition-colors"}
               >
                 हिंदी
               </button>
+              <span>|</span>
+              <a
+                href="https://www.admin.hlmfofficial.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer hover:text-[var(--color-primary)] transition-colors"
+              >
+                Admin
+              </a>
             </div>
           </div>
         </div>
@@ -67,10 +82,10 @@ const Topbar = () => {
                 ? "Heeralal Memorial Foundation"
                 : "हीरलल मेमोरियल फाउंडेशन"}
             </h1>
-            <p className="text-xs text-[var(--color-primary)] italic">
+            <p className="text-xs text-[var(--color-primary-dark)] font-medium italic">
               {lang === "en"
-                ? "Committed to Equality, Empowerment, and Sustainable Change"
-                : "स्वतंत्रता, उपयोगीता और संरक्षित बदलाव के लिये"}
+                ? getGeneralValue("taglineEn") !== "..." ? getGeneralValue("taglineEn") : "Committed to Equality, Empowerment, and Sustainable Change"
+                : getGeneralValue("taglineHi") !== "..." ? getGeneralValue("taglineHi") : "स्वतंत्रता, उपयोगीता और संरक्षित बदलाव के लिये"}
             </p>
           </div>
         </Link>
@@ -144,14 +159,15 @@ const MainNav = () => {
             <div className="flex gap-10 text-xs font-medium flex-1">
               <Link to={"/media"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
               <Link to={"/join-us"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "JOIN US" : "जुड़ें"}</Link>
+              <Link to={"/apply"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "APPLY" : "आवेदन"}</Link>
               <Link to={"/teams"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "TEAM" : "टीम" }</Link>
               <Link to={"/contact"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "CONTACT US" : "संपर्क करें" }</Link>
             </div>
           </div>
 
           {/* Mobile Title */}
-          <div className="md:hidden text-sm font-semibold">
-            {lang === "en" ? "H.M.F." : "एच.एम.एफ."}
+          <div className="md:hidden text-sm font-semibold tracking-wider">
+            {lang === "en" ? "H.L.M.F." : "एच.एल.एम.एफ."}
           </div>
         </div>
       </header>

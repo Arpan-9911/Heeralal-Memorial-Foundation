@@ -2,10 +2,32 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-import { getTeams } from "../api";
+import { getTeams, getSettings } from "../api";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL;
 const t = (obj, lang) => (obj && (obj[lang] || obj.en || obj.hi)) || "";
+
+/* ────────────────── GOLDEN CIRCLE PHOTO ───────────────────────────────────── */
+
+const GoldenCirclePhoto = ({ src, alt, size = "w-48 h-48 md:w-56 md:h-56" }) => (
+  <div
+    className={`relative ${size} rounded-full p-[4px] flex-shrink-0`}
+    style={{
+      background: "linear-gradient(135deg, #d4a017 0%, #f7e98e 25%, #c9952c 50%, #fffbe6 75%, #d4a017 100%)",
+      backgroundSize: "200% 200%",
+      animation: "goldenShimmer 3s ease-in-out infinite",
+      boxShadow: "0 0 24px rgba(212, 160, 23, 0.35)",
+    }}
+  >
+    <div className="w-full h-full rounded-full p-[3px] bg-white">
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-full rounded-full object-cover"
+      />
+    </div>
+  </div>
+);
 
 /* ────────────────────── VERTICAL CONNECTOR ────────────────────────────────── */
 
@@ -89,7 +111,7 @@ const ReadMoreModal = ({ open, onClose, member, lang }) => {
   );
 };
 
-/* ────────────────────── FOUNDING BODY CARD ─────────────────────────────────── */
+/* ────────────────────── FOUNDING BODY CARD (Founder only) ──────────────────── */
 
 const FoundingBodyCard = ({ member }) => {
   const { lang } = useLanguage();
@@ -103,29 +125,23 @@ const FoundingBodyCard = ({ member }) => {
 
   return (
     <>
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+      <div className="bg-[var(--color-secondary)] border border-[var(--color-secondary-dark)] rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left — Photo */}
-          <div className="md:w-[280px] flex-shrink-0 bg-[var(--color-primary-light)] flex items-center justify-center p-6">
-            <div
-              className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white shadow-lg"
-              style={{ boxShadow: "0 0 0 4px var(--color-primary), 0 8px 24px rgba(0,0,0,0.12)" }}
-            >
-              <img
-                src={`${BACKEND}/uploads/team/${member.photo}`}
-                alt={t(member.name, lang)}
-                className="w-full h-full object-cover"
-              />
-            </div>
+          <div className="md:w-[280px] flex-shrink-0 bg-[var(--color-secondary-dark)] flex items-center justify-center p-6">
+            <GoldenCirclePhoto
+              src={`${BACKEND}/uploads/team/${member.photo}`}
+              alt={t(member.name, lang)}
+            />
           </div>
 
           {/* Right — Content */}
           <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
             {/* Name & Role */}
-            <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary-dark)] font-bold mb-1">
+            <p className="text-[10px] uppercase tracking-widest font-bold mb-1 text-[var(--color-primary)]">
               {t(member.role, lang)}
             </p>
-            <h3 className="text-xl font-bold text-[var(--color-secondary)] mb-4">
+            <h3 className="text-xl font-bold mb-4 text-white">
               {t(member.name, lang)}
             </h3>
 
@@ -133,7 +149,7 @@ const FoundingBodyCard = ({ member }) => {
             {quote && (
               <div className="border-l-3 border-[var(--color-primary)] pl-4 mb-4">
                 <p
-                  className="text-sm text-gray-600 italic leading-relaxed"
+                  className="text-sm italic leading-relaxed text-gray-300"
                   style={{ fontFamily: "'Georgia', serif" }}
                 >
                   "{quote}"
@@ -143,7 +159,7 @@ const FoundingBodyCard = ({ member }) => {
 
             {/* Short Description */}
             {shortDesc && (
-              <p className="text-xs text-gray-500 leading-relaxed mb-4">
+              <p className="text-xs leading-relaxed mb-4 text-gray-400">
                 {shortDesc}
               </p>
             )}
@@ -153,7 +169,7 @@ const FoundingBodyCard = ({ member }) => {
               <div>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] border border-[var(--color-secondary)] px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] hover:text-white transition-colors duration-200"
+                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-lg transition-colors duration-200 text-[var(--color-primary)] border border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-secondary-dark)]"
                 >
                   {lang === "en" ? "Read More" : "और पढ़ें"}
                   <span className="text-sm">→</span>
@@ -191,19 +207,93 @@ const FoundingBodySection = ({ members }) => {
   );
 };
 
+/* ────────────────────── LEADERSHIP CARD (2 per row, golden circle) ────────── */
+
+const LeadershipCard = ({ member }) => {
+  const { lang } = useLanguage();
+  if (!member) return null;
+
+  const quote = t(member.quote, lang);
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+      <div className="flex flex-col items-center text-center p-6 md:p-8">
+        {/* Golden Circle Photo */}
+        <GoldenCirclePhoto
+          src={`${BACKEND}/uploads/team/${member.photo}`}
+          alt={t(member.name, lang)}
+          size="w-36 h-36 md:w-44 md:h-44"
+        />
+
+        {/* Name & Role */}
+        <div className="mt-5">
+          <h3 className="text-lg font-bold text-[var(--color-secondary)]">
+            {t(member.name, lang)}
+          </h3>
+          <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary-dark)] font-bold mt-1">
+            {t(member.role, lang)}
+          </p>
+        </div>
+
+        {/* Quote */}
+        {quote && (
+          <div className="mt-4 border-t border-gray-100 pt-4 w-full">
+            <p
+              className="text-sm text-gray-600 italic leading-relaxed"
+              style={{ fontFamily: "'Georgia', serif" }}
+            >
+              "{quote}"
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ────────────────────── LEADERSHIP SECTION ─────────────────────────────────── */
+
+const LeadershipSection = ({ members }) => {
+  const { lang } = useLanguage();
+  if (!members || members.length === 0) return null;
+
+  return (
+    <div>
+      <div className="text-center mb-8">
+        <h2 className="text-sm uppercase tracking-[0.25em] font-bold text-gray-800">
+          {lang === "en" ? "Leadership" : "नेतृत्व"}
+        </h2>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {members.map((member) => (
+          <LeadershipCard key={member._id} member={member} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 /* ────────────────────── EXECUTION TEAM GRID ───────────────────────────────── */
 
-const ExecutionTeamSection = ({ executionTeam, gridCols }) => {
+const ExecutionTeamSection = ({ executionTeam, layout }) => {
   const { lang } = useLanguage();
   if (!executionTeam || executionTeam.length === 0) return null;
 
-  // Map gridCols to tailwind classes
-  const gridClass = {
-    2: "grid-cols-1 sm:grid-cols-2",
-    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
-    4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-    5: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
-  }[gridCols] || "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+  // Build rows from layout array
+  const rows = [];
+  let index = 0;
+  const effectiveLayout = layout && layout.length > 0 ? layout : [3];
+
+  while (index < executionTeam.length) {
+    // Use the defined row layout, or repeat the last value for extra members
+    const rowIndex = rows.length;
+    const cols = effectiveLayout[rowIndex] !== undefined
+      ? effectiveLayout[rowIndex]
+      : effectiveLayout[effectiveLayout.length - 1];
+    const rowMembers = executionTeam.slice(index, index + cols);
+    rows.push({ cols, members: rowMembers });
+    index += cols;
+  }
 
   return (
     <div>
@@ -213,26 +303,34 @@ const ExecutionTeamSection = ({ executionTeam, gridCols }) => {
         </h2>
       </div>
 
-      <div className={`grid ${gridClass} gap-5`}>
-        {executionTeam.map((member) => (
+      <div className="space-y-5">
+        {rows.map((row, rIdx) => (
           <div
-            key={member._id}
-            className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
+            key={rIdx}
+            className="grid gap-5"
+            style={{ gridTemplateColumns: `repeat(${row.cols}, 1fr)` }}
           >
-            <img
-              src={`${BACKEND}/uploads/team/${member.photo}`}
-              alt={t(member.name, lang)}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-              <h4 className="text-white font-bold text-sm">
-                {t(member.name, lang)}
-              </h4>
-              <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
-                {t(member.role, lang)}
-              </p>
-            </div>
+            {row.members.map((member) => (
+              <div
+                key={member._id}
+                className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
+              >
+                <img
+                  src={`${BACKEND}/uploads/team/${member.photo}`}
+                  alt={t(member.name, lang)}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <h4 className="text-white font-bold text-sm">
+                    {t(member.name, lang)}
+                  </h4>
+                  <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
+                    {t(member.role, lang)}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -274,27 +372,36 @@ const JoinCTA = () => {
 
 const Teams = () => {
   const { lang } = useLanguage();
-  const [foundingBody, setFoundingBody] = useState([]);
+  const [founders, setFounders] = useState([]);
+  const [leaders, setLeaders] = useState([]);
   const [executionTeam, setExecutionTeam] = useState([]);
-  const [execGridCols, setExecGridCols] = useState(3);
+  const [executionLayout, setExecutionLayout] = useState([3]);
 
   useEffect(() => {
     const fetchTeam = async () => {
       try {
         const data = await getTeams();
-        // Founding body = founders + leaders combined
-        setFoundingBody(data.filter((m) => m.tier === "founder" || m.tier === "leader"));
+        setFounders(data.filter((m) => m.tier === "founder"));
+        setLeaders(data.filter((m) => m.tier === "leader"));
         setExecutionTeam(data.filter((m) => m.tier === "execution"));
       } catch (error) {
         console.error("Error fetching teams data:", error);
       }
     };
 
-    fetchTeam();
+    const fetchLayout = async () => {
+      try {
+        const data = await getSettings();
+        if (data?.settings?.executionLayout?.length > 0) {
+          setExecutionLayout(data.settings.executionLayout);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-    // Read grid cols from localStorage (synced with admin setting)
-    const stored = parseInt(localStorage.getItem("hlmf_exec_grid_cols") || "3", 10);
-    setExecGridCols(stored);
+    fetchTeam();
+    fetchLayout();
   }, []);
 
   return (
@@ -321,16 +428,23 @@ const Teams = () => {
             </p>
           </div>
 
-          {/* Founding Body */}
+          {/* Founding Body (founders only) */}
           <section className="show mt-6">
-            <FoundingBodySection members={foundingBody} />
+            <FoundingBodySection members={founders} />
           </section>
 
           <VerticalConnector />
 
-          {/* Execution Team */}
+          {/* Leadership (2 per row, golden circle, no popup) */}
           <section className="show">
-            <ExecutionTeamSection executionTeam={executionTeam} gridCols={execGridCols} />
+            <LeadershipSection members={leaders} />
+          </section>
+
+          <VerticalConnector />
+
+          {/* Execution Team — custom row layout */}
+          <section className="show">
+            <ExecutionTeamSection executionTeam={executionTeam} layout={executionLayout} />
           </section>
 
           {/* CTA */}
@@ -339,6 +453,14 @@ const Teams = () => {
           </section>
         </div>
       </div>
+
+      {/* Golden Shimmer Keyframes */}
+      <style>{`
+        @keyframes goldenShimmer {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+      `}</style>
 
       <Footer topBg="bg-[var(--color-bg)]" />
     </div>

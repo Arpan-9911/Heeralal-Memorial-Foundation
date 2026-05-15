@@ -191,7 +191,7 @@ const VisionMission = ({ data }) => {
       </div>
 
       {/* Mission + Objective Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {[
           { title: d.missionTitle, desc: d.missionDesc },
           { title: d.objectiveTitle, desc: d.objectiveDesc },
@@ -206,6 +206,17 @@ const VisionMission = ({ data }) => {
           </div>
         ))}
       </div>
+
+      {/* Vision Image */}
+      {d.image && (
+        <div className="w-full -mx-6 md:-mx-10 w-[calc(100%+3rem)] md:w-[calc(100%+5rem)] mt-4">
+          <img
+            src={`${import.meta.env.VITE_BACKEND_URL}/uploads/about/${d.image}`}
+            alt="Vision & Mission"
+            className="w-full h-auto object-cover max-h-[500px]"
+          />
+        </div>
+      )}
 
       <PageStamp />
     </div>

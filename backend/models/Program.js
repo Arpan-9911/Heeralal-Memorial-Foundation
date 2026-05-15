@@ -18,6 +18,21 @@ const programSchema =
         hi: String,
       },
 
+      longDescription: {
+        en: String,
+        hi: String,
+      },
+
+      location: {
+        en: String,
+        hi: String,
+      },
+
+      centres: {
+        en: String,
+        hi: String,
+      },
+
       image: {
         type: String,
         required: true,

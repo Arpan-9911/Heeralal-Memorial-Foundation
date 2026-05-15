@@ -3,7 +3,7 @@ import Team from "../models/Team.js";
 
 export const getMembers = async (req, res) => {
   try {
-    const members = await Team.find();
+    const members = await Team.find().sort({ order: 1, createdAt: -1 });
 
     res.json({
       success: true,
@@ -19,6 +19,10 @@ export const getMembers = async (req, res) => {
 
 export const createMember = async (req, res, next) => {
   try {
+    // Auto-assign order to end of the tier
+    const lastMember = await Team.findOne({ tier: req.body.tier }).sort({ order: -1 });
+    const nextOrder = lastMember ? (lastMember.order || 0) + 1 : 0;
+
     const member = await Team.create({
       tier: req.body.tier,
 
@@ -58,6 +62,7 @@ export const createMember = async (req, res, next) => {
       },
 
       photo: req.file?.filename,
+      order: nextOrder,
     });
 
     res.status(201).json({
@@ -167,6 +172,36 @@ export const deleteMember = async (req, res, next) => {
       success: true,
       message: "Member deleted",
     });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// Bulk reorder members
+export const reorderMembers = async (req, res) => {
+  try {
+    const { orderedIds } = req.body;
+
+    if (!orderedIds || !Array.isArray(orderedIds)) {
+      return res.status(400).json({
+        success: false,
+        message: "orderedIds array is required",
+      });
+    }
+
+    const bulkOps = orderedIds.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { order: index },
+      },
+    }));
+
+    await Team.bulkWrite(bulkOps);
+
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({
       success: false,

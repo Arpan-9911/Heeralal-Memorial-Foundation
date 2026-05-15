@@ -16,9 +16,9 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
 
-import { getHomeData, getSacredMemory } from "../api";
+import { getHomeData, getSacredMemory, getPillars } from "../api";
 
-const pillars = [
+const defaultPillars = [
   {
     id: 1,
     icon: "📚",
@@ -257,7 +257,7 @@ const SacredMemory = ({ data }) => {
   };
 
   return (
-    <section className="px-4 py-10">
+    <section className="px-4 py-6">
       <div
         className="max-w-6xl mx-auto rounded-2xl p-[3px]"
         style={{
@@ -267,18 +267,27 @@ const SacredMemory = ({ data }) => {
           boxShadow: "0 0 20px rgba(212, 160, 23, 0.3), 0 0 40px rgba(212, 160, 23, 0.1)",
         }}
       >
-        <div className="bg-[#EDE7DD] rounded-2xl md:p-10 p-6 shadow-inner">
-          <div className="flex max-md:flex-col md:gap-14 gap-8 items-center">
+        <div className="bg-[#EDE7DD] rounded-2xl md:p-6 p-4 shadow-inner">
+          <div className="flex max-md:flex-col md:gap-10 gap-6 items-center">
             
             {/* Left Side: Photo, Name, Lifespan */}
             <div className="flex flex-col items-center flex-shrink-0 text-center">
-              {/* Photo */}
-              <div className="relative w-56 h-56 md:w-64 md:h-64 mb-5 rounded-full overflow-hidden shadow-md">
-                <img
-                  src={MemoryPhoto}
-                  alt="Late Shree Heeralal Yadav"
-                  className="w-full h-full object-cover"
-                />
+              <div
+                className="relative w-48 h-48 md:w-56 md:h-56 mb-4 rounded-full p-[4px] flex-shrink-0"
+                style={{
+                  background: "linear-gradient(135deg, #d4a017 0%, #f7e98e 25%, #c9952c 50%, #fffbe6 75%, #d4a017 100%)",
+                  backgroundSize: "200% 200%",
+                  animation: "goldenShimmer 3s ease-in-out infinite",
+                  boxShadow: "0 0 24px rgba(212, 160, 23, 0.35)",
+                }}
+              >
+                <div className="w-full h-full rounded-full p-[3px] bg-white">
+                  <img
+                    src={MemoryPhoto}
+                    alt="Late Shree Heeralal Yadav"
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                </div>
               </div>
 
               {/* Name */}
@@ -298,8 +307,8 @@ const SacredMemory = ({ data }) => {
 
             {/* Right Side: Message */}
             <div className="flex-1 max-md:text-center max-w-2xl">
-              <h3 className="text-lg md:text-xl font-bold text-[var(--color-primary-dark)] uppercase tracking-wider mb-4">
-                {lang === "en" ? "In the memory of Late Heeralal Yadav Ji" : "स्वर्गीय हीरालाल यादव जी की स्मृति में"}
+              <h3 className="text-lg md:text-xl font-bold text-[var(--color-primary-dark)] uppercase tracking-wider mb-3">
+                {languageFallback(data?.memoryLine || { en: "In the memory of Late Heeralal Yadav Ji", hi: "स्वर्गीय हीरालाल यादव जी की स्मृति में" }, lang)}
               </h3>
               
               <div className="w-16 h-1 bg-[var(--color-primary)] rounded mb-6 max-md:mx-auto"></div>
@@ -385,7 +394,7 @@ const FormalCommendation = ({ commendation }) => {
                   {languageFallback(commendation.messageTitle, lang) || (lang === "en" ? "Message of Hope" : "आशा का संदेश")}
                 </p>
                 {commendation.messageBody && (
-                  <p className="text-sm italic text-gray-600 leading-relaxed">
+                  <p className="text-sm text-black font-semibold leading-relaxed">
                     "{languageFallback(commendation.messageBody, lang)}"
                   </p>
                 )}
@@ -464,8 +473,10 @@ const InstitutionalProgress = ({ stats }) => {
   );
 };
 
-const InstitutionalPillars = () => {
+const InstitutionalPillars = ({ pillars: pillarsProp }) => {
   const { lang } = useLanguage();
+
+  const items = pillarsProp && pillarsProp.length > 0 ? pillarsProp : defaultPillars;
 
   return (
     <section className="px-4 py-10 bg-[var(--color-primary-light)]">
@@ -487,9 +498,9 @@ const InstitutionalPillars = () => {
 
         {/* Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {pillars.map((item) => (
+          {items.map((item) => (
             <div
-              key={item.id}
+              key={item._id || item.id}
               className="bg-white border border-gray-200 rounded-md p-6 text-center hover:shadow-lg transition group hover:-translate-y-1"
             >
               {/* Icon */}
@@ -497,7 +508,7 @@ const InstitutionalPillars = () => {
 
               {/* Title */}
               <h3 className="text-sm font-semibold text-[var(--color-secondary)] uppercase tracking-wide">
-                {item.title[lang]}
+                {item.title[lang] || item.title?.en}
               </h3>
 
               {/* Divider */}
@@ -505,7 +516,7 @@ const InstitutionalPillars = () => {
 
               {/* Description */}
               <p className="text-xs text-gray-600 leading-relaxed">
-                {item.desc[lang]}
+                {item.desc[lang] || item.desc?.en}
               </p>
             </div>
           ))}
@@ -597,13 +608,14 @@ const Home = () => {
   const [stats, setStats] = useState([]);
   // const [pillars, setPillars] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [pillarsList, setPillarsList] = useState([]);
   // const [compliancePoints, setCompliancePoints] = useState([]);
 
   useEffect(() => {
     getHomeData()
       .then((res) => {
         setSlides(res.data.heroSlides || []);
-        setEvents(res.data.events || []);
+        setEvents(res.data.announcements || []);
 
         setCommendation(res.data.commendation || null);
         setStats(res.data.stats);
@@ -618,6 +630,12 @@ const Home = () => {
         if (res.memory) setSacredMemory(res.memory);
       })
       .catch((err) => console.log(err));
+
+    getPillars()
+      .then((res) => {
+        if (res.pillars && res.pillars.length > 0) setPillarsList(res.pillars);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   return (
@@ -628,7 +646,7 @@ const Home = () => {
       <SacredMemory data={sacredMemory} />
       <FormalCommendation commendation={commendation} />
       <InstitutionalProgress stats={stats} />
-      <InstitutionalPillars />
+      <InstitutionalPillars pillars={pillarsList} />
       <LatestFromField posts={posts} />
       <Footer topBg="bg-white" />
     </div>

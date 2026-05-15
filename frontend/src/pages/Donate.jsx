@@ -247,13 +247,15 @@ const PaymentSection = () => {
               </h3>
             </div>
 
-            <div className="border border-[var(--color-secondary-light)] rounded overflow-hidden">
+            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
               {bankItems.map((item, i) => (
-                <div key={i} className={`flex text-sm px-4 py-3 ${i % 2 === 0 ? "bg-[var(--color-bg)]" : "bg-white"}`}>
-                  <span className="text-[var(--color-secondary)] font-semibold min-w-[130px] text-xs">
+                <div key={i} className={`flex flex-col sm:flex-row sm:items-center px-5 py-4 ${i % 2 === 0 ? "bg-gray-50" : "bg-white"} ${i !== bankItems.length - 1 ? "border-b border-gray-200" : ""}`}>
+                  <span className="text-gray-600 font-medium sm:min-w-[160px] text-sm uppercase tracking-wider">
                     {item.label[lang]}:
                   </span>
-                  <span className="text-gray-700 text-xs ml-2">{item.value}</span>
+                  <span className="text-gray-900 text-base md:text-lg font-bold sm:ml-4 font-sans tracking-wide">
+                    {item.value}
+                  </span>
                 </div>
               ))}
             </div>

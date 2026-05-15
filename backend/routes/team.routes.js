@@ -7,6 +7,7 @@ import {
   createMember,
   updateMember,
   deleteMember,
+  reorderMembers,
 } from "../controllers/team.controller.js";
 
 const router =
@@ -32,6 +33,11 @@ router.put(
 router.delete(
   "/:id",
   deleteMember
+);
+
+router.patch(
+  "/reorder",
+  reorderMembers
 );
 
 export default router;

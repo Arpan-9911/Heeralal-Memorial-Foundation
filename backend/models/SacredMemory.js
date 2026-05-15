@@ -14,6 +14,10 @@ const sacredMemorySchema = new mongoose.Schema(
       en: { type: String, required: true },
       hi: { type: String, required: true },
     },
+    memoryLine: {
+      en: { type: String, default: "In the memory of Late Heeralal Yadav Ji" },
+      hi: { type: String, default: "स्वर्गीय हीरालाल यादव जी की स्मृति में" },
+    },
   },
   { timestamps: true }
 );

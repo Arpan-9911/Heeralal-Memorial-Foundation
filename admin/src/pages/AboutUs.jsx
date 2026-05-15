@@ -78,7 +78,7 @@ const LegacyTab = ({ data, setData, legacyFiles, setLegacyFiles }) => {
 };
 
 /* ═══════════════ TAB 2: VISION & MISSION ═══════════════ */
-const VisionTab = ({ data, setData }) => {
+const VisionTab = ({ data, setData, visionFile, setVisionFile }) => {
   const set = (key, val) => setData({ ...data, [key]: val });
   return (
     <div className="space-y-6">
@@ -92,6 +92,17 @@ const VisionTab = ({ data, setData }) => {
       <hr className="border-[var(--admin-border)]" />
       <BiInput label="Objective Title" enVal={data.objectiveTitleEn} hiVal={data.objectiveTitleHi} onEnChange={(v) => set("objectiveTitleEn", v)} onHiChange={(v) => set("objectiveTitleHi", v)} />
       <BiInput label="Objective Description" enVal={data.objectiveDescEn} hiVal={data.objectiveDescHi} onEnChange={(v) => set("objectiveDescEn", v)} onHiChange={(v) => set("objectiveDescHi", v)} textarea />
+      <hr className="border-[var(--admin-border)]" />
+      <div>
+        <label className={labelClass}>Vision & Mission Full-Width Image</label>
+        {data.image && !visionFile && (
+          <div className="mb-3">
+            <img src={`${BACKEND}/uploads/about/${data.image}`} alt="Vision" className="w-64 h-auto object-cover rounded-lg border border-[var(--admin-border)]" />
+          </div>
+        )}
+        <input type="file" accept="image/*" onChange={(e) => setVisionFile(e.target.files[0])} className="w-full border border-[var(--admin-border)] rounded-xl px-4 py-3 text-sm" />
+        <p className="text-xs text-[var(--admin-muted)] mt-1">Upload an image to show beneath the vision messages</p>
+      </div>
     </div>
   );
 };
@@ -229,7 +240,8 @@ const AboutUsAdmin = () => {
   // State per tab
   const [legacy, setLegacy] = useState({ titleEn: "", titleHi: "", paragraphs: [], images: [], removedImages: [] });
   const [legacyFiles, setLegacyFiles] = useState([]);
-  const [vision, setVision] = useState({ subtitleEn: "", subtitleHi: "", titleEn: "", titleHi: "", quoteEn: "", quoteHi: "", missionTitleEn: "", missionTitleHi: "", missionDescEn: "", missionDescHi: "", objectiveTitleEn: "", objectiveTitleHi: "", objectiveDescEn: "", objectiveDescHi: "" });
+  const [vision, setVision] = useState({ subtitleEn: "", subtitleHi: "", titleEn: "", titleHi: "", quoteEn: "", quoteHi: "", missionTitleEn: "", missionTitleHi: "", missionDescEn: "", missionDescHi: "", objectiveTitleEn: "", objectiveTitleHi: "", objectiveDescEn: "", objectiveDescHi: "", image: "" });
+  const [visionFile, setVisionFile] = useState(null);
   const [values, setValues] = useState([]);
   const [governance, setGovernance] = useState({ titleEn: "", titleHi: "", descEn: "", descHi: "", rows: [] });
   const [compliance, setCompliance] = useState({ titleEn: "", titleHi: "", descEn: "", descHi: "", items: [], cards: [] });
@@ -259,6 +271,7 @@ const AboutUsAdmin = () => {
         missionDescEn: v.missionDesc?.en || "", missionDescHi: v.missionDesc?.hi || "",
         objectiveTitleEn: v.objectiveTitle?.en || "", objectiveTitleHi: v.objectiveTitle?.hi || "",
         objectiveDescEn: v.objectiveDesc?.en || "", objectiveDescHi: v.objectiveDesc?.hi || "",
+        image: v.image || "",
       });
 
       setValues(d.coreValues || []);
@@ -307,6 +320,7 @@ const AboutUsAdmin = () => {
 
       // Vision
       Object.entries(vision).forEach(([k, v]) => {
+        if (k === 'image') return;
         const fieldMap = {
           subtitleEn: "visionSubtitleEn", subtitleHi: "visionSubtitleHi",
           titleEn: "visionTitleEn", titleHi: "visionTitleHi",
@@ -318,6 +332,9 @@ const AboutUsAdmin = () => {
         };
         fd.append(fieldMap[k] || k, v);
       });
+      if (visionFile) {
+        fd.append("visionImage", visionFile);
+      }
 
       // Core values
       fd.append("coreValues", JSON.stringify(values));
@@ -340,6 +357,7 @@ const AboutUsAdmin = () => {
       await updateAboutUs(fd);
       toast.success("About Us page updated!");
       setLegacyFiles([]);
+      setVisionFile(null);
       await fetchData();
     } catch (err) {
       console.log(err);
@@ -387,7 +405,7 @@ const AboutUsAdmin = () => {
       {/* TAB CONTENT */}
       <div className="bg-white border border-[var(--admin-border)] rounded-2xl p-6">
         {activeTab === "legacy" && <LegacyTab data={legacy} setData={setLegacy} legacyFiles={legacyFiles} setLegacyFiles={setLegacyFiles} />}
-        {activeTab === "vision" && <VisionTab data={vision} setData={setVision} />}
+        {activeTab === "vision" && <VisionTab data={vision} setData={setVision} visionFile={visionFile} setVisionFile={setVisionFile} />}
         {activeTab === "values" && <ValuesTab data={values} setData={setValues} />}
         {activeTab === "governance" && <GovernanceTab data={governance} setData={setGovernance} />}
         {activeTab === "compliance" && <ComplianceTab data={compliance} setData={setCompliance} />}

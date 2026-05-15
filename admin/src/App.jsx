@@ -22,6 +22,8 @@ import JoinRequests from "./pages/JoinRequests";
 import SocialLinks from "./pages/SocialLinks";
 import AboutUsAdmin from "./pages/AboutUs";
 import SacredMemory from "./pages/SacredMemory";
+import Pillars from "./pages/Pillars";
+import Applications from "./pages/Applications";
 
 const App = () => {
   useAuth();
@@ -57,6 +59,8 @@ const App = () => {
                     <Route path="/social-links" element={<SocialLinks />} />
                     <Route path="/about-us" element={<AboutUsAdmin />} />
                     <Route path="/sacred-memory" element={<SacredMemory />} />
+                    <Route path="/pillars" element={<Pillars />} />
+                    <Route path="/applications" element={<Applications />} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>

@@ -28,6 +28,7 @@ const aboutUsSchema = new mongoose.Schema(
       missionDesc: bilingualText("", ""),
       objectiveTitle: bilingualText("Core Objective", "मूल उद्देश्य"),
       objectiveDesc: bilingualText("", ""),
+      image: { type: String, default: "" },
     },
 
     /* ────── TAB 3: Core Values ────── */

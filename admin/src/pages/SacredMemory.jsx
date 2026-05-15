@@ -8,6 +8,8 @@ const SacredMemory = () => {
     headingHi: "",
     lifespanEn: "",
     lifespanHi: "",
+    memoryLineEn: "",
+    memoryLineHi: "",
     descriptionEn: "",
     descriptionHi: "",
   });
@@ -28,6 +30,8 @@ const SacredMemory = () => {
           headingHi: res.memory.heading?.hi || "",
           lifespanEn: res.memory.lifespan?.en || "",
           lifespanHi: res.memory.lifespan?.hi || "",
+          memoryLineEn: res.memory.memoryLine?.en || "",
+          memoryLineHi: res.memory.memoryLine?.hi || "",
           descriptionEn: res.memory.description?.en || "",
           descriptionHi: res.memory.description?.hi || "",
         });
@@ -102,6 +106,24 @@ const SacredMemory = () => {
               className={inp}
               value={form.lifespanHi}
               onChange={(e) => setForm({ ...form, lifespanHi: e.target.value })}
+            />
+          </div>
+
+          {/* Memory Line */}
+          <div>
+            <label className="text-sm font-bold block mb-2">Memory Line (EN)</label>
+            <input
+              className={inp}
+              value={form.memoryLineEn}
+              onChange={(e) => setForm({ ...form, memoryLineEn: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-bold block mb-2">Memory Line (HI)</label>
+            <input
+              className={inp}
+              value={form.memoryLineHi}
+              onChange={(e) => setForm({ ...form, memoryLineHi: e.target.value })}
             />
           </div>
 

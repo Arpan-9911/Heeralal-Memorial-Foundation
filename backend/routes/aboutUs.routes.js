@@ -19,6 +19,7 @@ router.put(
   protectAdmin,
   uploadAbout.fields([
     { name: "legacyImages", maxCount: 5 },
+    { name: "visionImage", maxCount: 1 },
   ]),
   updateAboutUs
 );

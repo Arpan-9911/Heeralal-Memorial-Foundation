@@ -5,6 +5,7 @@ import Achievement from "../models/Achievement.js";
 export const getAchievements = async (req, res) => {
   try {
     const achievements = await Achievement.find().sort({
+      serialNumber: 1,
       createdAt: -1,
     });
 
@@ -37,6 +38,8 @@ export const createAchievement = async (req, res) => {
         en: req.body.presentedByEn,
         hi: req.body.presentedByHi,
       },
+
+      serialNumber: req.body.serialNumber || 0,
 
       image: req.file?.filename,
     });
@@ -88,6 +91,10 @@ export const updateAchievement = async (req, res) => {
       en: req.body.presentedByEn,
       hi: req.body.presentedByHi,
     };
+
+    if (req.body.serialNumber !== undefined) {
+      achievement.serialNumber = req.body.serialNumber;
+    }
 
     await achievement.save();
 

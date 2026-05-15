@@ -56,4 +56,9 @@ export const getSettings = async () => {
   return response.data;
 };
 
+export const getPillars = async () => {
+  const response = await API.get("/pillars");
+  return response.data;
+};
+
 export default API;

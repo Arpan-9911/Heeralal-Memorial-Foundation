@@ -23,6 +23,10 @@ const settingsSchema = new mongoose.Schema(
         value: { type: String },
       },
     ],
+    executionLayout: {
+      type: [Number],
+      default: [3],
+    },
   },
   { timestamps: true }
 );
