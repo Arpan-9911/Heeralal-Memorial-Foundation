@@ -30,20 +30,24 @@ const PressGallery = ({ galleryImages }) => {
       </div>
 
       {/* Image Grid */}
-      <div className="grid grid-cols-2 gap-3">
-        {galleryImages.map((img) => (
-          <div
-            key={img._id}
-            className="overflow-hidden rounded-lg border border-gray-100 group cursor-pointer"
-          >
-            <img
-              src={import.meta.env.VITE_BACKEND_URL + "/uploads/media/images/" + img.image}
-              alt={img.alt}
-              className="w-full h-36 object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-          </div>
-        ))}
-      </div>
+      <div className="columns-2 gap-3 space-y-3">
+  {galleryImages.map((img) => (
+    <div
+      key={img._id}
+      className="break-inside-avoid overflow-hidden rounded-lg border border-gray-100 group cursor-pointer"
+    >
+      <img
+        src={
+          import.meta.env.VITE_BACKEND_URL +
+          "/uploads/media/images/" +
+          img.image
+        }
+        alt={img.alt}
+        className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
+      />
+    </div>
+  ))}
+</div>
     </div>
   );
 };
@@ -133,7 +137,6 @@ const Media = () => {
         setGalleryImages(mediaResponse.media.images);
         setVideoData(mediaResponse.media.video);
         setAnnouncements(announcementsResponse.announcements);
-        console.log("Announcements data fetched successfully:", announcementsResponse);
       } catch (error) {
         console.error("Error fetching media data:", error);
       }

@@ -262,12 +262,12 @@ const MediaGallery = () => {
                   Preview
                 </label>
 
-                <div className="mt-2 h-64 rounded-2xl overflow-hidden border border-dashed border-[var(--admin-border)] bg-white flex items-center justify-center">
+                <div className="mt-2 rounded-2xl overflow-hidden border border-dashed border-[var(--admin-border)] bg-white flex items-center justify-center min-h-[250px] p-3">
                   {imgForm.preview ? (
                     <img
                       src={imgForm.preview}
                       alt=""
-                      className="w-full h-full object-cover"
+                      className="max-w-full h-auto rounded-xl"
                     />
                   ) : (
                     <p className="text-sm text-gray-400">Image preview</p>
@@ -285,24 +285,22 @@ const MediaGallery = () => {
               Loading gallery...
             </div>
           ) : images.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
               {images.map((img) => (
                 <div
                   key={img._id}
-                  className="group relative rounded-2xl overflow-hidden border border-[var(--admin-border)] bg-white"
+                  className="group break-inside-avoid mb-4 rounded-2xl overflow-hidden border border-[var(--admin-border)] bg-white"
                 >
                   {/* Image */}
-                  <div className="relative">
+                  <div className="relative overflow-hidden">
                     <img
-                      src={`${import.meta.env.VITE_BACKEND_URL}/uploads/media/images/${
-                        img.image
-                      }`}
+                      src={`${import.meta.env.VITE_BACKEND_URL}/uploads/media/images/${img.image}`}
                       alt={img.alt}
-                      className="w-full h-52 object-cover"
+                      className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
                     />
 
                     {/* Overlay */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
                       <button
                         onClick={() => delImage(img._id)}
                         className="px-4 py-2 text-xs font-semibold rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all"
@@ -313,11 +311,13 @@ const MediaGallery = () => {
                   </div>
 
                   {/* Caption */}
-                  <div className="p-3">
-                    <p className="text-xs text-gray-700 line-clamp-2">
-                      {img.alt || "No caption"}
-                    </p>
-                  </div>
+                  {img.alt && (
+                    <div className="p-3">
+                      <p className="text-xs text-gray-700 leading-relaxed">
+                        {img.alt}
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
