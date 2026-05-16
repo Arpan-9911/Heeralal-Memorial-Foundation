@@ -69,9 +69,9 @@ const Applications = () => {
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold">Application Forms</h1>
+        <h1 className="text-xl font-bold">Join Us — Applications</h1>
         <p className="text-sm text-[var(--admin-muted)] mt-1">
-          View submissions from Volunteer, Skill Development, and Membership forms
+          View and manage all submissions from the Join Us page — Volunteer, Skill Development, and Membership forms
         </p>
       </div>
 

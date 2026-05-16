@@ -12,7 +12,7 @@ import NotFound from "./pages/NotFound";
 import Donate from "./pages/Donate";
 import Contact from "./pages/Contact";
 import JoinUs from "./pages/JoinUs";
-import ApplicationForms from "./pages/ApplicationForms";
+
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -43,7 +43,7 @@ const App = () => {
           <Route path="/donate" element={<Donate />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/join-us" element={<JoinUs />} />
-          <Route path="/apply" element={<ApplicationForms />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

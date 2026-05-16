@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-import Button from "../components/common/Button";
+import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -22,60 +22,40 @@ const heroData = {
     "https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=1974",
 };
 
-const roles = [
+const formTypes = [
   {
+    key: "volunteer",
+    title: { en: "Volunteer Application Form", hi: "स्वयंसेवक आवेदन पत्र" },
+    subtitle: { en: "Join us as a Volunteer", hi: "स्वयंसेवक के रूप में जुड़ें" },
     icon: "🤝",
-    value: "volunteer",
-    label: { en: "Volunteer", hi: "स्वयंसेवक" },
+    signatureLabel: { en: "Volunteer Signature", hi: "स्वयंसेवक के हस्ताक्षर" },
     desc: {
       en: "Dedicate your time and skills to community projects, health camps, and educational drives.",
       hi: "सामुदायिक परियोजनाओं, स्वास्थ्य शिविरों और शैक्षिक अभियानों के लिए अपना समय और कौशल समर्पित करें।",
     },
   },
   {
+    key: "skill_development",
+    title: { en: "Skill Development Scheme — Enrollment Form", hi: "कौशल विकास योजना — नामांकन फॉर्म" },
+    subtitle: { en: "Enroll in our Skill Development Program", hi: "हमारे कौशल विकास कार्यक्रम में नामांकन करें" },
     icon: "🎓",
-    value: "intern",
-    label: { en: "Intern", hi: "इंटर्न" },
+    signatureLabel: { en: "Trainee Signature", hi: "प्रशिक्षु के हस्ताक्षर" },
     desc: {
       en: "Gain hands-on experience in social development while contributing to real-world impact projects.",
       hi: "वास्तविक प्रभाव परियोजनाओं में योगदान देते हुए सामाजिक विकास में व्यावहारिक अनुभव प्राप्त करें।",
     },
   },
   {
-    icon: "🌾",
-    value: "fieldworker",
-    label: { en: "Field Worker", hi: "फील्ड वर्कर" },
+    key: "membership",
+    title: { en: "Membership Application Form", hi: "सदस्यता आवेदन पत्र" },
+    subtitle: { en: "Apply for Foundation Membership", hi: "फाउंडेशन सदस्यता के लिए आवेदन करें" },
+    icon: "📋",
+    signatureLabel: { en: "Member Signature", hi: "सदस्य के हस्ताक्षर" },
     desc: {
-      en: "Work directly with rural and underserved communities on the ground level.",
-      hi: "ग्रामीण और वंचित समुदायों के साथ सीधे जमीनी स्तर पर काम करें।",
+      en: "Become a member of the Foundation and contribute to institutional partnerships and governance.",
+      hi: "फाउंडेशन के सदस्य बनें और संस्थागत साझेदारी और शासन में योगदान दें।",
     },
-  },
-  {
-    icon: "💰",
-    value: "donor",
-    label: { en: "Donor", hi: "दानकर्ता" },
-    desc: {
-      en: "Support our programs financially and help us scale our impact across communities.",
-      hi: "हमारे कार्यक्रमों को आर्थिक रूप से समर्थन दें और हमें समुदायों में अपना प्रभाव बढ़ाने में मदद करें।",
-    },
-  },
-  {
-    icon: "🏢",
-    value: "partner",
-    label: { en: "CSR / Partner", hi: "CSR / साझेदार" },
-    desc: {
-      en: "Collaborate with us on institutional partnerships, CSR initiatives, and MoU-based programs.",
-      hi: "संस्थागत साझेदारी, CSR पहल और MoU-आधारित कार्यक्रमों पर हमारे साथ सहयोग करें।",
-    },
-  },
-  {
-    icon: "✨",
-    value: "other",
-    label: { en: "Other", hi: "अन्य" },
-    desc: {
-      en: "Have a unique way to contribute? Tell us about it and we'll find the right fit for you.",
-      hi: "योगदान करने का कोई अनूठा तरीका है? हमें बताएं और हम आपके लिए सही जगह खोजेंगे।",
-    },
+    extra: ["dob", "membershipFees"],
   },
 ];
 
@@ -184,88 +164,49 @@ const WhyJoinSection = () => {
   );
 };
 
-const RoleCards = ({ selectedRole, onSelect }) => {
+/* ────────────────────────── INLINE APPLICATION FORM ───────────────────────── */
+
+const ApplicationForm = ({ formDef, onClose }) => {
   const { lang } = useLanguage();
-
-  return (
-    <section className="px-4 py-12">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-secondary)]">
-            {lang === "en"
-              ? "How Would You Like to Contribute?"
-              : "आप कैसे योगदान देना चाहेंगे?"}
-          </h2>
-          <p className="text-sm text-gray-500 mt-2">
-            {lang === "en"
-              ? "Select a role that best fits you"
-              : "वह भूमिका चुनें जो आपको सबसे अच्छी लगे"}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {roles.map((role) => (
-            <button
-              key={role.value}
-              onClick={() => onSelect(role.value)}
-              className={`p-4 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer ${
-                selectedRole === role.value
-                  ? "border-[var(--color-primary)] bg-[var(--color-primary-light)] shadow-md scale-105"
-                  : "border-gray-200 bg-white hover:border-[var(--color-primary)] hover:shadow-sm"
-              }`}
-            >
-              <div className="text-2xl mb-2">{role.icon}</div>
-              <p className="text-xs font-bold text-[var(--color-secondary)]">
-                {role.label[lang]}
-              </p>
-            </button>
-          ))}
-        </div>
-
-        {selectedRole && (
-          <div className="mt-6 bg-[var(--color-primary-light)] border border-[var(--color-primary)] rounded-lg p-4 max-w-2xl mx-auto text-center">
-            <p className="text-sm text-gray-700">
-              {roles.find((r) => r.value === selectedRole)?.desc[lang]}
-            </p>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-};
-
-const JoinForm = ({ selectedRole }) => {
-  const { lang } = useLanguage();
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    message: "",
+  const [form, setForm] = useState({
+    name: "", aadharNo: "", dob: "", address: "",
+    mobileNo: "", emailId: "", occupation: "",
+    reference: "", department: "", membershipFees: "",
   });
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handlePhoto = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!selectedRole) {
-      alert(lang === "en" ? "Please select a role above" : "कृपया ऊपर एक भूमिका चुनें");
+    if (!form.name || !form.mobileNo) {
+      toast.error(lang === "en" ? "Please fill required fields" : "कृपया आवश्यक फ़ील्ड भरें");
       return;
     }
 
     try {
       setSubmitting(true);
-      await axios.post(`${API_URL}/join-requests`, {
-        ...formData,
-        role: selectedRole,
-      });
+      const fd = new FormData();
+      fd.append("formType", formDef.key);
+      Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+      if (photo) fd.append("photo", photo);
+
+      await axios.post(`${API_URL}/applications`, fd);
       setSubmitted(true);
+      toast.success(lang === "en" ? "Application submitted!" : "आवेदन सफलतापूर्वक जमा!");
     } catch (err) {
-      alert(err.response?.data?.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Something went wrong");
     } finally {
       setSubmitting(false);
     }
@@ -273,127 +214,277 @@ const JoinForm = ({ selectedRole }) => {
 
   if (submitted) {
     return (
-      <section className="px-4 py-12 bg-[var(--color-primary-light)]">
-        <div className="max-w-xl mx-auto bg-white rounded-lg border border-gray-200 shadow-sm p-10 text-center">
-          <div className="text-5xl mb-4">🎉</div>
-          <h2 className="text-xl font-bold text-[var(--color-secondary)] mb-2">
-            {lang === "en" ? "Thank You for Joining!" : "जुड़ने के लिए धन्यवाद!"}
-          </h2>
-          <p className="text-sm text-gray-600">
-            {lang === "en"
-              ? "Your request has been submitted successfully. Our team will review it and get back to you soon."
-              : "आपका अनुरोध सफलतापूर्वक सबमिट हो गया है। हमारी टीम इसकी समीक्षा करेगी और जल्द ही आपसे संपर्क करेगी।"}
-          </p>
-        </div>
-      </section>
+      <div className="max-w-xl mx-auto bg-white rounded-lg border border-gray-200 shadow-sm p-10 text-center">
+        <div className="text-5xl mb-4">🎉</div>
+        <h2 className="text-xl font-bold text-[var(--color-secondary)] mb-2">
+          {lang === "en" ? "Application Submitted!" : "आवेदन जमा हो गया!"}
+        </h2>
+        <p className="text-sm text-gray-600">
+          {lang === "en"
+            ? "Your application has been received. Our team will review it shortly."
+            : "आपका आवेदन प्राप्त हो गया है। हमारी टीम जल्द ही इसकी समीक्षा करेगी।"}
+        </p>
+        <button
+          onClick={onClose}
+          className="mt-6 px-6 py-2 text-xs font-semibold text-[var(--color-secondary)] border border-[var(--color-secondary)] rounded-lg hover:bg-[var(--color-secondary)] hover:text-white transition-all duration-200"
+        >
+          {lang === "en" ? "← Back to Forms" : "← फॉर्म पर वापस"}
+        </button>
+      </div>
     );
   }
 
+  const inp =
+    "w-full bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400";
+  const fieldWrap =
+    "group flex items-center rounded border border-gray-300 px-3 py-2.5 bg-white hover:border-[var(--color-primary)] focus-within:border-[var(--color-primary)] focus-within:ring-2 focus-within:ring-[var(--color-primary-light)] transition-all duration-200";
+
+  const isMembership = formDef.key === "membership";
+
   return (
-    <section className="px-4 py-12 bg-[var(--color-primary-light)]">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8">
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-1 h-5 bg-[var(--color-primary)] rounded" />
-          <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
-            {lang === "en" ? "Your Details" : "आपका विवरण"}
-          </h3>
+    <div className="max-w-2xl mx-auto bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      {/* Header mimicking the paper form */}
+      <div className="bg-[var(--color-primary-light)] border-b border-[var(--color-primary)] px-6 py-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="text-3xl">{formDef.icon}</div>
+            <div>
+              <h3 className="text-base font-bold text-[var(--color-secondary)] uppercase tracking-wide">
+                {formDef.title[lang]}
+              </h3>
+              <p className="text-xs text-gray-600 mt-0.5">
+                Heeralal Memorial Foundation
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors flex items-center gap-1"
+          >
+            ✕ {lang === "en" ? "Close" : "बंद"}
+          </button>
+        </div>
+      </div>
+
+      {/* Form Body */}
+      <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Department + Date Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-gray-500">
+              {lang === "en" ? "Department" : "विभाग"}
+            </label>
+            <div className={fieldWrap}>
+              <input name="department" value={form.department} onChange={handleChange} placeholder={lang === "en" ? "Department name" : "विभाग का नाम"} className={inp} />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-gray-500">
+              {lang === "en" ? "Date" : "दिनांक"}
+            </label>
+            <div className={fieldWrap}>
+              <input type="date" name="date" className={inp} defaultValue={new Date().toISOString().split("T")[0]} readOnly />
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-gray-500">
-                {lang === "en" ? "Full Name" : "पूरा नाम"}{" "}
-                <span className="text-red-500">*</span>
-              </label>
-              <div className="group flex items-center rounded border border-gray-300 px-3 py-2.5 bg-white hover:border-[var(--color-primary)] focus-within:border-[var(--color-primary-light)] focus-within:ring-3 focus-within:ring-[var(--color-primary-light)] transition-all duration-200">
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder={lang === "en" ? "Enter your full name" : "अपना पूरा नाम दर्ज करें"}
-                  className="w-full bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
-                  required
-                />
-              </div>
+        {/* Photo Upload */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-gray-500">
+            {lang === "en" ? "Passport Photo" : "पासपोर्ट फोटो"}
+          </label>
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-24 rounded border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
+              {photoPreview ? (
+                <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-gray-400 text-xs text-center px-1">{lang === "en" ? "Photo" : "फोटो"}</span>
+              )}
             </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-gray-500">
-                {lang === "en" ? "Email Address" : "ईमेल पता"}{" "}
-                <span className="text-red-500">*</span>
-              </label>
-              <div className="group flex items-center rounded border border-gray-300 px-3 py-2.5 bg-white hover:border-[var(--color-primary)] focus-within:border-[var(--color-primary-light)] focus-within:ring-3 focus-within:ring-[var(--color-primary-light)] transition-all duration-200">
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder={lang === "en" ? "Enter your email" : "अपना ईमेल दर्ज करें"}
-                  className="w-full bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
-                  required
-                />
-              </div>
-            </div>
+            <input type="file" accept="image/*" onChange={handlePhoto} className="text-xs" />
           </div>
+        </div>
 
+        {/* Name */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-gray-500">
+            {lang === "en" ? "Name" : "नाम"} <span className="text-red-500">*</span>
+          </label>
+          <div className={fieldWrap}>
+            <input name="name" value={form.name} onChange={handleChange} placeholder={lang === "en" ? "Full Name" : "पूरा नाम"} className={inp} required />
+          </div>
+        </div>
+
+        {/* Aadhar */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-gray-500">
+            {lang === "en" ? "Aadhar No." : "आधार नं."}
+          </label>
+          <div className={fieldWrap}>
+            <input name="aadharNo" value={form.aadharNo} onChange={handleChange} placeholder="XXXX XXXX XXXX" className={inp} />
+          </div>
+        </div>
+
+        {/* DOB — membership only */}
+        {isMembership && (
           <div className="space-y-1.5">
             <label className="block text-xs font-medium text-gray-500">
-              {lang === "en" ? "Phone Number" : "फ़ोन नंबर"}{" "}
-              <span className="text-red-500">*</span>
+              {lang === "en" ? "D.O.B & Age" : "जन्मतिथि एवं आयु"}
             </label>
-            <div className="group flex items-center rounded border border-gray-300 px-3 py-2.5 bg-white hover:border-[var(--color-primary)] focus-within:border-[var(--color-primary-light)] focus-within:ring-3 focus-within:ring-[var(--color-primary-light)] transition-all duration-200">
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+91 XXXXX XXXXX"
-                className="w-full bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
-                required
-              />
+            <div className={fieldWrap}>
+              <input name="dob" value={form.dob} onChange={handleChange} placeholder={lang === "en" ? "DD/MM/YYYY & Age" : "DD/MM/YYYY एवं आयु"} className={inp} />
             </div>
           </div>
+        )}
 
+        {/* Address */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-gray-500">
+            {lang === "en" ? "Address" : "पता"}
+          </label>
+          <div className="group rounded border border-gray-300 bg-white hover:border-[var(--color-primary)] focus-within:border-[var(--color-primary)] focus-within:ring-2 focus-within:ring-[var(--color-primary-light)] transition-all duration-200">
+            <textarea name="address" rows={2} value={form.address} onChange={handleChange} placeholder={lang === "en" ? "Full Address" : "पूरा पता"} className="w-full resize-none bg-transparent px-3 py-2.5 outline-none text-sm text-gray-800 placeholder-gray-400 rounded" />
+          </div>
+        </div>
+
+        {/* Mobile + Email */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="block text-xs font-medium text-gray-500">
-              {lang === "en" ? "Why do you want to join?" : "आप क्यों जुड़ना चाहते हैं?"}{" "}
-              <span className="text-gray-400 text-[10px]">({lang === "en" ? "optional" : "वैकल्पिक"})</span>
+              {lang === "en" ? "Mobile No." : "मोबाइल नं."} <span className="text-red-500">*</span>
             </label>
-            <div className="group rounded border border-gray-300 bg-white hover:border-[var(--color-primary)] focus-within:border-[var(--color-primary-light)] focus-within:ring-3 focus-within:ring-[var(--color-primary-light)] transition-all duration-200">
-              <textarea
-                name="message"
-                rows={4}
-                value={formData.message}
-                onChange={handleChange}
-                placeholder={
-                  lang === "en"
-                    ? "Tell us about yourself and how you'd like to help..."
-                    : "हमें अपने बारे में बताएं और आप कैसे मदद करना चाहेंगे..."
-                }
-                className="w-full resize-none bg-transparent px-3 py-2.5 outline-none text-sm text-gray-800 placeholder-gray-400 rounded"
-              />
+            <div className={fieldWrap}>
+              <input name="mobileNo" type="tel" value={form.mobileNo} onChange={handleChange} placeholder="+91 XXXXX XXXXX" className={inp} required />
             </div>
           </div>
-
-          {/* Selected Role Indicator */}
-          {selectedRole && (
-            <div className="flex items-center gap-2 text-sm bg-[var(--color-primary-light)] rounded-lg px-4 py-2 border border-[var(--color-primary)]">
-              <span className="text-lg">{roles.find(r => r.value === selectedRole)?.icon}</span>
-              <span className="font-semibold text-[var(--color-secondary)]">
-                {lang === "en" ? "Applying as:" : "आवेदन:"}{" "}
-                {roles.find(r => r.value === selectedRole)?.label[lang]}
-              </span>
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-gray-500">
+              {lang === "en" ? "Email Id" : "ईमेल आईडी"}
+            </label>
+            <div className={fieldWrap}>
+              <input name="emailId" type="email" value={form.emailId} onChange={handleChange} placeholder="email@example.com" className={inp} />
             </div>
-          )}
+          </div>
+        </div>
 
-          <Button type="submit" disabled={submitting}>
-            {submitting
-              ? (lang === "en" ? "Submitting..." : "भेज रहे हैं...")
-              : (lang === "en" ? "Submit Application" : "आवेदन जमा करें")}
-          </Button>
-        </form>
+        {/* Occupation + Reference */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-gray-500">
+              {lang === "en" ? "Occupation" : "व्यवसाय"}
+            </label>
+            <div className={fieldWrap}>
+              <input name="occupation" value={form.occupation} onChange={handleChange} placeholder={lang === "en" ? "Your occupation" : "आपका व्यवसाय"} className={inp} />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-gray-500">
+              {lang === "en" ? "Reference" : "संदर्भ"}
+            </label>
+            <div className={fieldWrap}>
+              <input name="reference" value={form.reference} onChange={handleChange} placeholder={lang === "en" ? "Reference person" : "संदर्भ व्यक्ति"} className={inp} />
+            </div>
+          </div>
+        </div>
+
+        {/* Membership Fees — membership only */}
+        {isMembership && (
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-gray-500">
+              {lang === "en" ? "Membership Fees" : "सदस्यता शुल्क"}
+            </label>
+            <div className={fieldWrap}>
+              <input name="membershipFees" value={form.membershipFees} onChange={handleChange} placeholder="₹" className={inp} />
+            </div>
+          </div>
+        )}
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full py-3 rounded-lg font-bold text-sm text-white transition-all duration-200 disabled:opacity-50 cursor-pointer"
+          style={{
+            background: "linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark, #2a0a08) 100%)",
+          }}
+        >
+          {submitting
+            ? (lang === "en" ? "Submitting..." : "भेज रहे हैं...")
+            : (lang === "en" ? "Submit Application" : "आवेदन जमा करें")}
+        </button>
+
+        {/* Footer */}
+        <div className="pt-3 border-t border-gray-200 flex justify-between text-[10px] text-gray-400">
+          <span>{formDef.signatureLabel[lang]}</span>
+          <span>{lang === "en" ? "Authorized Person (HLM Foundation)" : "अधिकृत व्यक्ति (एचएलएम फाउंडेशन)"}</span>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+/* ────────────────────────── FORM SELECTOR CARDS ───────────────────────────── */
+
+const FormCardsSection = () => {
+  const { lang } = useLanguage();
+  const [activeForm, setActiveForm] = useState(null);
+
+  return (
+    <section className="px-4 py-12">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8">
+          <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
+            {lang === "en" ? "Choose Your Path" : "अपना रास्ता चुनें"}
+          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-secondary)] mt-2">
+            {lang === "en"
+              ? "How Would You Like to Contribute?"
+              : "आप कैसे योगदान देना चाहेंगे?"}
+          </h2>
+          <div className="w-16 h-1 bg-[var(--color-primary)] mx-auto mt-3 rounded"></div>
+          <p className="text-sm text-gray-500 mt-3 max-w-md mx-auto leading-relaxed">
+            {lang === "en"
+              ? "Select the appropriate form below to apply for volunteering, skill development, or membership with the Foundation."
+              : "फाउंडेशन के साथ स्वयंसेवा, कौशल विकास, या सदस्यता के लिए नीचे उपयुक्त फॉर्म चुनें।"}
+          </p>
+        </div>
+
+        {/* Cards */}
+        {!activeForm && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+            {formTypes.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setActiveForm(f)}
+                className="bg-white border-2 border-gray-200 rounded-xl p-6 text-center hover:border-[var(--color-primary)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+              >
+                <div className="text-4xl mb-3">{f.icon}</div>
+                <h3 className="text-sm font-bold text-[var(--color-secondary)] group-hover:text-[var(--color-primary-dark)]">
+                  {f.title[lang]}
+                </h3>
+                <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                  {f.desc[lang]}
+                </p>
+                <div className="mt-4 text-[10px] uppercase tracking-widest font-bold text-[var(--color-primary)]">
+                  {lang === "en" ? "Apply Now →" : "अभी आवेदन करें →"}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Active Form (inline) */}
+        {activeForm && (
+          <div>
+            <button
+              onClick={() => setActiveForm(null)}
+              className="mb-4 text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors flex items-center gap-1"
+            >
+              ← {lang === "en" ? "Back to all forms" : "सभी फॉर्म पर वापस"}
+            </button>
+            <ApplicationForm formDef={activeForm} onClose={() => setActiveForm(null)} />
+          </div>
+        )}
       </div>
     </section>
   );
@@ -402,15 +493,12 @@ const JoinForm = ({ selectedRole }) => {
 /* ────────────────────────────── MAIN PAGE ─────────────────────────────────── */
 
 const JoinUs = () => {
-  const [selectedRole, setSelectedRole] = useState("");
-
   return (
     <div>
       <Navbar />
       <JoinHero />
       <WhyJoinSection />
-      <RoleCards selectedRole={selectedRole} onSelect={setSelectedRole} />
-      <JoinForm selectedRole={selectedRole} />
+      <FormCardsSection />
       <Footer />
     </div>
   );

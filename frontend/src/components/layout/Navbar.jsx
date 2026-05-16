@@ -80,7 +80,7 @@ const Topbar = () => {
             <h1 className="text-xl font-bold text-[var(--color-secondary)] tracking-wide">
               {lang === "en"
                 ? "Heeralal Memorial Foundation"
-                : "हीरलल मेमोरियल फाउंडेशन"}
+                : "हीरालाल मेमोरियल फाउंडेशन"}
             </h1>
             <p className="text-xs text-[var(--color-primary-dark)] font-medium italic">
               {lang === "en"
@@ -159,7 +159,7 @@ const MainNav = () => {
             <div className="flex gap-10 text-xs font-medium flex-1">
               <Link to={"/media"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
               <Link to={"/join-us"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "JOIN US" : "जुड़ें"}</Link>
-              <Link to={"/apply"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "APPLY" : "आवेदन"}</Link>
+
               <Link to={"/teams"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "TEAM" : "टीम" }</Link>
               <Link to={"/contact"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "CONTACT US" : "संपर्क करें" }</Link>
             </div>

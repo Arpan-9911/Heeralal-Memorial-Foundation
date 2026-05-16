@@ -40,7 +40,6 @@ const Sidebar = ({ open, setOpen }) => {
           <Link to="/programs" onClick={() => setOpen(false)}>{lang === "en" ? "PROGRAMS" : "प्रोग्राम"}</Link>
           <Link to="/media" onClick={() => setOpen(false)}>{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
           <Link to="/join-us" onClick={() => setOpen(false)}>{lang === "en" ? "JOIN US" : "जुड़ें"}</Link>
-          <Link to="/apply" onClick={() => setOpen(false)}>{lang === "en" ? "APPLY" : "आवेदन"}</Link>
           <Link to="/teams" onClick={() => setOpen(false)}>{lang === "en" ? "TEAM" : "टीम"}</Link>
           <Link to="/contact" onClick={() => setOpen(false)}>{lang === "en" ? "CONTACT US" : "संपर्क करें"}</Link>
 

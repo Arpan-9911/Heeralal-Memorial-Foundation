@@ -18,7 +18,7 @@ import Donations from "./pages/Donations";
 import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Commendation from "./pages/Commendation";
-import JoinRequests from "./pages/JoinRequests";
+
 import SocialLinks from "./pages/SocialLinks";
 import AboutUsAdmin from "./pages/AboutUs";
 import SacredMemory from "./pages/SacredMemory";
@@ -55,7 +55,7 @@ const App = () => {
                     <Route path="/stats" element={<Stats />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/commendation" element={<Commendation />} />
-                    <Route path="/join-requests" element={<JoinRequests />} />
+
                     <Route path="/social-links" element={<SocialLinks />} />
                     <Route path="/about-us" element={<AboutUsAdmin />} />
                     <Route path="/sacred-memory" element={<SacredMemory />} />
