@@ -61,4 +61,9 @@ export const getPillars = async () => {
   return response.data;
 };
 
+export const getCommendationCards = async () => {
+  const response = await API.get("/commendation-cards");
+  return response.data;
+};
+
 export default API;

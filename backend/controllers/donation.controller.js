@@ -70,6 +70,7 @@ export const createDonation = asyncHandler(
       utrNumber,
       paymentMode: paymentMode || "upi",
       message: message || "",
+      screenshot: req.file ? req.file.filename : "",
     });
 
     res.status(201).json({

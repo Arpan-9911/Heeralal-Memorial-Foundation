@@ -33,6 +33,7 @@ const navItems = [
   { path: "/pillars", label: "Inst. Pillars", icon: "🏛️" },
   { path: "/applications", label: "Join / Applications", icon: "📝" },
   { path: "/commendation", label: "Commendation", icon: "📜" },
+  { path: "/commendation-cards", label: "Commendation Cards", icon: "🎖️" },
   { path: "/social-links", label: "Social Links", icon: "🔗" },
   { path: "/about-us", label: "About Us Page", icon: "ℹ️" },
   { path: "/sacred-memory", label: "In Loving Memory", icon: "🕊️" },

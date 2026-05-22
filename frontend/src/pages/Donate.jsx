@@ -200,38 +200,41 @@ const PaymentSection = () => {
             <div className="h-6 w-20 md:w-28 rounded" style={{ background: "linear-gradient(90deg, #0072bc, #00a4e4)" }} />
           </div>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* QR Code */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8 flex flex-col items-center">
-            <div className="flex items-center gap-2 mb-5 self-start">
-              <div className="w-1 h-5 bg-[var(--color-primary)] rounded" />
-              <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
-                {lang === "en" ? "Scan QR to Pay (UPI)" : "QR स्कैन करके भुगतान करें (UPI)"}
-              </h3>
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8 flex flex-col justify-between items-center h-full">
+            <div className="w-full flex flex-col items-center">
+              <div className="flex items-center gap-2 mb-5 self-start w-full">
+                <div className="w-1 h-5 bg-[var(--color-primary)] rounded" />
+                <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
+                  {lang === "en" ? "Scan QR to Pay (UPI)" : "QR स्कैन करके भुगतान करें (UPI)"}
+                </h3>
+              </div>
+
+              {qrSrc ? (
+                <div className="w-64 h-64 rounded-xl border-2 border-[var(--color-primary)] p-2 bg-white">
+                  <img src={qrSrc} alt="UPI QR Code" className="w-full h-full object-contain rounded-lg" />
+                </div>
+              ) : (
+                <div className="w-64 h-64 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                  <p className="text-sm text-gray-400 text-center px-4">
+                    {lang === "en" ? "QR Code will appear here" : "QR कोड यहाँ दिखेगा"}
+                  </p>
+                </div>
+              )}
+
+              {config?.upiId && (
+                <div className="mt-4 bg-[var(--color-primary-light)] rounded-lg px-4 py-2 border border-[var(--color-primary)]">
+                  <p className="text-xs text-gray-600">
+                    <span className="font-semibold text-[var(--color-secondary)]">UPI ID: </span>
+                    {config.upiId}
+                  </p>
+                </div>
+              )}
             </div>
 
-            {qrSrc ? (
-              <div className="w-64 h-64 rounded-xl border-2 border-[var(--color-primary)] p-2 bg-white">
-                <img src={qrSrc} alt="UPI QR Code" className="w-full h-full object-contain rounded-lg" />
-              </div>
-            ) : (
-              <div className="w-64 h-64 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
-                <p className="text-sm text-gray-400 text-center px-4">
-                  {lang === "en" ? "QR Code will appear here" : "QR कोड यहाँ दिखेगा"}
-                </p>
-              </div>
-            )}
-
-            {config?.upiId && (
-              <div className="mt-4 bg-[var(--color-primary-light)] rounded-lg px-4 py-2 border border-[var(--color-primary)]">
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-[var(--color-secondary)]">UPI ID: </span>
-                  {config.upiId}
-                </p>
-              </div>
-            )}
-
-            <p className="text-[11px] text-gray-500 mt-4 text-center italic">
+            <p className="text-[11px] text-gray-500 mt-6 text-center italic">
               {lang === "en"
                 ? "Open any UPI app (GPay, PhonePe, Paytm) → Scan → Pay → Fill the form below"
                 : "कोई भी UPI ऐप खोलें (GPay, PhonePe, Paytm) → स्कैन करें → भुगतान करें → नीचे फॉर्म भरें"}
@@ -239,42 +242,53 @@ const PaymentSection = () => {
           </div>
 
           {/* Bank Details */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-1 h-5 bg-[var(--color-primary)] rounded" />
-              <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
-                {lang === "en" ? "Bank Transfer Details" : "बैंक हस्तांतरण विवरण"}
-              </h3>
-            </div>
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8 flex flex-col justify-between h-full">
+            <div className="w-full">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-1 h-5 bg-[var(--color-primary)] rounded" />
+                <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
+                  {lang === "en" ? "Bank Transfer Details" : "बैंक हस्तांतरण विवरण"}
+                </h3>
+              </div>
 
-            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-              {bankItems.map((item, i) => (
-                <div key={i} className={`flex flex-col sm:flex-row sm:items-center px-5 py-4 ${i % 2 === 0 ? "bg-gray-50" : "bg-white"} ${i !== bankItems.length - 1 ? "border-b border-gray-200" : ""}`}>
-                  <span className="text-gray-600 font-medium sm:min-w-[160px] text-sm uppercase tracking-wider">
-                    {item.label[lang]}:
-                  </span>
-                  <span className="text-gray-900 text-base md:text-lg font-bold sm:ml-4 font-sans tracking-wide">
-                    {item.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Tax Info */}
-            <div className="mt-6 pt-5 border-t border-gray-200">
-              <h4 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)] mb-3">
-                {taxInfo.title[lang]}
-              </h4>
-              <p className="text-xs text-gray-600 leading-relaxed mb-4">{taxInfo.description[lang]}</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {taxInfo.points.map((point, i) => (
-                  <div key={i} className="flex items-center gap-2 px-3 py-2 rounded border border-gray-100 bg-[var(--color-bg)]">
-                    <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-                    <span className="text-[11px] font-semibold text-gray-800">{point[lang]}</span>
+              <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+                {bankItems.map((item, i) => (
+                  <div key={i} className={`flex flex-col sm:flex-row sm:items-center px-5 py-4.5 ${i % 2 === 0 ? "bg-gray-50" : "bg-white"} ${i !== bankItems.length - 1 ? "border-b border-gray-200" : ""}`}>
+                    <span className="text-gray-600 font-medium sm:min-w-[140px] text-xs uppercase tracking-wider">
+                      {item.label[lang]}:
+                    </span>
+                    <span className="text-gray-900 text-sm md:text-base font-bold sm:ml-4 font-sans tracking-wide">
+                      {item.value}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
+
+            <p className="text-[11px] text-gray-500 mt-6 text-center italic">
+              {lang === "en"
+                ? "Open your banking app → Add beneficiary or pay directly → Note UTR number → Fill the form below"
+                : "अपना बैंकिंग ऐप खोलें → लाभार्थी जोड़ें या सीधे भुगतान करें → UTR नंबर नोट करें → नीचे फॉर्म भरें"}
+            </p>
+          </div>
+        </div>
+
+        {/* Tax Info (beneath QR code & Bank Details) */}
+        <div className="mt-8 bg-white rounded-lg border border-gray-200 shadow-sm p-6 md:p-8">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-1 h-5 bg-[var(--color-primary)] rounded" />
+            <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
+              {taxInfo.title[lang]}
+            </h3>
+          </div>
+          <p className="text-xs text-gray-600 leading-relaxed mb-5">{taxInfo.description[lang]}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {taxInfo.points.map((point, i) => (
+              <div key={i} className="flex items-center gap-2.5 px-4 py-3 rounded border border-gray-100 bg-gray-50/50">
+                <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                <span className="text-xs font-semibold text-gray-800">{point[lang]}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -293,6 +307,7 @@ const PaymentConfirmationForm = () => {
     paymentMode: "upi",
     message: "",
   });
+  const [screenshotFile, setScreenshotFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -300,11 +315,31 @@ const PaymentConfirmationForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    setScreenshotFile(e.target.files[0] || null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setSubmitting(true);
-      await axios.post(`${API_URL}/donations`, formData);
+      const data = new FormData();
+      data.append("fullName", formData.fullName);
+      data.append("email", formData.email);
+      data.append("phone", formData.phone);
+      data.append("amount", formData.amount);
+      data.append("utrNumber", formData.utrNumber);
+      data.append("paymentMode", formData.paymentMode);
+      data.append("message", formData.message);
+      if (screenshotFile) {
+        data.append("screenshot", screenshotFile);
+      }
+
+      await axios.post(`${API_URL}/donations`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setSubmitted(true);
     } catch (err) {
       alert(err.response?.data?.message || "Something went wrong");
@@ -418,6 +453,21 @@ const PaymentConfirmationForm = () => {
                     <option value="other">{lang === "en" ? "Other" : "अन्य"}</option>
                   </select>
                 </div>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-medium text-gray-500">
+                {lang === "en" ? "Payment Screenshot (optional)" : "भुगतान का स्क्रीनशॉट (वैकल्पिक)"}
+              </label>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded cursor-pointer text-xs font-semibold text-gray-700 transition-all">
+                  <span>📁 {lang === "en" ? "Choose File" : "फ़ाइल चुनें"}</span>
+                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                </label>
+                <span className="text-xs text-gray-500 truncate max-w-xs">
+                  {screenshotFile ? screenshotFile.name : (lang === "en" ? "No file chosen" : "कोई फ़ाइल नहीं चुनी गई")}
+                </span>
               </div>
             </div>
 

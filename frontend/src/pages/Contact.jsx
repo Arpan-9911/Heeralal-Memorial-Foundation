@@ -5,7 +5,7 @@ import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
 import { getSettings } from "../api";
 
-/* ──────────────────────────────────── DATA ──────────────────────────────────── */
+/* ────────────────────────────── HERO DATA ──────────────────────────────────── */
 
 const heroData = {
   title: {
@@ -20,65 +20,13 @@ const heroData = {
     "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=1974",
 };
 
-const contactCards = [
-  {
-    icon: "📍",
-    title: { en: "Registered Office", hi: "पंजीकृत कार्यालय" },
-    lines: [
-      { en: "12/4B Institutional Area,", hi: "12/4B संस्थागत क्षेत्र," },
-      { en: "Central Delhi, New Delhi - 110001", hi: "मध्य दिल्ली, नई दिल्ली - 110001" },
-    ],
-  },
-  {
-    icon: "📞",
-    title: { en: "Phone & Helpline", hi: "फ़ोन और हेल्पलाइन" },
-    lines: [
-      { en: "General: +91 11-2345XXXX", hi: "सामान्य: +91 11-2345XXXX" },
-      { en: "Helpline: 1800-XXX-XXXX (Toll Free)", hi: "हेल्पलाइन: 1800-XXX-XXXX (टोल फ्री)" },
-    ],
-  },
-  {
-    icon: "✉️",
-    title: { en: "Email", hi: "ईमेल" },
-    lines: [
-      { en: "General: admin@hlmf.org.in", hi: "सामान्य: admin@hlmf.org.in" },
-      { en: "Donations: donate@hlmf.org.in", hi: "दान: donate@hlmf.org.in" },
-      { en: "Careers: hr@hlmf.org.in", hi: "करियर: hr@hlmf.org.in" },
-    ],
-  },
-  {
-    icon: "🕐",
-    title: { en: "Office Hours", hi: "कार्यालय समय" },
-    lines: [
-      { en: "Monday – Friday: 9:30 AM – 5:30 PM", hi: "सोमवार – शुक्रवार: सुबह 9:30 – शाम 5:30" },
-      { en: "Saturday: 10:00 AM – 2:00 PM", hi: "शनिवार: सुबह 10:00 – दोपहर 2:00" },
-      { en: "Sunday & Gazetted Holidays: Closed", hi: "रविवार और राजपत्रित अवकाश: बंद" },
-    ],
-  },
-];
+/* ────────────────────────── HELPER ───────────────────────────── */
 
-const departments = [
-  {
-    title: { en: "Education Wing", hi: "शिक्षा विभाग" },
-    contact: { en: "education@hlmf.org.in", hi: "education@hlmf.org.in" },
-    head: { en: "Ms. Anjali Sharma", hi: "सुश्री अंजलि शर्मा" },
-  },
-  {
-    title: { en: "Healthcare Wing", hi: "स्वास्थ्य सेवा विभाग" },
-    contact: { en: "health@hlmf.org.in", hi: "health@hlmf.org.in" },
-    head: { en: "Dr. Vivek Mehra", hi: "डॉ. विवेक मेहरा" },
-  },
-  {
-    title: { en: "Finance & Audit", hi: "वित्त एवं ऑडिट" },
-    contact: { en: "finance@hlmf.org.in", hi: "finance@hlmf.org.in" },
-    head: { en: "Mr. Arjun Malhotra", hi: "श्री अर्जुन मल्होत्रा" },
-  },
-  {
-    title: { en: "Legal & Compliance", hi: "विधि एवं अनुपालन" },
-    contact: { en: "legal@hlmf.org.in", hi: "legal@hlmf.org.in" },
-    head: { en: "Ms. Kavita Jain", hi: "सुश्री कविता जैन" },
-  },
-];
+const getContactVal = (settings, key) => {
+  if (!settings || !settings.contact) return null;
+  const item = settings.contact.find((i) => i.key === key);
+  return item ? item.value : null;
+};
 
 /* ────────────────────────── SECTION COMPONENTS ───────────────────────────── */
 
@@ -110,93 +58,6 @@ const ContactHero = () => {
   );
 };
 
-const ContactCards = ({ settings }) => {
-  const { lang } = useLanguage();
-
-  const getContactVal = (key) => {
-    if (!settings || !settings.contact) return null;
-    const item = settings.contact.find(i => i.key === key);
-    return item ? item.value : null;
-  };
-
-  const dynamicCards = [
-    {
-      icon: "📍",
-      title: { en: "Registered Office", hi: "पंजीकृत कार्यालय" },
-      lines: [
-        { 
-          en: getContactVal("addressEn") || "12/4B Institutional Area, New Delhi - 110001", 
-          hi: getContactVal("addressHi") || "12/4B संस्थागत क्षेत्र, नई दिल्ली - 110001" 
-        },
-        ...(getContactVal("address2En") ? [
-          {
-            en: getContactVal("address2En"),
-            hi: getContactVal("address2Hi")
-          }
-        ] : []),
-      ],
-    },
-    {
-      icon: "📞",
-      title: { en: "Phone & Helpline", hi: "फ़ोन और हेल्पलाइन" },
-      lines: [
-        { 
-          en: `General: ${getContactVal("phone") || "+91 11-2345XXXX"}`, 
-          hi: `सामान्य: ${getContactVal("phone") || "+91 11-2345XXXX"}` 
-        },
-        { en: "Helpline: 1800-XXX-XXXX (Toll Free)", hi: "हेल्पलाइन: 1800-XXX-XXXX (टोल फ्री)" },
-      ],
-    },
-    {
-      icon: "✉️",
-      title: { en: "Email", hi: "ईमेल" },
-      lines: [
-        { 
-          en: `General: ${getContactVal("email") || "admin@hlmf.org.in"}`, 
-          hi: `सामान्य: ${getContactVal("email") || "admin@hlmf.org.in"}` 
-        },
-        { en: "Donations: donate@hlmf.org.in", hi: "दान: donate@hlmf.org.in" },
-        { en: "Careers: hr@hlmf.org.in", hi: "करियर: hr@hlmf.org.in" },
-      ],
-    },
-    {
-      icon: "🕐",
-      title: { en: "Office Hours", hi: "कार्यालय समय" },
-      lines: [
-        { en: "Monday – Friday: 9:30 AM – 5:30 PM", hi: "सोमवार – शुक्रवार: सुबह 9:30 – शाम 5:30" },
-        { en: "Saturday: 10:00 AM – 2:00 PM", hi: "शनिवार: सुबह 10:00 – दोपहर 2:00" },
-        { en: "Sunday & Gazetted Holidays: Closed", hi: "रविवार और राजपत्रित अवकाश: बंद" },
-      ],
-    },
-  ];
-
-  return (
-    <section className="px-4 py-10">
-      <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {dynamicCards.map((card, i) => (
-          <div
-            key={i}
-            className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
-          >
-            <div className="text-2xl mb-3">{card.icon}</div>
-            <h3 className="text-xs uppercase tracking-wider font-bold text-[var(--color-secondary)] mb-3">
-              {card.title[lang]}
-            </h3>
-            <div className="w-8 h-[2px] bg-[var(--color-primary)] mb-3 rounded" />
-            <div className="space-y-1">
-              {card.lines.map((line, j) => (
-                <p key={j} className="text-xs text-gray-600 leading-relaxed">
-                  {line[lang]}
-                </p>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
-
 const ContactForm = ({ settings }) => {
   const { lang } = useLanguage();
   const [formData, setFormData] = useState({
@@ -207,13 +68,6 @@ const ContactForm = ({ settings }) => {
     message: "",
   });
 
-  const getContactVal = (key) => {
-    if (!settings || !settings.contact) return null;
-    const item = settings.contact.find(i => i.key === key);
-    return item ? item.value : null;
-  };
-
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -221,6 +75,20 @@ const ContactForm = ({ settings }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
   };
+
+  /* Build departments dynamically from settings */
+  const departments = [];
+  for (let i = 1; i <= 4; i++) {
+    const titleEn = getContactVal(settings, `dept${i}TitleEn`);
+    const titleHi = getContactVal(settings, `dept${i}TitleHi`);
+    if (titleEn || titleHi) {
+      departments.push({
+        title: { en: titleEn || "", hi: titleHi || "" },
+        contact: { en: getContactVal(settings, `dept${i}Contact`) || "", hi: getContactVal(settings, `dept${i}Contact`) || "" },
+        head: { en: getContactVal(settings, `dept${i}HeadEn`) || "", hi: getContactVal(settings, `dept${i}HeadHi`) || "" },
+      });
+    }
+  }
 
   return (
     <section className="px-4 py-10 bg-[var(--color-primary-light)]">
@@ -389,8 +257,8 @@ const ContactForm = ({ settings }) => {
             <div className="mt-8 pt-5 border-t border-[var(--color-secondary-light)]">
               <p className="text-[11px] text-gray-400 italic leading-relaxed">
                 {lang === "en"
-                  ? `For urgent matters outside business hours, please email ${getContactVal("email") || "admin@hlmf.org.in"} with "URGENT" in the subject line.`
-                  : `कार्यालय समय के बाहर तत्काल मामलों के लिए, कृपया विषय पंक्ति में "URGENT" के साथ ${getContactVal("email") || "admin@hlmf.org.in"} पर ईमेल करें।`}
+                  ? `For urgent matters outside business hours, please email ${getContactVal(settings, "email") || "admin@hlmf.org.in"} with "URGENT" in the subject line.`
+                  : `कार्यालय समय के बाहर तत्काल मामलों के लिए, कृपया विषय पंक्ति में "URGENT" के साथ ${getContactVal(settings, "email") || "admin@hlmf.org.in"} पर ईमेल करें।`}
               </p>
             </div>
           </div>
@@ -400,8 +268,113 @@ const ContactForm = ({ settings }) => {
   );
 };
 
-const MapSection = () => {
+const ContactCards = ({ settings }) => {
   const { lang } = useLanguage();
+
+  const dynamicCards = [
+    {
+      icon: "📍",
+      title: { en: "Registered Office", hi: "पंजीकृत कार्यालय" },
+      lines: [
+        {
+          en: getContactVal(settings, "addressEn") || "12/4B Institutional Area, New Delhi - 110001",
+          hi: getContactVal(settings, "addressHi") || "12/4B संस्थागत क्षेत्र, नई दिल्ली - 110001",
+        },
+        ...(getContactVal(settings, "address2En")
+          ? [
+              {
+                en: getContactVal(settings, "address2En"),
+                hi: getContactVal(settings, "address2Hi"),
+              },
+            ]
+          : []),
+      ],
+    },
+    {
+      icon: "📞",
+      title: { en: "Phone & Helpline", hi: "फ़ोन और हेल्पलाइन" },
+      lines: [
+        {
+          en: `General: ${getContactVal(settings, "phone") || "+91 11-2345XXXX"}`,
+          hi: `सामान्य: ${getContactVal(settings, "phone") || "+91 11-2345XXXX"}`,
+        },
+        {
+          en: `Helpline: ${getContactVal(settings, "helpline") || "1800-XXX-XXXX"} (Toll Free)`,
+          hi: `हेल्पलाइन: ${getContactVal(settings, "helpline") || "1800-XXX-XXXX"} (टोल फ्री)`,
+        },
+      ],
+    },
+    {
+      icon: "✉️",
+      title: { en: "Email", hi: "ईमेल" },
+      lines: [
+        {
+          en: `General: ${getContactVal(settings, "email") || "admin@hlmf.org.in"}`,
+          hi: `सामान्य: ${getContactVal(settings, "email") || "admin@hlmf.org.in"}`,
+        },
+        {
+          en: `Donations: ${getContactVal(settings, "donationEmail") || "donate@hlmf.org.in"}`,
+          hi: `दान: ${getContactVal(settings, "donationEmail") || "donate@hlmf.org.in"}`,
+        },
+        {
+          en: `Careers: ${getContactVal(settings, "careerEmail") || "hr@hlmf.org.in"}`,
+          hi: `करियर: ${getContactVal(settings, "careerEmail") || "hr@hlmf.org.in"}`,
+        },
+      ],
+    },
+    {
+      icon: "🕐",
+      title: { en: "Office Hours", hi: "कार्यालय समय" },
+      lines: [
+        {
+          en: getContactVal(settings, "officeHoursMFEn") || "Monday – Friday: 9:30 AM – 5:30 PM",
+          hi: getContactVal(settings, "officeHoursMFHi") || "सोमवार – शुक्रवार: सुबह 9:30 – शाम 5:30",
+        },
+        {
+          en: getContactVal(settings, "officeHoursSatEn") || "Saturday: 10:00 AM – 2:00 PM",
+          hi: getContactVal(settings, "officeHoursSatHi") || "शनिवार: सुबह 10:00 – दोपहर 2:00",
+        },
+        {
+          en: getContactVal(settings, "officeHoursSunEn") || "Sunday & Gazetted Holidays: Closed",
+          hi: getContactVal(settings, "officeHoursSunHi") || "रविवार और राजपत्रित अवकाश: बंद",
+        },
+      ],
+    },
+  ];
+
+  return (
+    <section className="px-4 py-10">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {dynamicCards.map((card, i) => (
+          <div
+            key={i}
+            className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+          >
+            <div className="text-2xl mb-3">{card.icon}</div>
+            <h3 className="text-xs uppercase tracking-wider font-bold text-[var(--color-secondary)] mb-3">
+              {card.title[lang]}
+            </h3>
+            <div className="w-8 h-[2px] bg-[var(--color-primary)] mb-3 rounded" />
+            <div className="space-y-1">
+              {card.lines.map((line, j) => (
+                <p key={j} className="text-xs text-gray-600 leading-relaxed">
+                  {line[lang]}
+                </p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const MapSection = ({ settings }) => {
+  const { lang } = useLanguage();
+
+  const mapUrl =
+    getContactVal(settings, "googleMapsUrl") ||
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.5445606837786!2d77.2090057!3d28.6328247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd37b741d057%3A0xcdee88e47393c3f1!2sConnaught%20Place%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1700000000000";
 
   return (
     <section className="px-4 py-10">
@@ -414,11 +387,11 @@ const MapSection = () => {
           <div className="w-16 h-1 bg-[var(--color-primary)] mx-auto mt-3 rounded" />
         </div>
 
-        {/* Map Placeholder */}
+        {/* Map */}
         <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
           <iframe
             title="HLMF Office Location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.5445606837786!2d77.2090057!3d28.6328247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd37b741d057%3A0xcdee88e47393c3f1!2sConnaught%20Place%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1700000000000"
+            src={mapUrl}
             width="100%"
             height="350"
             style={{ border: 0 }}
@@ -445,18 +418,20 @@ const Contact = () => {
   const [settings, setSettings] = useState(null);
 
   React.useEffect(() => {
-    getSettings().then((res) => {
-      if (res.settings) setSettings(res.settings);
-    }).catch(console.error);
+    getSettings()
+      .then((res) => {
+        if (res.settings) setSettings(res.settings);
+      })
+      .catch(console.error);
   }, []);
 
   return (
     <div>
       <Navbar />
       <ContactHero />
-      <ContactCards settings={settings} />
       <ContactForm settings={settings} />
-      <MapSection />
+      <ContactCards settings={settings} />
+      <MapSection settings={settings} />
       <Footer />
     </div>
   );

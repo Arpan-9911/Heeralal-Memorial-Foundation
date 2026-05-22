@@ -7,6 +7,7 @@ import {
   createProgram,
   updateProgram,
   deleteProgram,
+  reorderPrograms,
 } from "../controllers/program.controller.js";
 
 const router =
@@ -17,15 +18,20 @@ router.get(
   getPrograms
 );
 
+router.patch(
+  "/reorder",
+  reorderPrograms
+);
+
 router.post(
   "/",
-  upload.single("image"),
+  upload.any(),
   createProgram
 );
 
 router.put(
   "/:id",
-  upload.single("image"),
+  upload.any(),
   updateProgram
 );
 

@@ -121,13 +121,10 @@ const InstitutionalLegacy = ({ data }) => {
   const { lang } = useLanguage();
   const d = data || defaultLegacy;
 
-  // Build image list: uploaded images from API, then fallback Unsplash
-  const images = d.images && d.images.length > 0
-    ? d.images.map((img) => `${BACKEND}/uploads/about/${img}`)
-    : [
-        "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=1974",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1974",
-      ];
+  // Single legacy image: check images array, else fallback
+  const legacyImage = d.images && d.images.length > 0
+    ? `${BACKEND}/uploads/about/${d.images[0]}`
+    : "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=1974";
 
   return (
     <div className="relative bg-white rounded-lg shadow-sm border border-gray-100 p-6 md:p-10">
@@ -147,16 +144,57 @@ const InstitutionalLegacy = ({ data }) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {images.map((img, i) => (
-          <div key={i} className="overflow-hidden rounded-lg border border-gray-200">
+      {/* Premium Vignette & Ornamental Frame */}
+      <div className="mt-8 flex justify-center">
+        <div className="relative w-full max-w-3xl overflow-hidden bg-white p-2">
+          <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[3/1] overflow-hidden">
+            {/* The Image */}
             <img
-              src={img}
-              alt={`Legacy ${i + 1}`}
-              className="w-full h-52 object-cover hover:scale-105 transition-transform duration-500"
+              src={legacyImage}
+              alt={t(d.title, lang)}
+              className="w-full h-full object-cover select-none"
             />
+            
+            {/* Vignette Overlay (Top, Left, Right and general fade) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-white opacity-95 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white opacity-95 pointer-events-none"></div>
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: "radial-gradient(circle at center, transparent 15%, rgba(255, 255, 255, 0.4) 55%, rgba(255, 255, 255, 0.95) 85%, rgba(255, 255, 255, 1) 98%)",
+              }}
+            />
+            
+            {/* Bottom Border Line */}
+            <div className="absolute bottom-[12%] left-[10%] right-[10%] h-[1px] bg-[#6B1D2F]/60 pointer-events-none"></div>
+            
+            {/* Left Corner Flourish */}
+            <div className="absolute bottom-[12%] left-[8%] w-20 h-10 -mb-[8px] text-[#6B1D2F]/80 pointer-events-none">
+              <svg viewBox="0 0 100 50" className="w-full h-full" preserveAspectRatio="xMinYMax meet">
+                <path
+                  d="M 5 48 C 15 48, 25 46, 25 38 C 25 30, 12 28, 8 36 C 4 44, 18 50, 28 43 C 38 36, 30 20, 18 18 C 10 16, 4 26, 12 32 C 18 36, 24 32, 22 26 C 20 20, 12 22, 14 28"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            
+            {/* Right Corner Flourish (Mirrored) */}
+            <div className="absolute bottom-[12%] right-[8%] w-20 h-10 -mb-[8px] text-[#6B1D2F]/80 pointer-events-none transform scale-x-[-1]">
+              <svg viewBox="0 0 100 50" className="w-full h-full" preserveAspectRatio="xMinYMax meet">
+                <path
+                  d="M 5 48 C 15 48, 25 46, 25 38 C 25 30, 12 28, 8 36 C 4 44, 18 50, 28 43 C 38 36, 30 20, 18 18 C 10 16, 4 26, 12 32 C 18 36, 24 32, 22 26 C 20 20, 12 22, 14 28"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
           </div>
-        ))}
+        </div>
       </div>
 
       <PageStamp />
@@ -167,6 +205,11 @@ const InstitutionalLegacy = ({ data }) => {
 const VisionMission = ({ data }) => {
   const { lang } = useLanguage();
   const d = data || defaultVision;
+
+  // Extract multiple vision images
+  const visionImages = d.images && d.images.length > 0
+    ? d.images.map((img) => `${BACKEND}/uploads/about/${img}`)
+    : [];
 
   return (
     <div className="relative bg-white rounded-lg shadow-sm border border-gray-100 p-6 md:p-10">
@@ -207,8 +250,38 @@ const VisionMission = ({ data }) => {
         ))}
       </div>
 
-      {/* Vision Image */}
-      {d.image && (
+      {/* Vision Images Gallery */}
+      {visionImages.length > 0 ? (
+        <div className="mt-8">
+          <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)] mb-4 border-b border-gray-100 pb-2">
+            {lang === "en" ? "Gallery & Action" : "गैलरी और गतिविधियाँ"}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {visionImages.map((imgUrl, idx) => {
+              const spanClass = visionImages.length > 1 && idx === 0 ? "sm:col-span-2 sm:row-span-2" : "";
+              const heightClass = visionImages.length > 1 && idx === 0 ? "h-64 sm:h-[340px]" : "h-48 sm:h-40 md:h-44";
+              return (
+                <div
+                  key={idx}
+                  className={`relative overflow-hidden rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300 group ${spanClass}`}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`Vision Gallery ${idx + 1}`}
+                    className={`w-full ${heightClass} object-cover group-hover:scale-105 transition-transform duration-500`}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                    <p className="text-white text-xs font-medium">
+                      {lang === "en" ? `HLMF Initiative ${idx + 1}` : `HLMF पहल ${idx + 1}`}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : d.image ? (
+        /* Fallback to original single image */
         <div className="w-full -mx-6 md:-mx-10 w-[calc(100%+3rem)] md:w-[calc(100%+5rem)] mt-4">
           <img
             src={`${import.meta.env.VITE_BACKEND_URL}/uploads/about/${d.image}`}
@@ -216,7 +289,7 @@ const VisionMission = ({ data }) => {
             className="w-full h-auto object-cover max-h-[500px]"
           />
         </div>
-      )}
+      ) : null}
 
       <PageStamp />
     </div>

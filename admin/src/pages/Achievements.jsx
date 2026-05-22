@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Cropper from "react-easy-crop";
 import {
   getAchievements,
   createAchievement,
   updateAchievement,
   deleteAchievement,
+  reorderAchievements,
 } from "../api/achievement.api";
 import { toast } from "sonner";
 
@@ -74,6 +75,10 @@ const Achievements = () => {
 
   const [form, setForm] = useState(initialForm);
 
+  // Drag state
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+
   // Crop States
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -108,6 +113,39 @@ const Achievements = () => {
     setPreview("");
     setZoom(1);
     setCrop({ x: 0, y: 0 });
+  };
+
+  const handleDragStart = (e, index) => {
+    dragItem.current = index;
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    dragOverItem.current = index;
+  };
+
+  const handleDrop = async (e, index) => {
+    e.preventDefault();
+    const reordered = [...items];
+    const [dragged] = reordered.splice(dragItem.current, 1);
+    reordered.splice(dragOverItem.current, 0, dragged);
+
+    // Update local state immediately
+    setItems(reordered);
+
+    // Persist
+    try {
+      await reorderAchievements(reordered.map((a) => a._id));
+      toast.success("Order updated");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save order");
+      fetchAchievements(); // rollback
+    }
+
+    dragItem.current = null;
+    dragOverItem.current = null;
   };
 
   const handleEdit = (achievement) => {
@@ -178,7 +216,9 @@ const Achievements = () => {
 
       formData.append("presentedByEn", form.presentedByEn);
       formData.append("presentedByHi", form.presentedByHi);
-      formData.append("serialNumber", form.serialNumber);
+      if (editing) {
+        formData.append("serialNumber", form.serialNumber);
+      }
       if (form.image) {
         formData.append("image", form.image);
       }
@@ -192,7 +232,7 @@ const Achievements = () => {
       } else {
         const data = await createAchievement(formData);
 
-        setItems((prev) => [data.achievement, ...prev]);
+        setItems((prev) => [...prev, data.achievement]);
       }
 
       reset();
@@ -352,18 +392,7 @@ const Achievements = () => {
 )}
           </div>
 
-          {/* Serial Number */}
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Serial Number / Order
-            </label>
-            <input
-              type="number"
-              value={form.serialNumber}
-              onChange={(e) => setForm({ ...form, serialNumber: e.target.value })}
-              className={inputClass}
-            />
-          </div>
+
 
           {/* Titles */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -515,12 +544,33 @@ const Achievements = () => {
       {/* Cards */}
       {!loading && items.length > 0 && (
         <div className="space-y-3">
-          {items.map((a) => (
+          {items.map((a, index) => (
             <div
               key={a._id}
-              className="relative bg-white border border-[var(--admin-border)] rounded-2xl p-3 hover:shadow-md transition-all duration-300"
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              className="relative bg-white border border-[var(--admin-border)] rounded-2xl p-3 hover:shadow-md transition-all duration-300 cursor-grab active:cursor-grabbing flex items-center gap-3"
             >
-              <div className="flex gap-3">
+              {/* Drag Handle */}
+              <div className="flex-shrink-0 text-gray-400 hover:text-gray-600 px-1 cursor-grab">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <circle cx="5" cy="3" r="1.5" />
+                  <circle cx="11" cy="3" r="1.5" />
+                  <circle cx="5" cy="8" r="1.5" />
+                  <circle cx="11" cy="8" r="1.5" />
+                  <circle cx="5" cy="13" r="1.5" />
+                  <circle cx="11" cy="13" r="1.5" />
+                </svg>
+              </div>
+
+              {/* Order Badge */}
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 text-gray-600 text-[11px] font-bold flex items-center justify-center">
+                {index + 1}
+              </span>
+
+              <div className="flex gap-3 flex-1 min-w-0 pr-24">
                 {/* Image */}
                 <div className="w-32 h-20 rounded-xl overflow-hidden flex-shrink-0">
                   <img
@@ -531,8 +581,8 @@ const Achievements = () => {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0 pr-24">
-                  <div className="absolute top-3 right-3 text-right max-w-[180px]">
+                <div className="flex-1 min-w-0 relative">
+                  <div className="absolute top-0 right-0 text-right max-w-[180px]">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-gray-400">
                       Presented By
                     </p>
@@ -547,8 +597,7 @@ const Achievements = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug pr-2 flex items-center gap-2">
-                      <span className="bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded text-xs">#{a.serialNumber || 0}</span>
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug pr-2">
                       {a.title?.en}
                     </h3>
 
@@ -574,15 +623,21 @@ const Achievements = () => {
               {/* Actions */}
               <div className="absolute bottom-3 right-3 flex gap-2">
                 <button
-                  onClick={() => handleEdit(a)}
-                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(a);
+                  }}
+                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 transition-all cursor-pointer"
                 >
                   Edit
                 </button>
 
                 <button
-                  onClick={() => handleDelete(a._id)}
-                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(a._id);
+                  }}
+                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all cursor-pointer"
                 >
                   Delete
                 </button>

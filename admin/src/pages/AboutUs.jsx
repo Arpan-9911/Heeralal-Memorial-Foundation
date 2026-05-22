@@ -35,6 +35,9 @@ const LegacyTab = ({ data, setData, legacyFiles, setLegacyFiles }) => {
     setData({ ...data, paragraphs: p });
   };
   const removeExistingImage = (img) => setData({ ...data, images: data.images.filter((x) => x !== img), removedImages: [...(data.removedImages || []), img] });
+  const removeNewImage = () => setLegacyFiles([]);
+
+  const hasImage = data.images?.length > 0 || legacyFiles.length > 0;
 
   return (
     <div className="space-y-6">
@@ -59,27 +62,54 @@ const LegacyTab = ({ data, setData, legacyFiles, setLegacyFiles }) => {
       </div>
 
       <div>
-        <label className={labelClass}>Legacy Images</label>
+        <label className={labelClass}>Legacy Image (Single Image Only)</label>
+        
         {data.images?.length > 0 && (
-          <div className="flex flex-wrap gap-3 mb-3">
-            {data.images.map((img, i) => (
-              <div key={i} className="relative group">
-                <img src={`${BACKEND}/uploads/about/${img}`} alt="" className="w-32 h-24 object-cover rounded-lg border border-[var(--admin-border)]" />
-                <button type="button" onClick={() => removeExistingImage(img)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition">✕</button>
-              </div>
-            ))}
+          <div className="relative w-48 h-36 group mb-3">
+            <img src={`${BACKEND}/uploads/about/${data.images[0]}`} alt="Legacy" className="w-full h-full object-cover rounded-lg border border-[var(--admin-border)]" />
+            <button type="button" onClick={() => removeExistingImage(data.images[0])} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center shadow hover:bg-red-600 transition">✕</button>
           </div>
         )}
-        <input type="file" accept="image/*" multiple onChange={(e) => setLegacyFiles(Array.from(e.target.files))} className="w-full border border-[var(--admin-border)] rounded-xl px-4 py-3 text-sm" />
-        <p className="text-xs text-[var(--admin-muted)] mt-1">Upload new images (max 5)</p>
+
+        {legacyFiles.length > 0 && (
+          <div className="relative w-48 h-36 group mb-3">
+            <img src={URL.createObjectURL(legacyFiles[0])} alt="Legacy Preview" className="w-full h-full object-cover rounded-lg border border-[var(--admin-border)] border-dashed" />
+            <button type="button" onClick={removeNewImage} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center shadow hover:bg-red-600 transition">✕</button>
+            <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">New Upload</div>
+          </div>
+        )}
+
+        {!hasImage && (
+          <>
+            <input type="file" accept="image/*" onChange={(e) => setLegacyFiles(e.target.files[0] ? [e.target.files[0]] : [])} className="w-full border border-[var(--admin-border)] rounded-xl px-4 py-3 text-sm" />
+            <p className="text-xs text-[var(--admin-muted)] mt-1">Upload a single image for the institutional legacy section.</p>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
 /* ═══════════════ TAB 2: VISION & MISSION ═══════════════ */
-const VisionTab = ({ data, setData, visionFile, setVisionFile }) => {
+const VisionTab = ({ data, setData, visionFiles, setVisionFiles }) => {
   const set = (key, val) => setData({ ...data, [key]: val });
+  const removeExistingImage = (img) => {
+    setData({
+      ...data,
+      images: (data.images || []).filter((x) => x !== img),
+      removedImages: [...(data.removedImages || []), img]
+    });
+  };
+  const removeNewImage = (idx) => {
+    setVisionFiles(visionFiles.filter((_, i) => i !== idx));
+  };
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setVisionFiles([...visionFiles, ...files]);
+  };
+
+  const totalImageCount = (data.images?.length || 0) + visionFiles.length;
+
   return (
     <div className="space-y-6">
       <h2 className={sectionHeading}>🔭 Vision & Mission</h2>
@@ -94,14 +124,47 @@ const VisionTab = ({ data, setData, visionFile, setVisionFile }) => {
       <BiInput label="Objective Description" enVal={data.objectiveDescEn} hiVal={data.objectiveDescHi} onEnChange={(v) => set("objectiveDescEn", v)} onHiChange={(v) => set("objectiveDescHi", v)} textarea />
       <hr className="border-[var(--admin-border)]" />
       <div>
-        <label className={labelClass}>Vision & Mission Full-Width Image</label>
-        {data.image && !visionFile && (
-          <div className="mb-3">
-            <img src={`${BACKEND}/uploads/about/${data.image}`} alt="Vision" className="w-64 h-auto object-cover rounded-lg border border-[var(--admin-border)]" />
+        <label className={labelClass}>Vision & Mission Gallery Images (Multiple)</label>
+        
+        {/* Existing Images */}
+        {data.images?.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-[var(--admin-text)] mb-2">Existing Images:</p>
+            <div className="flex flex-wrap gap-3">
+              {data.images.map((img, i) => (
+                <div key={i} className="relative group w-32 h-24">
+                  <img src={`${BACKEND}/uploads/about/${img}`} alt="" className="w-full h-full object-cover rounded-lg border border-[var(--admin-border)]" />
+                  <button type="button" onClick={() => removeExistingImage(img)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow hover:bg-red-600">✕</button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
-        <input type="file" accept="image/*" onChange={(e) => setVisionFile(e.target.files[0])} className="w-full border border-[var(--admin-border)] rounded-xl px-4 py-3 text-sm" />
-        <p className="text-xs text-[var(--admin-muted)] mt-1">Upload an image to show beneath the vision messages</p>
+
+        {/* New Upload Previews */}
+        {visionFiles.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-[var(--admin-text)] mb-2">New Images to Upload:</p>
+            <div className="flex flex-wrap gap-3">
+              {visionFiles.map((f, i) => (
+                <div key={i} className="relative group w-32 h-24">
+                  <img src={URL.createObjectURL(f)} alt="" className="w-full h-full object-cover rounded-lg border border-[var(--admin-border)] border-dashed" />
+                  <button type="button" onClick={() => removeNewImage(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center shadow hover:bg-red-600">✕</button>
+                  <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[9px] px-1 py-0.5 rounded">New</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {totalImageCount >= 5 ? (
+          <p className="text-xs text-amber-600 font-medium">Maximum limit of 5 images reached. Remove existing or new images to add more.</p>
+        ) : (
+          <>
+            <input type="file" accept="image/*" multiple onChange={handleFileChange} className="w-full border border-[var(--admin-border)] rounded-xl px-4 py-3 text-sm" />
+            <p className="text-xs text-[var(--admin-muted)] mt-1">Upload multiple images (max 5 total). Hold Ctrl/Cmd to select multiple files.</p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -240,8 +303,8 @@ const AboutUsAdmin = () => {
   // State per tab
   const [legacy, setLegacy] = useState({ titleEn: "", titleHi: "", paragraphs: [], images: [], removedImages: [] });
   const [legacyFiles, setLegacyFiles] = useState([]);
-  const [vision, setVision] = useState({ subtitleEn: "", subtitleHi: "", titleEn: "", titleHi: "", quoteEn: "", quoteHi: "", missionTitleEn: "", missionTitleHi: "", missionDescEn: "", missionDescHi: "", objectiveTitleEn: "", objectiveTitleHi: "", objectiveDescEn: "", objectiveDescHi: "", image: "" });
-  const [visionFile, setVisionFile] = useState(null);
+  const [vision, setVision] = useState({ subtitleEn: "", subtitleHi: "", titleEn: "", titleHi: "", quoteEn: "", quoteHi: "", missionTitleEn: "", missionTitleHi: "", missionDescEn: "", missionDescHi: "", objectiveTitleEn: "", objectiveTitleHi: "", objectiveDescEn: "", objectiveDescHi: "", image: "", images: [], removedImages: [] });
+  const [visionFiles, setVisionFiles] = useState([]);
   const [values, setValues] = useState([]);
   const [governance, setGovernance] = useState({ titleEn: "", titleHi: "", descEn: "", descHi: "", rows: [] });
   const [compliance, setCompliance] = useState({ titleEn: "", titleHi: "", descEn: "", descHi: "", items: [], cards: [] });
@@ -272,6 +335,8 @@ const AboutUsAdmin = () => {
         objectiveTitleEn: v.objectiveTitle?.en || "", objectiveTitleHi: v.objectiveTitle?.hi || "",
         objectiveDescEn: v.objectiveDesc?.en || "", objectiveDescHi: v.objectiveDesc?.hi || "",
         image: v.image || "",
+        images: v.images || [],
+        removedImages: [],
       });
 
       setValues(d.coreValues || []);
@@ -313,14 +378,14 @@ const AboutUsAdmin = () => {
       if (legacy.removedImages?.length) {
         legacy.removedImages.forEach((img) => fd.append("removeLegacyImage", img));
       }
-      // New files
+      // New file (single image - backend field is 'legacyImage')
       if (legacyFiles.length) {
-        legacyFiles.forEach((f) => fd.append("legacyImages", f));
+        fd.append("legacyImage", legacyFiles[0]);
       }
 
       // Vision
       Object.entries(vision).forEach(([k, v]) => {
-        if (k === 'image') return;
+        if (k === 'image' || k === 'images' || k === 'removedImages') return;
         const fieldMap = {
           subtitleEn: "visionSubtitleEn", subtitleHi: "visionSubtitleHi",
           titleEn: "visionTitleEn", titleHi: "visionTitleHi",
@@ -332,8 +397,15 @@ const AboutUsAdmin = () => {
         };
         fd.append(fieldMap[k] || k, v);
       });
-      if (visionFile) {
-        fd.append("visionImage", visionFile);
+      
+      // Removed vision images
+      if (vision.removedImages?.length) {
+        vision.removedImages.forEach((img) => fd.append("removeVisionImage", img));
+      }
+
+      // New vision files (multiple)
+      if (visionFiles.length) {
+        visionFiles.forEach((f) => fd.append("visionImages", f));
       }
 
       // Core values
@@ -357,7 +429,7 @@ const AboutUsAdmin = () => {
       await updateAboutUs(fd);
       toast.success("About Us page updated!");
       setLegacyFiles([]);
-      setVisionFile(null);
+      setVisionFiles([]);
       await fetchData();
     } catch (err) {
       console.log(err);
@@ -405,7 +477,7 @@ const AboutUsAdmin = () => {
       {/* TAB CONTENT */}
       <div className="bg-white border border-[var(--admin-border)] rounded-2xl p-6">
         {activeTab === "legacy" && <LegacyTab data={legacy} setData={setLegacy} legacyFiles={legacyFiles} setLegacyFiles={setLegacyFiles} />}
-        {activeTab === "vision" && <VisionTab data={vision} setData={setVision} visionFile={visionFile} setVisionFile={setVisionFile} />}
+        {activeTab === "vision" && <VisionTab data={vision} setData={setVision} visionFiles={visionFiles} setVisionFiles={setVisionFiles} />}
         {activeTab === "values" && <ValuesTab data={values} setData={setValues} />}
         {activeTab === "governance" && <GovernanceTab data={governance} setData={setGovernance} />}
         {activeTab === "compliance" && <ComplianceTab data={compliance} setData={setCompliance} />}

@@ -38,23 +38,14 @@ export const updateAboutUs = asyncHandler(async (req, res) => {
     }
   }
 
-  // Handle legacy images — keep existing ones unless new ones uploaded
-  if (req.files?.legacyImages?.length) {
-    // Append new uploaded filenames to existing
-    const newFiles = req.files.legacyImages.map((f) => f.filename);
-    // If body says to replace, replace entirely
-    if (body.replaceLegacyImages === "true") {
-      doc.legacy.images = newFiles;
-    } else {
-      doc.legacy.images = [...(doc.legacy.images || []), ...newFiles];
-    }
+  // Handle legacy image - single image
+  if (req.files?.legacyImage?.length) {
+    doc.legacy.images = [req.files.legacyImage[0].filename];
   }
 
   // Remove specific legacy image by filename
   if (body.removeLegacyImage) {
-    doc.legacy.images = doc.legacy.images.filter(
-      (img) => img !== body.removeLegacyImage
-    );
+    doc.legacy.images = [];
   }
 
   /* ────── TAB 2: Vision & Mission ────── */
@@ -75,6 +66,26 @@ export const updateAboutUs = asyncHandler(async (req, res) => {
 
   if (req.files?.visionImage?.length) {
     doc.vision.image = req.files.visionImage[0].filename;
+  }
+
+  // Handle vision images — keep existing ones unless new ones uploaded
+  if (req.files?.visionImages?.length) {
+    const newFiles = req.files.visionImages.map((f) => f.filename);
+    if (body.replaceVisionImages === "true") {
+      doc.vision.images = newFiles;
+    } else {
+      doc.vision.images = [...(doc.vision.images || []), ...newFiles];
+    }
+  }
+
+  // Remove specific vision image by filename
+  if (body.removeVisionImage) {
+    const toRemove = Array.isArray(body.removeVisionImage)
+      ? body.removeVisionImage
+      : [body.removeVisionImage];
+    doc.vision.images = (doc.vision.images || []).filter(
+      (img) => !toRemove.includes(img)
+    );
   }
 
   /* ────── TAB 3: Core Values ────── */

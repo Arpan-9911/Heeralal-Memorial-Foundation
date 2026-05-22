@@ -93,10 +93,23 @@ const Topbar = () => {
           {/* Social Icons — to the left of NGO info */}
           <SocialIconsBar links={socialLinks} size={13} gap="5px" variant="header" />
           {/* NGO Registration Info */}
-          <div className="text-xs text-gray-600 text-right space-y-1">
-            <div>NGO Reg No: {getRegValue("ngoReg")}</div>
-            <div>ESTD: {getRegValue("regDate")}</div>
+          <div 
+            className="text-xs text-gray-600 text-right grid grid-cols-2 gap-x-4 gap-y-0.5"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            <div>Reg No: {getRegValue("ngoReg")}</div>
+            <div>PAN: {getRegValue("pan")}</div>
             <div>CIN: {getRegValue("cin")}</div>
+            <div>ESTD: {getRegValue("regDate")}</div>
+            {getRegValue("section12A") && getRegValue("section12A") !== "..." && (
+              <div>12A/12AB: {getRegValue("section12A")}</div>
+            )}
+            {getRegValue("section80G") && getRegValue("section80G") !== "..." && (
+              <div>80G: {getRegValue("section80G")}</div>
+            )}
+            {getRegValue("darpanId") && getRegValue("darpanId") !== "..." && (
+              <div>DARPAN: {getRegValue("darpanId")}</div>
+            )}
           </div>
         </div>
       </div>
@@ -130,6 +143,7 @@ const MainNav = () => {
               <Link to={"/about"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "ABOUT US" : "हमारे बारे में"}</Link>
               <Link to={"/achievements"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "ACHIEVEMENTS" : "उपलब्धियाँ" }</Link>
               <Link to={"/programs"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "PROGRAMS" : "प्रोग्राम" }</Link>
+              <Link to={"/commendations"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "COMMENDATIONS" : "प्रशंसापत्र" }</Link>
             </div>
 
             {/* Center Diamond — 3D Golden Donate Button */}

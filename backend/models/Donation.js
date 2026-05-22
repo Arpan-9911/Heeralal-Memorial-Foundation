@@ -43,6 +43,11 @@ const donationSchema = new mongoose.Schema(
       default: "",
     },
 
+    screenshot: {
+      type: String,
+      default: "",
+    },
+
     status: {
       type: String,
       enum: ["pending", "verified", "rejected"],

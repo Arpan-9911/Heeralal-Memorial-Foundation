@@ -18,8 +18,8 @@ router.put(
   "/",
   protectAdmin,
   uploadAbout.fields([
-    { name: "legacyImages", maxCount: 5 },
-    { name: "visionImage", maxCount: 1 },
+    { name: "legacyImage", maxCount: 1 },
+    { name: "visionImages", maxCount: 5 },
   ]),
   updateAboutUs
 );

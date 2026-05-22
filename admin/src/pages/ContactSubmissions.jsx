@@ -5,7 +5,246 @@ import {
   updateContactStatus,
   deleteContact,
 } from "../api/contact.api";
+import { getSettings, updateSettings } from "../api/settings.api";
 import { toast } from "sonner";
+import { FiChevronDown, FiChevronUp, FiSave } from "react-icons/fi";
+
+/* ─────────────────── Initial Contact Keys (mirrors backend) ─────────────────── */
+
+const initialContactKeys = [
+  { key: "email", label: "General Email" },
+  { key: "phone", label: "Phone" },
+  { key: "helpline", label: "Helpline (Toll Free)" },
+  { key: "donationEmail", label: "Donation Email" },
+  { key: "careerEmail", label: "Career Email" },
+  { key: "addressEn", label: "Address (EN)" },
+  { key: "addressHi", label: "Address (HI)" },
+  { key: "officeEn", label: "Office Label (EN)" },
+  { key: "officeHi", label: "Office Label (HI)" },
+  { key: "address2En", label: "Address 2 (EN)" },
+  { key: "address2Hi", label: "Address 2 (HI)" },
+  { key: "office2En", label: "Office 2 Label (EN)" },
+  { key: "office2Hi", label: "Office 2 Label (HI)" },
+  { key: "officeHoursMFEn", label: "Mon-Fri Hours (EN)" },
+  { key: "officeHoursMFHi", label: "Mon-Fri Hours (HI)" },
+  { key: "officeHoursSatEn", label: "Saturday Hours (EN)" },
+  { key: "officeHoursSatHi", label: "Saturday Hours (HI)" },
+  { key: "officeHoursSunEn", label: "Sunday/Holiday (EN)" },
+  { key: "officeHoursSunHi", label: "Sunday/Holiday (HI)" },
+  { key: "dept1TitleEn", label: "Dept 1 Title (EN)" },
+  { key: "dept1TitleHi", label: "Dept 1 Title (HI)" },
+  { key: "dept1Contact", label: "Dept 1 Email" },
+  { key: "dept1HeadEn", label: "Dept 1 Head (EN)" },
+  { key: "dept1HeadHi", label: "Dept 1 Head (HI)" },
+  { key: "dept2TitleEn", label: "Dept 2 Title (EN)" },
+  { key: "dept2TitleHi", label: "Dept 2 Title (HI)" },
+  { key: "dept2Contact", label: "Dept 2 Email" },
+  { key: "dept2HeadEn", label: "Dept 2 Head (EN)" },
+  { key: "dept2HeadHi", label: "Dept 2 Head (HI)" },
+  { key: "dept3TitleEn", label: "Dept 3 Title (EN)" },
+  { key: "dept3TitleHi", label: "Dept 3 Title (HI)" },
+  { key: "dept3Contact", label: "Dept 3 Email" },
+  { key: "dept3HeadEn", label: "Dept 3 Head (EN)" },
+  { key: "dept3HeadHi", label: "Dept 3 Head (HI)" },
+  { key: "dept4TitleEn", label: "Dept 4 Title (EN)" },
+  { key: "dept4TitleHi", label: "Dept 4 Title (HI)" },
+  { key: "dept4Contact", label: "Dept 4 Email" },
+  { key: "dept4HeadEn", label: "Dept 4 Head (EN)" },
+  { key: "dept4HeadHi", label: "Dept 4 Head (HI)" },
+  { key: "googleMapsUrl", label: "Google Maps Embed URL" },
+];
+
+/* ─────────────────── Editable settings grouped by section ─────────────────── */
+
+const settingsSections = [
+  {
+    title: "Address & Phone",
+    keys: ["phone", "helpline", "addressEn", "addressHi", "officeEn", "officeHi", "address2En", "address2Hi", "office2En", "office2Hi"],
+  },
+  {
+    title: "Emails",
+    keys: ["email", "donationEmail", "careerEmail"],
+  },
+  {
+    title: "Office Hours",
+    keys: ["officeHoursMFEn", "officeHoursMFHi", "officeHoursSatEn", "officeHoursSatHi", "officeHoursSunEn", "officeHoursSunHi"],
+  },
+  {
+    title: "Department 1",
+    keys: ["dept1TitleEn", "dept1TitleHi", "dept1Contact", "dept1HeadEn", "dept1HeadHi"],
+  },
+  {
+    title: "Department 2",
+    keys: ["dept2TitleEn", "dept2TitleHi", "dept2Contact", "dept2HeadEn", "dept2HeadHi"],
+  },
+  {
+    title: "Department 3",
+    keys: ["dept3TitleEn", "dept3TitleHi", "dept3Contact", "dept3HeadEn", "dept3HeadHi"],
+  },
+  {
+    title: "Department 4",
+    keys: ["dept4TitleEn", "dept4TitleHi", "dept4Contact", "dept4HeadEn", "dept4HeadHi"],
+  },
+  {
+    title: "Google Maps",
+    keys: ["googleMapsUrl"],
+  },
+];
+
+/* ─────────────────── Contact Page Settings Panel ─────────────────── */
+
+const ContactPageSettings = () => {
+  const [open, setOpen] = useState(false);
+  const [contactFields, setContactFields] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchContactSettings();
+  }, []);
+
+  const fetchContactSettings = async () => {
+    try {
+      setLoading(true);
+      const res = await getSettings();
+      const fetched = res.settings?.contact || [];
+
+      // Merge fetched with initial keys
+      const merged = initialContactKeys.map((init) => {
+        const found = fetched.find((f) => f.key === init.key);
+        return { ...init, value: found?.value ?? "" };
+      });
+      setContactFields(merged);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateField = (key, newValue) => {
+    setContactFields((prev) =>
+      prev.map((f) => (f.key === key ? { ...f, value: newValue } : f))
+    );
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      await updateSettings({ contact: contactFields });
+      toast.success("Contact page settings saved!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save contact settings");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getField = (key) => contactFields.find((f) => f.key === key);
+
+  const inp =
+    "w-full px-3 py-2 text-sm border border-[var(--admin-border)] rounded-lg outline-none focus:border-[var(--admin-accent)] focus:ring-2 focus:ring-[var(--admin-accent-light)] transition-all bg-white";
+
+  return (
+    <div className="bg-white rounded-2xl border border-[var(--admin-border)] overflow-hidden">
+      {/* Toggle Header */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-lg">⚙️</span>
+          <div className="text-left">
+            <h3 className="text-sm font-bold text-gray-900">
+              Contact Page Settings
+            </h3>
+            <p className="text-[11px] text-[var(--admin-muted)]">
+              Edit contact details, departments, office hours & Google Maps
+            </p>
+          </div>
+        </div>
+        {open ? (
+          <FiChevronUp size={18} className="text-gray-400" />
+        ) : (
+          <FiChevronDown size={18} className="text-gray-400" />
+        )}
+      </button>
+
+      {/* Collapsible Body */}
+      {open && (
+        <div className="border-t border-[var(--admin-border)] p-5 space-y-6">
+          {loading ? (
+            <p className="text-sm text-gray-400 text-center py-6">
+              Loading settings...
+            </p>
+          ) : (
+            <>
+              {settingsSections.map((section) => (
+                <div key={section.title}>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--admin-muted)] mb-3">
+                    {section.title}
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {section.keys.map((key) => {
+                      const field = getField(key);
+                      if (!field) return null;
+                      const isLongField = key === "googleMapsUrl";
+                      return (
+                        <div
+                          key={key}
+                          className={`space-y-1 ${
+                            isLongField ? "sm:col-span-2" : ""
+                          }`}
+                        >
+                          <label className="text-[11px] font-semibold text-gray-500">
+                            {field.label}
+                          </label>
+                          {isLongField ? (
+                            <textarea
+                              value={field.value}
+                              onChange={(e) =>
+                                updateField(key, e.target.value)
+                              }
+                              rows={2}
+                              className={inp + " resize-none"}
+                            />
+                          ) : (
+                            <input
+                              value={field.value}
+                              onChange={(e) =>
+                                updateField(key, e.target.value)
+                              }
+                              className={inp}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {/* Save Button */}
+              <div className="flex justify-end pt-2">
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[var(--admin-accent)] text-white text-sm font-semibold rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity"
+                >
+                  <FiSave size={14} />
+                  {saving ? "Saving..." : "Save Contact Settings"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─────────────────── Status Config ─────────────────── */
 
 const statusConfig = {
   unread: {
@@ -26,6 +265,8 @@ const statusConfig = {
     dot: "bg-green-500",
   },
 };
+
+/* ─────────────────── Main Component ─────────────────── */
 
 const ContactSubmissions = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -130,6 +371,10 @@ const ContactSubmissions = () => {
 
   return (
     <div className="space-y-4">
+      {/* ================= CONTACT PAGE SETTINGS ================= */}
+
+      <ContactPageSettings />
+
       {/* ================= TOOLBAR ================= */}
 
       <div className="bg-white rounded-2xl border border-[var(--admin-border)] p-4 flex flex-col lg:flex-row gap-3 lg:items-center">

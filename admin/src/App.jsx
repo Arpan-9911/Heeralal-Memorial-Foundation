@@ -18,6 +18,7 @@ import Donations from "./pages/Donations";
 import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Commendation from "./pages/Commendation";
+import CommendationCards from "./pages/CommendationCards";
 
 import SocialLinks from "./pages/SocialLinks";
 import AboutUsAdmin from "./pages/AboutUs";
@@ -55,6 +56,7 @@ const App = () => {
                     <Route path="/stats" element={<Stats />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/commendation" element={<Commendation />} />
+                    <Route path="/commendation-cards" element={<CommendationCards />} />
 
                     <Route path="/social-links" element={<SocialLinks />} />
                     <Route path="/about-us" element={<AboutUsAdmin />} />

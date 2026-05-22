@@ -68,7 +68,11 @@ const footerData = {
       { label: "CIN", value: "U88900DL2023NPL416329" },
       { label: "REG DATE", value: "June 29, 2023" },
       { label: "PAN", value: "AACH0000F" },
+      { label: "REG NO", value: "DL/2023/..." },
       { label: "ROC NO", value: "ITRA/DXM/S/ROC/..." },
+      { label: "12A/12AB", value: "—" },
+      { label: "80G", value: "—" },
+      { label: "DARPAN ID", value: "—" },
     ],
   },
   copyright: {
@@ -92,11 +96,35 @@ const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
     }).catch(console.error);
   }, []);
 
+  const getGeneralVal = (key) => {
+    if (!settings || !settings.general) return null;
+    const item = settings.general.find(i => i.key === key);
+    return item && item.value ? item.value : null;
+  };
+
   const getContactVal = (key) => {
     if (!settings || !settings.contact) return null;
     const item = settings.contact.find(i => i.key === key);
     return item ? item.value : null;
   };
+
+  const getRegVal = (key) => {
+    if (!settings || !settings.registration) return null;
+    const item = settings.registration.find(i => i.key === key);
+    return item && item.value ? item.value : null;
+  };
+
+  // Build dynamic identity items from settings, falling back to footerData defaults
+  const identityItems = [
+    { label: "CIN", value: getRegVal("cin") || footerData.identity.items[0]?.value },
+    { label: "REG DATE", value: getRegVal("regDate") || footerData.identity.items[1]?.value },
+    { label: "PAN", value: getRegVal("pan") || footerData.identity.items[2]?.value },
+    { label: "REG NO", value: getRegVal("ngoReg") || footerData.identity.items[3]?.value },
+    { label: "ROC NO", value: getRegVal("rocNo") || footerData.identity.items[4]?.value },
+    ...(getRegVal("section12A") ? [{ label: "12A/12AB", value: getRegVal("section12A") }] : []),
+    ...(getRegVal("section80G") ? [{ label: "80G", value: getRegVal("section80G") }] : []),
+    ...(getRegVal("darpanId") ? [{ label: "DARPAN ID", value: getRegVal("darpanId") }] : []),
+  ];
 
   return (
     <footer id="site-footer">
@@ -114,7 +142,7 @@ const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
                 className="text-[var(--color-primary)] font-bold text-lg italic mb-4"
                 style={{ fontFamily: "'Georgia', serif" }}
               >
-                {footerData.foundation.name[lang]}
+                {getGeneralVal("orgName") || footerData.foundation.name[lang]}
               </h3>
               <p className="text-xs leading-relaxed text-gray-400">
                 {footerData.foundation.description[lang]}
@@ -190,8 +218,11 @@ const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
               <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-4">
                 {footerData.identity.title[lang]}
               </h4>
-              <div className="border border-[var(--color-secondary-light)] rounded overflow-hidden">
-                {footerData.identity.items.map((item, i) => (
+              <div 
+                className="border border-[var(--color-secondary-light)] rounded overflow-hidden"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                {identityItems.map((item, i) => (
                   <div
                     key={i}
                     className={`flex text-[11px] px-3 py-[6px] ${
@@ -215,10 +246,10 @@ const Footer = ({ topBg = "bg-[var(--color-secondary)]" }) => {
         <div className="border-t border-[var(--color-secondary)]">
           <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-[11px] text-gray-500">
-              {footerData.copyright[lang]}
+              {getGeneralVal("copyright") || footerData.copyright[lang]}
             </p>
             <p className="text-[11px] text-gray-500 italic">
-              {footerData.managedBy[lang]}
+              {getGeneralVal("managedBy") || footerData.managedBy[lang]}
             </p>
           </div>
         </div>

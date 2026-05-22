@@ -81,38 +81,87 @@ const ProgramModal = ({ program, onClose }) => {
             </div>
           )}
 
-          {/* Info Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Location */}
-            {(program.location?.en || program.location?.hi) && (
-              <div className="bg-[var(--color-primary-light)] rounded-xl p-4 border border-gray-100">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">📍</span>
-                  <h4 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
-                    {lang === "en" ? "Location" : "स्थान"}
-                  </h4>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  {languageFallback(program.location, lang)}
-                </p>
-              </div>
-            )}
+          {/* Centres List (Multiple Centres with Photos) */}
+          {program.centresList && program.centresList.length > 0 ? (
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <h3 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)] mb-1">
+                {lang === "en" ? "Our Active Centres" : "हमारे सक्रिय केंद्र"}
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {program.centresList.map((centre, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col bg-white border border-gray-150 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                  >
+                    {/* Centre Image */}
+                    {centre.image ? (
+                      <div className="h-40 overflow-hidden relative">
+                        <img
+                          src={`${BACKEND}/uploads/programs/${centre.image}`}
+                          alt={languageFallback(centre.name, lang)}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-40 bg-[var(--color-primary-light)] flex items-center justify-center text-gray-400">
+                        <span className="text-2xl">🏢</span>
+                      </div>
+                    )}
 
-            {/* Centres */}
-            {(program.centres?.en || program.centres?.hi) && (
-              <div className="bg-[var(--color-primary-light)] rounded-xl p-4 border border-gray-100">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🏢</span>
-                  <h4 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
-                    {lang === "en" ? "Centres" : "केंद्र"}
-                  </h4>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                  {languageFallback(program.centres, lang)}
-                </p>
+                    {/* Centre Details */}
+                    <div className="p-4 flex-1 flex flex-col justify-between space-y-2">
+                      <div>
+                        <h4 className="text-sm font-bold text-[var(--color-secondary)]">
+                          {languageFallback(centre.name, lang)}
+                        </h4>
+                      </div>
+                      {languageFallback(centre.location, lang) && (
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <span>📍</span>
+                          <span className="truncate">
+                            {languageFallback(centre.location, lang)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            /* Traditional Info Grid fallback if centresList is empty */
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Location */}
+              {(program.location?.en || program.location?.hi) && (
+                <div className="bg-[var(--color-primary-light)] rounded-xl p-4 border border-gray-100">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">📍</span>
+                    <h4 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
+                      {lang === "en" ? "Location" : "स्थान"}
+                    </h4>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {languageFallback(program.location, lang)}
+                  </p>
+                </div>
+              )}
+
+              {/* Centres */}
+              {(program.centres?.en || program.centres?.hi) && (
+                <div className="bg-[var(--color-primary-light)] rounded-xl p-4 border border-gray-100">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">🏢</span>
+                    <h4 className="text-xs uppercase tracking-widest font-bold text-[var(--color-secondary)]">
+                      {lang === "en" ? "Centres" : "केंद्र"}
+                    </h4>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                    {languageFallback(program.centres, lang)}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

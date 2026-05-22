@@ -359,6 +359,25 @@ const Donations = () => {
                   <p className="text-xs text-gray-600 bg-gray-50 rounded-lg p-3 italic">"{d.message}"</p>
                 )}
 
+                {/* Screenshot */}
+                {d.screenshot && (
+                  <div className="mt-2.5 pt-2.5 border-t border-[var(--admin-border)]">
+                    <p className="text-xs font-semibold text-[var(--admin-muted)] mb-1.5">📷 Payment Screenshot:</p>
+                    <a
+                      href={`${BACKEND}/uploads/donations/${d.screenshot}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block border border-[var(--admin-border)] hover:border-[var(--admin-accent)] rounded-lg overflow-hidden max-w-xs transition-all bg-gray-50"
+                    >
+                      <img
+                        src={`${BACKEND}/uploads/donations/${d.screenshot}`}
+                        alt="Payment Screenshot"
+                        className="max-h-32 object-contain"
+                      />
+                    </a>
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div className="flex items-center gap-2 pt-2 border-t border-[var(--admin-border)]">
                   <select

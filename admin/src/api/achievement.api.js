@@ -23,3 +23,9 @@ export const deleteAchievement = async (id) => {
 
   return data;
 };
+
+export const reorderAchievements = async (orderedIds) => {
+  const { data } = await API.patch("/achievements/reorder", { orderedIds });
+
+  return data;
+};

@@ -7,6 +7,7 @@ import {
   createAchievement,
   updateAchievement,
   deleteAchievement,
+  reorderAchievements,
 } from "../controllers/achievement.controller.js";
 
 const router =
@@ -32,6 +33,11 @@ router.put(
 router.delete(
   "/:id",
   deleteAchievement
+);
+
+router.patch(
+  "/reorder",
+  reorderAchievements
 );
 
 export default router;

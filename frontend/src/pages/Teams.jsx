@@ -188,21 +188,13 @@ const FoundingBodyCard = ({ member }) => {
 /* ────────────────────── FOUNDING BODY SECTION ─────────────────────────────── */
 
 const FoundingBodySection = ({ members }) => {
-  const { lang } = useLanguage();
   if (!members || members.length === 0) return null;
 
   return (
-    <div>
-      <div className="text-center mb-8">
-        <h2 className="text-sm uppercase tracking-[0.25em] font-bold text-gray-800">
-          {lang === "en" ? "Founding Body" : "संस्थापक निकाय"}
-        </h2>
-      </div>
-      <div className="space-y-6">
-        {members.map((member) => (
-          <FoundingBodyCard key={member._id} member={member} />
-        ))}
-      </div>
+    <div className="space-y-6">
+      {members.map((member) => (
+        <FoundingBodyCard key={member._id} member={member} />
+      ))}
     </div>
   );
 };
@@ -216,36 +208,45 @@ const LeadershipCard = ({ member }) => {
   const quote = t(member.quote, lang);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-      <div className="flex flex-col items-center text-center p-6 md:p-8">
-        {/* Golden Circle Photo */}
+    <div className="relative flex flex-col min-h-[140px] md:min-h-[160px] bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+      {/* Top Half: Golden Background */}
+      <div
+        className="flex-1 flex flex-col justify-center pl-[110px] md:pl-[150px] pr-4 py-3"
+        style={{
+          background: "linear-gradient(135deg, #e5b842 0%, #f9eeb2 50%, #d4a017 100%)",
+        }}
+      >
+        <h3 className="text-sm md:text-base font-bold text-slate-900 leading-tight">
+          {t(member.name, lang)}
+        </h3>
+        <p className="text-[9px] md:text-[10px] uppercase tracking-widest text-slate-800 font-bold mt-0.5">
+          {t(member.role, lang)}
+        </p>
+      </div>
+
+      {/* Bottom Half: White Background */}
+      <div className="flex-1 flex items-center pl-[110px] md:pl-[150px] pr-4 py-3 bg-white">
+        {quote ? (
+          <p
+            className="text-xs md:text-sm text-gray-600 italic leading-relaxed line-clamp-3"
+            style={{ fontFamily: "'Georgia', serif" }}
+          >
+            "{quote}"
+          </p>
+        ) : (
+          <p className="text-xs text-gray-400 italic">
+            {lang === "en" ? "No quote available." : "कोई विचार उपलब्ध नहीं है।"}
+          </p>
+        )}
+      </div>
+
+      {/* Photo Centered Vertically on the Border Line */}
+      <div className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10">
         <GoldenCirclePhoto
           src={`${BACKEND}/uploads/team/${member.photo}`}
           alt={t(member.name, lang)}
-          size="w-36 h-36 md:w-44 md:h-44"
+          size="w-20 h-20 md:w-24 h-24"
         />
-
-        {/* Name & Role */}
-        <div className="mt-5">
-          <h3 className="text-lg font-bold text-[var(--color-secondary)]">
-            {t(member.name, lang)}
-          </h3>
-          <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary-dark)] font-bold mt-1">
-            {t(member.role, lang)}
-          </p>
-        </div>
-
-        {/* Quote */}
-        {quote && (
-          <div className="mt-4 border-t border-gray-100 pt-4 w-full">
-            <p
-              className="text-sm text-gray-600 italic leading-relaxed"
-              style={{ fontFamily: "'Georgia', serif" }}
-            >
-              "{quote}"
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -254,21 +255,13 @@ const LeadershipCard = ({ member }) => {
 /* ────────────────────── LEADERSHIP SECTION ─────────────────────────────────── */
 
 const LeadershipSection = ({ members }) => {
-  const { lang } = useLanguage();
   if (!members || members.length === 0) return null;
 
   return (
-    <div>
-      <div className="text-center mb-8">
-        <h2 className="text-sm uppercase tracking-[0.25em] font-bold text-gray-800">
-          {lang === "en" ? "Leadership" : "नेतृत्व"}
-        </h2>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {members.map((member) => (
-          <LeadershipCard key={member._id} member={member} />
-        ))}
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {members.map((member) => (
+        <LeadershipCard key={member._id} member={member} />
+      ))}
     </div>
   );
 };
@@ -296,44 +289,36 @@ const ExecutionTeamSection = ({ executionTeam, layout }) => {
   }
 
   return (
-    <div>
-      <div className="text-center mb-8">
-        <h2 className="text-sm uppercase tracking-[0.25em] font-bold text-gray-800">
-          {lang === "en" ? "Our Execution Team" : "हमारी कार्यकारी टीम"}
-        </h2>
-      </div>
-
-      <div className="space-y-5">
-        {rows.map((row, rIdx) => (
-          <div
-            key={rIdx}
-            className="grid gap-5"
-            style={{ gridTemplateColumns: `repeat(${row.cols}, 1fr)` }}
-          >
-            {row.members.map((member) => (
-              <div
-                key={member._id}
-                className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
-              >
-                <img
-                  src={`${BACKEND}/uploads/team/${member.photo}`}
-                  alt={t(member.name, lang)}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <h4 className="text-white font-bold text-sm">
-                    {t(member.name, lang)}
-                  </h4>
-                  <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
-                    {t(member.role, lang)}
-                  </p>
-                </div>
+    <div className="space-y-5">
+      {rows.map((row, rIdx) => (
+        <div
+          key={rIdx}
+          className="grid gap-5"
+          style={{ gridTemplateColumns: `repeat(${row.cols}, 1fr)` }}
+        >
+          {row.members.map((member) => (
+            <div
+              key={member._id}
+              className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
+            >
+              <img
+                src={`${BACKEND}/uploads/team/${member.photo}`}
+                alt={t(member.name, lang)}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <h4 className="text-white font-bold text-sm">
+                  {t(member.name, lang)}
+                </h4>
+                <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
+                  {t(member.role, lang)}
+                </p>
               </div>
-            ))}
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
@@ -433,17 +418,13 @@ const Teams = () => {
             <FoundingBodySection members={founders} />
           </section>
 
-          <VerticalConnector />
-
           {/* Leadership (2 per row, golden circle, no popup) */}
-          <section className="show">
+          <section className="show mt-8">
             <LeadershipSection members={leaders} />
           </section>
 
-          <VerticalConnector />
-
           {/* Execution Team — custom row layout */}
-          <section className="show">
+          <section className="show mt-8">
             <ExecutionTeamSection executionTeam={executionTeam} layout={executionLayout} />
           </section>
 

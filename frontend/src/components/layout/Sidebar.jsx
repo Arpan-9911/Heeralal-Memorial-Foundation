@@ -38,6 +38,7 @@ const Sidebar = ({ open, setOpen }) => {
           <Link to="/about" onClick={() => setOpen(false)}>{lang === "en" ? "ABOUT US" : "हमारे बारे में"}</Link>
           <Link to="/achievements" onClick={() => setOpen(false)}>{lang === "en" ? "ACHIEVEMENTS" : "उपलब्धियाँ"}</Link>
           <Link to="/programs" onClick={() => setOpen(false)}>{lang === "en" ? "PROGRAMS" : "प्रोग्राम"}</Link>
+          <Link to="/commendations" onClick={() => setOpen(false)}>{lang === "en" ? "COMMENDATIONS" : "प्रशंसापत्र"}</Link>
           <Link to="/media" onClick={() => setOpen(false)}>{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
           <Link to="/join-us" onClick={() => setOpen(false)}>{lang === "en" ? "JOIN US" : "जुड़ें"}</Link>
           <Link to="/teams" onClick={() => setOpen(false)}>{lang === "en" ? "TEAM" : "टीम"}</Link>

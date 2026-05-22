@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import {
   getPrograms,
   createProgram,
   updateProgram,
   deleteProgram,
+  reorderPrograms,
 } from "../api/program.api";
 import { toast } from "sonner";
 
@@ -23,6 +24,7 @@ const initialForm = {
   centresHi: "",
   image: null,
   active: true,
+  centresList: [],
 };
 
 const inputClass =
@@ -37,6 +39,43 @@ const Programs = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(initialForm);
+
+  // Drag state
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+
+  const handleDragStart = (e, index) => {
+    dragItem.current = index;
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    dragOverItem.current = index;
+  };
+
+  const handleDrop = async (e, index) => {
+    e.preventDefault();
+    const reordered = [...programs];
+    const [dragged] = reordered.splice(dragItem.current, 1);
+    reordered.splice(dragOverItem.current, 0, dragged);
+
+    // Update local state immediately
+    setPrograms(reordered);
+
+    // Persist
+    try {
+      await reorderPrograms(reordered.map((p) => p._id));
+      toast.success("Order updated");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save order");
+      fetchPrograms(); // rollback
+    }
+
+    dragItem.current = null;
+    dragOverItem.current = null;
+  };
 
   const fetchPrograms = async () => {
     try {
@@ -76,6 +115,7 @@ const Programs = () => {
       centresHi: program.centres?.hi || "",
       image: null,
       active: program.active ?? true,
+      centresList: program.centresList ? program.centresList.map(c => ({ ...c, file: null })) : [],
     });
     setEditing(program._id);
     setShowForm(true);
@@ -109,6 +149,20 @@ const Programs = () => {
       formData.append("centresEn", form.centresEn);
       formData.append("centresHi", form.centresHi);
       formData.append("active", form.active);
+
+      // Serialize centres list (stripping the temporary client-side File objects)
+      const serializedCentres = (form.centresList || []).map(centre => {
+        const { file, ...rest } = centre;
+        return rest;
+      });
+      formData.append("centresList", JSON.stringify(serializedCentres));
+
+      // Append raw files for dynamic centre images
+      (form.centresList || []).forEach((centre, index) => {
+        if (centre.file) {
+          formData.append(`centreImage_${index}`, centre.file);
+        }
+      });
 
       if (form.image) {
         formData.append("image", form.image);
@@ -164,6 +218,7 @@ const Programs = () => {
       formData.append("centresEn", program.centres?.en || "");
       formData.append("centresHi", program.centres?.hi || "");
       formData.append("active", !program.active);
+      formData.append("centresList", JSON.stringify(program.centresList || []));
 
       const data = await updateProgram(program._id, formData);
       setPrograms((prev) =>
@@ -325,6 +380,175 @@ const Programs = () => {
             </div>
           </div>
 
+          {/* Multiple Centres List */}
+          <div className="border-t border-gray-100 pt-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className={`${labelClass}`}>🏢 Multiple Centres (with Photo & Location)</p>
+                <p className="text-[10px] text-gray-400 normal-case mt-0.5">
+                  Add specific centres with their names, locations, and photographs.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setForm({
+                    ...form,
+                    centresList: [
+                      ...(form.centresList || []),
+                      {
+                        name: { en: "", hi: "" },
+                        location: { en: "", hi: "" },
+                        image: "",
+                        file: null,
+                      },
+                    ],
+                  });
+                }}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
+              >
+                + Add Centre
+              </button>
+            </div>
+
+            {form.centresList && form.centresList.length > 0 && (
+              <div className="space-y-4 bg-gray-50 p-4 rounded-2xl border border-gray-200/60">
+                {form.centresList.map((centre, index) => (
+                  <div
+                    key={index}
+                    className="p-4 bg-white border border-gray-100 rounded-xl space-y-3 relative shadow-sm"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = (form.centresList || []).filter((_, i) => i !== index);
+                        setForm({ ...form, centresList: updated });
+                      }}
+                      className="absolute top-3 right-3 text-red-500 hover:text-red-700 font-bold text-xs"
+                    >
+                      Remove
+                    </button>
+
+                    <p className="text-xs font-bold text-gray-700">Centre #{index + 1}</p>
+
+                    {/* Bilingual Name */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <span className="text-[10px] font-semibold text-gray-500 uppercase">Name (English)</span>
+                        <input
+                          placeholder="e.g. Heeralal Memorial Center"
+                          value={centre.name?.en || ""}
+                          onChange={(e) => {
+                            const updated = [...form.centresList];
+                            updated[index] = {
+                              ...updated[index],
+                              name: { ...updated[index].name, en: e.target.value },
+                            };
+                            setForm({ ...form, centresList: updated });
+                          }}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-semibold text-gray-500 uppercase">Name (Hindi)</span>
+                        <input
+                          placeholder="उदा. हीरालाल मेमोरियल सेंटर"
+                          value={centre.name?.hi || ""}
+                          onChange={(e) => {
+                            const updated = [...form.centresList];
+                            updated[index] = {
+                              ...updated[index],
+                              name: { ...updated[index].name, hi: e.target.value },
+                            };
+                            setForm({ ...form, centresList: updated });
+                          }}
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bilingual Location */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <span className="text-[10px] font-semibold text-gray-500 uppercase">Location (English)</span>
+                        <input
+                          placeholder="e.g. Kolkata, West Bengal"
+                          value={centre.location?.en || ""}
+                          onChange={(e) => {
+                            const updated = [...form.centresList];
+                            updated[index] = {
+                              ...updated[index],
+                              location: { ...updated[index].location, en: e.target.value },
+                            };
+                            setForm({ ...form, centresList: updated });
+                          }}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-semibold text-gray-500 uppercase">Location (Hindi)</span>
+                        <input
+                          placeholder="उदा. कोलकाता, पश्चिम बंगाल"
+                          value={centre.location?.hi || ""}
+                          onChange={(e) => {
+                            const updated = [...form.centresList];
+                            updated[index] = {
+                              ...updated[index],
+                              location: { ...updated[index].location, hi: e.target.value },
+                            };
+                            setForm({ ...form, centresList: updated });
+                          }}
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Centre Photo */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                      <div className="md:col-span-2">
+                        <span className="text-[10px] font-semibold text-gray-500 uppercase">Centre Image File</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const updated = [...form.centresList];
+                              updated[index] = {
+                                ...updated[index],
+                                file: file,
+                              };
+                              setForm({ ...form, centresList: updated });
+                            }
+                          }}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div className="flex items-center justify-center border border-dashed border-gray-200 rounded-lg h-20 overflow-hidden bg-gray-50">
+                        {centre.file ? (
+                          <img
+                            src={URL.createObjectURL(centre.file)}
+                            alt="Selected"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : centre.image ? (
+                          <img
+                            src={`${import.meta.env.VITE_BACKEND_URL}/uploads/programs/${centre.image}`}
+                            alt="Current"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-[10px] text-gray-400">No image</span>
+                        )}
+                      </div>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Image & Active */}
           <div className="space-y-3">
             <div>
@@ -383,90 +607,127 @@ const Programs = () => {
 
       {/* Cards */}
       {!loading && programs.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {programs.map((p) => (
+        <div className="space-y-3">
+          {programs.map((p, index) => (
             <div
               key={p._id}
-              className="group bg-white rounded-2xl overflow-hidden border border-[var(--admin-border)] hover:shadow-xl transition-all duration-300"
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              className="relative bg-white border border-[var(--admin-border)] rounded-2xl p-3 hover:shadow-md transition-all duration-300 cursor-grab active:cursor-grabbing flex items-center gap-3"
             >
-              {/* Top Image Section */}
-              <div className="relative h-44 overflow-hidden">
-                <img
-                  src={`${import.meta.env.VITE_BACKEND_URL}/uploads/programs/${p.image}`}
-                  alt={p.name?.en}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+              {/* Drag Handle */}
+              <div className="flex-shrink-0 text-gray-400 hover:text-gray-600 px-1 cursor-grab">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <circle cx="5" cy="3" r="1.5" />
+                  <circle cx="11" cy="3" r="1.5" />
+                  <circle cx="5" cy="8" r="1.5" />
+                  <circle cx="11" cy="8" r="1.5" />
+                  <circle cx="5" cy="13" r="1.5" />
+                  <circle cx="11" cy="13" r="1.5" />
+                </svg>
+              </div>
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10" />
+              {/* Order Badge */}
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 text-gray-600 text-[11px] font-bold flex items-center justify-center">
+                {index + 1}
+              </span>
 
-                {/* Status */}
-                <button
-                  onClick={() => toggleStatus(p)}
-                  className={`absolute top-3 right-3 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full backdrop-blur-md ${
-                    p.active
-                      ? "bg-green-500/20 text-green-100 border border-green-300/30"
-                      : "bg-white/10 text-white border border-white/20"
-                  }`}
-                >
-                  {p.active ? "Active" : "Inactive"}
-                </button>
+              <div className="flex gap-3 flex-1 min-w-0 pr-24">
+                {/* Image */}
+                <div className="w-32 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                  <img
+                    src={`${import.meta.env.VITE_BACKEND_URL}/uploads/programs/${p.image}`}
+                    alt={p.name?.en}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
                 {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <p className="text-[10px] uppercase tracking-[0.18em] mb-0.5">
-                    {p.category?.en}
-                  </p>
-                  <h3 className="text-base font-bold leading-tight line-clamp-1">
-                    {p.name?.en}
-                  </h3>
-                  <p className="text-xs mt-0.5 line-clamp-1 opacity-80">
-                    {p.name?.hi}
-                  </p>
+                <div className="flex-1 min-w-0 relative">
+                  <div className="absolute top-0 right-0 text-right flex flex-col items-end gap-1">
+                    {/* Status Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleStatus(p);
+                      }}
+                      className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full transition-all cursor-pointer ${
+                        p.active
+                          ? "bg-green-100 text-green-700 border border-green-200"
+                          : "bg-gray-100 text-gray-600 border border-gray-200"
+                      }`}
+                    >
+                      {p.active ? "Active" : "Inactive"}
+                    </button>
+                    
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-gray-400 mt-1">
+                      {p.category?.en}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug pr-20">
+                      {p.name?.en}
+                    </h3>
+                    <p className="text-xs text-[var(--admin-muted)] mt-0.5 leading-snug pr-20">
+                      {p.name?.hi}
+                    </p>
+                  </div>
+
+                  <div className="mt-1.5 space-y-1 pr-20">
+                    <p className="text-xs text-gray-700 leading-relaxed line-clamp-1">
+                      {p.description?.en}
+                    </p>
+                    
+                    {/* Info Tags */}
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      {p.location?.en && (
+                        <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                          📍 {p.location.en}
+                        </span>
+                      )}
+                      {p.centresList && p.centresList.length > 0 ? (
+                        <span className="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full">
+                          🏢 {p.centresList.length} Centres (with photo)
+                        </span>
+                      ) : p.centres?.en ? (
+                        <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">
+                          🏢 Centres: {p.centres.en}
+                        </span>
+                      ) : null}
+                      {p.longDescription?.en && (
+                        <span className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                          📝 Long desc
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Bottom */}
-              <div className="p-4 space-y-2">
-                <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">
-                  {p.description?.en}
-                </p>
+              {/* Actions */}
+              <div className="absolute bottom-3 right-3 flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(p);
+                  }}
+                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 transition-all cursor-pointer"
+                >
+                  Edit
+                </button>
 
-                {/* Info Tags */}
-                <div className="flex flex-wrap gap-1.5">
-                  {p.location?.en && (
-                    <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-                      📍 {p.location.en}
-                    </span>
-                  )}
-                  {p.centres?.en && (
-                    <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">
-                      🏢 Centres added
-                    </span>
-                  )}
-                  {p.longDescription?.en && (
-                    <span className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-                      📝 Long desc
-                    </span>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2 pt-1">
-                  <button
-                    onClick={() => handleEdit(p)}
-                    className="flex-1 px-3 py-2 text-xs font-semibold rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(p._id)}
-                    className="flex-1 px-3 py-2 text-xs font-semibold rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                  >
-                    Delete
-                  </button>
-                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(p._id);
+                  }}
+                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all cursor-pointer"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}

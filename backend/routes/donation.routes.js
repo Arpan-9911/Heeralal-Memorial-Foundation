@@ -23,7 +23,7 @@ router.put(
 );
 
 /* ───── Donation Submissions ───── */
-router.post("/", createDonation);
+router.post("/", uploadDonation.single("screenshot"), createDonation);
 router.get("/", protectAdmin, getDonations);
 router.put("/:id", protectAdmin, updateDonationStatus);
 router.delete("/:id", protectAdmin, deleteDonation);

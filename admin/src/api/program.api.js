@@ -44,3 +44,14 @@ export const deleteProgram =
 
     return data;
   };
+
+export const reorderPrograms =
+  async (orderedIds) => {
+    const { data } =
+      await API.patch(
+        "/programs/reorder",
+        { orderedIds }
+      );
+
+    return data;
+  };

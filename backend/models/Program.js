@@ -33,6 +33,23 @@ const programSchema =
         hi: String,
       },
 
+      centresList: [
+        {
+          name: {
+            en: String,
+            hi: String,
+          },
+          location: {
+            en: String,
+            hi: String,
+          },
+          image: {
+            type: String,
+            default: "",
+          },
+        },
+      ],
+
       image: {
         type: String,
         required: true,
@@ -41,6 +58,11 @@ const programSchema =
       active: {
         type: Boolean,
         default: true,
+      },
+
+      serialNumber: {
+        type: Number,
+        default: 0,
       },
     },
     {

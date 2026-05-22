@@ -26,6 +26,7 @@ import sacredMemoryRoutes from "./routes/sacredMemory.routes.js";
 import settingsRoutes from "./routes/settings.routes.js";
 import pillarRoutes from "./routes/pillar.routes.js";
 import applicationRoutes from "./routes/application.routes.js";
+import commendationCardRoutes from "./routes/commendationCard.routes.js";
 
 import homeRoutes from "./routes/home.routes.js";
 
@@ -101,6 +102,7 @@ app.use("/api/sacred-memory", sacredMemoryRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/pillars", pillarRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/commendation-cards", commendationCardRoutes);
 
 app.use("/api/home", homeRoutes);
 
