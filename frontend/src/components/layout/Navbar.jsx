@@ -62,7 +62,7 @@ const Topbar = () => {
               </button>
               <span>|</span>
               <a
-                href="https://www.admin.hlmfofficial.org"
+                href="https://admin.hlmfofficial.org"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="cursor-pointer hover:text-[var(--color-primary)] transition-colors"

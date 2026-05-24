@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -112,7 +111,7 @@ const stripText = (text, maxLength = 200) => {
 const fallbackImage =
   "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1974";
 const languageFallback = (textObj, lang) => {
-  return textObj[lang] || textObj["en"] || textObj["hi"] || "N/A";
+  return textObj[lang] || textObj["en"] || textObj["hi"] || "";
 };
 
 const Hero = ({ slides }) => {

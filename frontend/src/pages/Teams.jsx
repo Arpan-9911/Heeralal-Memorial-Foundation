@@ -9,11 +9,16 @@ const t = (obj, lang) => (obj && (obj[lang] || obj.en || obj.hi)) || "";
 
 /* ────────────────── GOLDEN CIRCLE PHOTO ───────────────────────────────────── */
 
-const GoldenCirclePhoto = ({ src, alt, size = "w-48 h-48 md:w-56 md:h-56" }) => (
+const GoldenCirclePhoto = ({
+  src,
+  alt,
+  size = "w-48 h-48 md:w-56 md:h-56",
+}) => (
   <div
     className={`relative ${size} rounded-full p-[4px] flex-shrink-0`}
     style={{
-      background: "linear-gradient(135deg, #d4a017 0%, #f7e98e 25%, #c9952c 50%, #fffbe6 75%, #d4a017 100%)",
+      background:
+        "linear-gradient(135deg, #d4a017 0%, #f7e98e 25%, #c9952c 50%, #fffbe6 75%, #d4a017 100%)",
       backgroundSize: "200% 200%",
       animation: "goldenShimmer 3s ease-in-out infinite",
       boxShadow: "0 0 24px rgba(212, 160, 23, 0.35)",
@@ -45,12 +50,16 @@ const ReadMoreModal = ({ open, onClose, member, lang }) => {
   const designation = t(member.role, lang);
   const messageBody = t(member.message, lang);
   const signatureName = t(member.displayName, lang) || t(member.name, lang);
-  const signatureDesignation = t(member.displayDesignation, lang) || designation;
+  const signatureDesignation =
+    t(member.displayDesignation, lang) || designation;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       {/* Modal */}
       <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto animate-[fadeIn_0.3s_ease]">
@@ -83,7 +92,9 @@ const ReadMoreModal = ({ open, onClose, member, lang }) => {
             </p>
           ) : (
             <p className="text-sm text-gray-400 italic">
-              {lang === "en" ? "No message available." : "कोई संदेश उपलब्ध नहीं है।"}
+              {lang === "en"
+                ? "No message available."
+                : "कोई संदेश उपलब्ध नहीं है।"}
             </p>
           )}
 
@@ -180,7 +191,12 @@ const FoundingBodyCard = ({ member }) => {
         </div>
       </div>
 
-      <ReadMoreModal open={showModal} onClose={() => setShowModal(false)} member={member} lang={lang} />
+      <ReadMoreModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        member={member}
+        lang={lang}
+      />
     </>
   );
 };
@@ -203,50 +219,55 @@ const FoundingBodySection = ({ members }) => {
 
 const LeadershipCard = ({ member }) => {
   const { lang } = useLanguage();
+
   if (!member) return null;
 
   const quote = t(member.quote, lang);
 
   return (
-    <div className="relative flex flex-col min-h-[140px] md:min-h-[160px] bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-      {/* Top Half: Golden Background */}
-      <div
-        className="flex-1 flex flex-col justify-center pl-[110px] md:pl-[150px] pr-4 py-3"
-        style={{
-          background: "linear-gradient(135deg, #e5b842 0%, #f9eeb2 50%, #d4a017 100%)",
-        }}
-      >
-        <h3 className="text-sm md:text-base font-bold text-slate-900 leading-tight">
-          {t(member.name, lang)}
-        </h3>
-        <p className="text-[9px] md:text-[10px] uppercase tracking-widest text-slate-800 font-bold mt-0.5">
-          {t(member.role, lang)}
-        </p>
-      </div>
+    <div className="group relative bg-white/80 backdrop-blur-sm border border-gray-200 rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+      {/* Top Gradient */}
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] opacity-90" />
 
-      {/* Bottom Half: White Background */}
-      <div className="flex-1 flex items-center pl-[110px] md:pl-[150px] pr-4 py-3 bg-white">
-        {quote ? (
-          <p
-            className="text-xs md:text-sm text-gray-600 italic leading-relaxed line-clamp-3"
-            style={{ fontFamily: "'Georgia', serif" }}
-          >
-            "{quote}"
+      <div className="relative px-6 pb-8 pt-10 flex flex-col items-center text-center">
+        {/* Floating Image */}
+        <div className="relative z-10">
+          <div className="absolute inset-0 rounded-full blur-2xl bg-[var(--color-primary)] opacity-30 group-hover:scale-125 transition duration-500" />
+
+          <div className="relative border-4 border-white rounded-full shadow-xl overflow-hidden">
+            <GoldenCirclePhoto
+              src={`${BACKEND}/uploads/team/${member.photo}`}
+              alt={t(member.name, lang)}
+              size="w-36 h-36 md:w-44 md:h-44"
+            />
+          </div>
+        </div>
+
+        {/* Name & Role */}
+        <div className="mt-6">
+          <h3 className="text-2xl font-extrabold text-gray-900">
+            {t(member.name, lang)}
+          </h3>
+
+          <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-[var(--color-primary-dark)] font-bold">
+            {t(member.role, lang)}
           </p>
-        ) : (
-          <p className="text-xs text-gray-400 italic">
-            {lang === "en" ? "No quote available." : "कोई विचार उपलब्ध नहीं है।"}
-          </p>
+        </div>
+
+        {/* Decorative Line */}
+        <div className="w-16 h-1 rounded-full bg-[var(--color-primary)] mt-5" />
+
+        {/* Quote */}
+        {quote && (
+          <div className="mt-6">
+            <p
+              className="text-gray-600 italic leading-8 text-[15px]"
+              style={{ fontFamily: "'Georgia', serif" }}
+            >
+              “{quote}”
+            </p>
+          </div>
         )}
-      </div>
-
-      {/* Photo Centered Vertically on the Border Line */}
-      <div className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10">
-        <GoldenCirclePhoto
-          src={`${BACKEND}/uploads/team/${member.photo}`}
-          alt={t(member.name, lang)}
-          size="w-20 h-20 md:w-24 h-24"
-        />
       </div>
     </div>
   );
@@ -255,14 +276,48 @@ const LeadershipCard = ({ member }) => {
 /* ────────────────────── LEADERSHIP SECTION ─────────────────────────────────── */
 
 const LeadershipSection = ({ members }) => {
+  const { lang } = useLanguage();
+
   if (!members || members.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {members.map((member) => (
-        <LeadershipCard key={member._id} member={member} />
-      ))}
-    </div>
+    <section className="relative mb-8">
+      {/* Heading */}
+      <div className="text-center mb-8">
+        <span className="text-[11px] uppercase tracking-[0.35em] text-[var(--color-primary)] font-bold">
+          {lang === "en" ? "Leadership" : "नेतृत्व"}
+        </span>
+
+        <h2 className="mt-3 text-3xl md:text-4xl font-black text-gray-900">
+          {lang === "en"
+            ? "Meet Our Visionaries"
+            : "हमारे दूरदर्शी नेताओं से मिलें"}
+        </h2>
+
+        <div className="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-4 rounded-full" />
+      </div>
+
+      {/* Centered 2-Column Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {members.map((member, index) => {
+          const isOdd = members.length % 2 !== 0;
+          const isLast = index === members.length - 1;
+
+          return (
+            <div
+              key={member._id}
+              className={
+                isOdd && isLast
+                  ? "md:col-span-2 w-1/2 mx-auto"
+                  : ""
+              }
+            >
+              <LeadershipCard member={member} />
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 };
 
@@ -280,45 +335,61 @@ const ExecutionTeamSection = ({ executionTeam, layout }) => {
   while (index < executionTeam.length) {
     // Use the defined row layout, or repeat the last value for extra members
     const rowIndex = rows.length;
-    const cols = effectiveLayout[rowIndex] !== undefined
-      ? effectiveLayout[rowIndex]
-      : effectiveLayout[effectiveLayout.length - 1];
+    const cols =
+      effectiveLayout[rowIndex] !== undefined
+        ? effectiveLayout[rowIndex]
+        : effectiveLayout[effectiveLayout.length - 1];
     const rowMembers = executionTeam.slice(index, index + cols);
     rows.push({ cols, members: rowMembers });
     index += cols;
   }
 
   return (
-    <div className="space-y-5">
-      {rows.map((row, rIdx) => (
-        <div
-          key={rIdx}
-          className="grid gap-5"
-          style={{ gridTemplateColumns: `repeat(${row.cols}, 1fr)` }}
-        >
-          {row.members.map((member) => (
+    <div>
+      <div className="text-center mb-8">
+        <h2 className="text-sm uppercase tracking-[0.25em] font-bold text-gray-800">
+          {lang === "en" ? "Our Execution Team" : "हमारी कार्यकारी टीम"}
+        </h2>
+      </div>
+
+      <div className="space-y-5">
+        {rows.map((row, rIdx) => (
+          <div className="flex justify-center" key={rIdx}>
             <div
-              key={member._id}
-              className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
+              className="grid gap-5"
+              style={{
+                gridTemplateColumns: `repeat(${row.members.length}, minmax(0, 320px))`,
+                justifyContent: "center",
+              }}
             >
-              <img
-                src={`${BACKEND}/uploads/team/${member.photo}`}
-                alt={t(member.name, lang)}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <h4 className="text-white font-bold text-sm">
-                  {t(member.name, lang)}
-                </h4>
-                <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
-                  {t(member.role, lang)}
-                </p>
-              </div>
+              {row.members.map((member) => (
+                <div
+                  key={member._id}
+                  className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
+                >
+                  <img
+                    src={`${BACKEND}/uploads/team/${member.photo}`}
+                    alt={t(member.name, lang)}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h4 className="text-white font-bold text-sm">
+                      {t(member.name, lang)}
+                    </h4>
+
+                    <p className="text-[10px] uppercase tracking-widest text-[var(--color-primary)] font-semibold">
+                      {t(member.role, lang)}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -401,9 +472,7 @@ const Teams = () => {
               className="text-2xl md:text-3xl font-bold text-[var(--color-secondary)] italic"
               style={{ fontFamily: "'Georgia', serif" }}
             >
-              {lang === "en"
-                ? "Organizational Hierarchy"
-                : "संगठनात्मक संरचना"}
+              {lang === "en" ? "Organizational Hierarchy" : "संगठनात्मक संरचना"}
             </h1>
             <div className="w-40 h-[2px] bg-[var(--color-primary)] mt-3 mx-auto rounded" />
             <p className="text-xs text-gray-500 mt-3 max-w-md mx-auto leading-relaxed">
@@ -424,8 +493,11 @@ const Teams = () => {
           </section>
 
           {/* Execution Team — custom row layout */}
-          <section className="show mt-8">
-            <ExecutionTeamSection executionTeam={executionTeam} layout={executionLayout} />
+          <section className="show">
+            <ExecutionTeamSection
+              executionTeam={executionTeam}
+              layout={executionLayout}
+            />
           </section>
 
           {/* CTA */}

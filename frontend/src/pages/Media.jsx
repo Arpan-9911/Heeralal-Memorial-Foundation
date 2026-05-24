@@ -30,24 +30,24 @@ const PressGallery = ({ galleryImages }) => {
       </div>
 
       {/* Image Grid */}
-      <div className="columns-2 gap-3 space-y-3">
-  {galleryImages.map((img) => (
-    <div
-      key={img._id}
-      className="break-inside-avoid overflow-hidden rounded-lg border border-gray-100 group cursor-pointer"
-    >
-      <img
-        src={
-          import.meta.env.VITE_BACKEND_URL +
-          "/uploads/media/images/" +
-          img.image
-        }
-        alt={img.alt}
-        className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-      />
-    </div>
-  ))}
-</div>
+      <div className="columns-3 gap-3 space-y-3">
+        {galleryImages.map((img) => (
+          <div
+            key={img._id}
+            className="break-inside-avoid overflow-hidden rounded-lg border border-gray-300 group cursor-pointer"
+          >
+            <img
+              src={
+                import.meta.env.VITE_BACKEND_URL +
+                "/uploads/media/images/" +
+                img.image
+              }
+              alt={img.alt}
+              className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -58,7 +58,9 @@ const VideoResources = ({ videoData }) => {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex items-center justify-center">
         <p className="text-sm text-gray-600">
-          {lang === "en" ? "No Video Resources Found" : "कोई वीडियो संसाधन नहीं मिला"}
+          {lang === "en"
+            ? "No Video Resources Found"
+            : "कोई वीडियो संसाधन नहीं मिला"}
         </p>
       </div>
     );
@@ -75,12 +77,23 @@ const VideoResources = ({ videoData }) => {
 
       {/* Video Thumbnail */}
       <div className="relative rounded-lg overflow-hidden group cursor-pointer">
-        <video src={import.meta.env.VITE_BACKEND_URL + "/uploads/media/video/" + videoData.file} controls className="w-full h-60 object-cover" />
+        <video
+          src={
+            import.meta.env.VITE_BACKEND_URL +
+            "/uploads/media/video/" +
+            videoData.file
+          }
+          controls
+          className="w-full h-48 rounded-lg object-contain bg-black"
+        />
       </div>
 
       {/* Caption */}
       <p className="text-xs text-gray-600 mt-3 italic">
-        {videoData.caption[lang] || (lang === "en" ? "No caption available." : "कोई कैप्शन उपलब्ध नहीं है।")}
+        {videoData.caption[lang] ||
+          (lang === "en"
+            ? "No caption available."
+            : "कोई कैप्शन उपलब्ध नहीं है।")}
       </p>
     </div>
   );
@@ -92,7 +105,7 @@ const LatestAnnouncements = ({ announcements }) => {
   return (
     <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
       {/* Header */}
-      <div className="bg-[var(--color-secondary)] px-6 py-4 border-l-4 border-[var(--color-primary)]">
+      <div className="bg-[var(--color-secondary)] p-4 border-l-4 border-[var(--color-primary)]">
         <h3 className="text-white font-bold text-lg">
           {lang === "en" ? "Latest Announcements" : "नवीनतम घोषणाएँ"}
         </h3>
@@ -103,16 +116,22 @@ const LatestAnnouncements = ({ announcements }) => {
         {announcements.map((item) => (
           <div
             key={item._id}
-            className="px-6 py-5 hover:bg-[var(--color-primary-light)] transition-colors duration-200 cursor-pointer group"
+            className="p-4 hover:bg-[var(--color-primary-light)] transition-colors duration-200 cursor-pointer group"
           >
             <p className="text-[11px] text-[var(--color-secondary)] font-semibold uppercase tracking-wider mb-1">
               {new Date(item.date).toLocaleDateString()}
             </p>
             <h4 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-[var(--color-secondary)] transition-colors duration-200">
-              {item.title[lang] || (lang === "en" ? "No title available." : "कोई शीर्षक उपलब्ध नहीं है।")}
+              {item.title[lang] ||
+                (lang === "en"
+                  ? "No title available."
+                  : "कोई शीर्षक उपलब्ध नहीं है।")}
             </h4>
             <p className="text-xs text-gray-500 leading-relaxed">
-              {item.excerpt[lang] || (lang === "en" ? "No excerpt available." : "कोई सारांश उपलब्ध नहीं है।")}
+              {item.excerpt[lang] ||
+                (lang === "en"
+                  ? "No excerpt available."
+                  : "कोई सारांश उपलब्ध नहीं है।")}
             </p>
           </div>
         ))}
@@ -163,15 +182,17 @@ const Media = () => {
             <div className="w-full h-[2px] bg-[var(--color-primary)] mt-3 rounded" />
           </div>
 
-          {/* Press Gallery + Video Resources */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 show">
-            <PressGallery galleryImages={galleryImages} />
-            <VideoResources videoData={videoData} />
-          </section>
+          <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 show">
+            {/* LEFT SIDE — BIG GALLERY */}
+            <div className="lg:col-span-2">
+              <PressGallery galleryImages={galleryImages} />
+            </div>
 
-          {/* Latest Announcements */}
-          <section className="show">
-            <LatestAnnouncements announcements={announcements} />
+            {/* RIGHT SIDE — VIDEO + ANNOUNCEMENTS */}
+            <div className="space-y-6">
+              <VideoResources videoData={videoData} />
+              <LatestAnnouncements announcements={announcements} />
+            </div>
           </section>
         </div>
       </div>

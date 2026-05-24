@@ -344,7 +344,7 @@ const Settings = () => {
                     className={inp + " flex-1"}
                   />
                 ) : (
-                  <span className="text-sm text-gray-800 flex-1">{field.value}</span>
+                  <span className="text-sm text-gray-800 flex-1 break-all">{field.value}</span>
                 )}
               </div>
             ))}

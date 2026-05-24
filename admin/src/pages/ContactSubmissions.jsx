@@ -138,6 +138,7 @@ const ContactPageSettings = () => {
       toast.error("Failed to save contact settings");
     } finally {
       setSaving(false);
+      setOpen(false);
     }
   };
 

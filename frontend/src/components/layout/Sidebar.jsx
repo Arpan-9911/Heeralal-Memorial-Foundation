@@ -74,6 +74,15 @@ const Sidebar = ({ open, setOpen }) => {
           >
             हिंदी
           </button>
+          <span>|</span>
+          <a
+            href="https://admin.hlmfofficial.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[var(--color-primary)] transition-colors"
+          >
+            Admin
+          </a>
         </div>
       </div>
     </>
