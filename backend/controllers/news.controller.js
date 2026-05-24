@@ -22,6 +22,28 @@ export const getNews = async (req, res) => {
   }
 };
 
+// GET BY ID
+export const getNewsById = async (req, res) => {
+  try {
+    const newsItem = await News.findById(req.params.id);
+    if (!newsItem) {
+      return res.status(404).json({
+        success: false,
+        message: "News post not found",
+      });
+    }
+    res.json({
+      success: true,
+      news: newsItem,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 // ADD
 export const addNews = async (req, res) => {
   try {

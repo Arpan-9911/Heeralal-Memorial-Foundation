@@ -14,6 +14,7 @@ import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
+import { Link } from "react-router-dom";
 
 import { getHomeData, getSacredMemory, getPillars } from "../api";
 
@@ -538,16 +539,17 @@ const LatestFromField = ({ posts }) => {
               {lang === "en" ? "Latest from the Field" : "मैदान से नवीनतम"}
             </h2>
 
-            <button className="text-xs border px-3 py-1 rounded hover:bg-gray-100">
+            <Link to="/news" className="text-xs border px-3 py-1 rounded hover:bg-gray-100 font-medium">
               {lang === "en" ? "All Press Releases" : "सभी प्रेस विज्ञप्ति"}
-            </button>
+            </Link>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6">
             {posts.map((post) => (
-              <div
+              <Link
                 key={post._id}
-                className="bg-white rounded border border-gray-200 overflow-hidden hover:shadow-lg group"
+                to={`/news/${post._id}`}
+                className="bg-white rounded border border-gray-200 overflow-hidden hover:shadow-lg group block"
               >
                 <div className="relative overflow-hidden">
                   <img
@@ -569,7 +571,7 @@ const LatestFromField = ({ posts }) => {
                     {languageFallback(post.title, lang)}
                   </h3>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

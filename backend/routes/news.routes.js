@@ -4,6 +4,7 @@ import express from "express";
 
 import {
   getNews,
+  getNewsById,
   addNews,
   updateNews,
   deleteNews,
@@ -14,6 +15,7 @@ import { uploadNews } from "../middleware/uploadNews.js";
 const router = express.Router();
 
 router.get("/", getNews);
+router.get("/:id", getNewsById);
 
 router.post(
   "/",

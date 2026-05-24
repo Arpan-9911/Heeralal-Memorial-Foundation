@@ -13,6 +13,8 @@ import Donate from "./pages/Donate";
 import Contact from "./pages/Contact";
 import JoinUs from "./pages/JoinUs";
 import Commendations from "./pages/Commendations";
+import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
 
 
 const ScrollToTop = () => {
@@ -45,6 +47,8 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/join-us" element={<JoinUs />} />
           <Route path="/commendations" element={<Commendations />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

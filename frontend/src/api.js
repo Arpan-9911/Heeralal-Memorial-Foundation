@@ -66,4 +66,19 @@ export const getCommendationCards = async () => {
   return response.data;
 };
 
+export const submitContact = async (data) => {
+  const response = await API.post("/contact", data);
+  return response.data;
+};
+
+export const getNews = async () => {
+  const response = await API.get("/news");
+  return response.data;
+};
+
+export const getNewsById = async (id) => {
+  const response = await API.get(`/news/${id}`);
+  return response.data;
+};
+
 export default API;

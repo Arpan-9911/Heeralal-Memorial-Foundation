@@ -3,7 +3,8 @@ import { useLanguage } from "../LanguageContext";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
-import { getSettings } from "../api";
+import { getSettings, submitContact } from "../api";
+import { toast } from "sonner";
 
 /* ────────────────────────────── HERO DATA ──────────────────────────────────── */
 
@@ -67,6 +68,7 @@ const ContactForm = ({ settings }) => {
     subject: "",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -74,6 +76,26 @@ const ContactForm = ({ settings }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      toast.error(lang === "en" ? "Please fill required fields" : "कृपया आवश्यक फ़ील्ड भरें");
+      return;
+    }
+    try {
+      setSubmitting(true);
+      await submitContact(formData);
+      toast.success(lang === "en" ? "Message submitted successfully!" : "संदेश सफलतापूर्वक जमा!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.message || (lang === "en" ? "Something went wrong" : "कुछ गलत हो गया"));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   /* Build departments dynamically from settings */
@@ -221,7 +243,7 @@ const ContactForm = ({ settings }) => {
             </div>
 
             {/* Submit */}
-            <Button type="submit">
+            <Button type="submit" loading={submitting} disabled={submitting}>
               {lang === "en" ? "Submit Message" : "संदेश जमा करें"}
             </Button>
           </form>
