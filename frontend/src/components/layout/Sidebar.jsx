@@ -36,8 +36,9 @@ const Sidebar = ({ open, setOpen }) => {
         <div className="flex flex-col p-4 gap-4 text-sm font-medium">
           <Link to="/" onClick={() => setOpen(false)}>{lang === "en" ? "HOME" : "होम"}</Link>
           <Link to="/about" onClick={() => setOpen(false)}>{lang === "en" ? "ABOUT US" : "हमारे बारे में"}</Link>
+          <Link to="/patrons" onClick={() => setOpen(false)}>{lang === "en" ? "PATRONS" : "संरक्षक"}</Link>
           <Link to="/achievements" onClick={() => setOpen(false)}>{lang === "en" ? "ACHIEVEMENTS" : "उपलब्धियाँ"}</Link>
-          <Link to="/programs" onClick={() => setOpen(false)}>{lang === "en" ? "PROGRAMS" : "प्रोग्राम"}</Link>
+          <Link to="/programs" onClick={() => setOpen(false)}>{lang === "en" ? "PROGRAM" : "प्रोग्राम"}</Link>
           <Link to="/commendations" onClick={() => setOpen(false)}>{lang === "en" ? "COMMENDATIONS" : "प्रशंसापत्र"}</Link>
           <Link to="/media" onClick={() => setOpen(false)}>{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
           <Link to="/join-us" onClick={() => setOpen(false)}>{lang === "en" ? "JOIN US" : "जुड़ें"}</Link>

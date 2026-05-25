@@ -25,6 +25,7 @@ import AboutUsAdmin from "./pages/AboutUs";
 import SacredMemory from "./pages/SacredMemory";
 import Pillars from "./pages/Pillars";
 import Applications from "./pages/Applications";
+import PatronManagement from "./pages/PatronManagement";
 
 const App = () => {
   useAuth();
@@ -48,6 +49,7 @@ const App = () => {
                     <Route path="/hero-slides" element={<HeroSlides />} />
                     <Route path="/announcements" element={<Announcements />} />
                     <Route path="/team" element={<TeamManagement />} />
+                    <Route path="/patrons" element={<PatronManagement />} />
                     <Route path="/programs" element={<Programs />} />
                     <Route path="/achievements" element={<Achievements />} />
                     <Route path="/media" element={<MediaGallery />} />

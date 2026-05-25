@@ -24,6 +24,7 @@ const navItems = [
   { path: "/hero-slides", label: "Hero Slides", icon: "🖼️" },
   { path: "/announcements", label: "Announcements", icon: "📢" },
   { path: "/team", label: "Team Management", icon: "👥" },
+  { path: "/patrons", label: "Patrons Management", icon: "🤝" },
   { path: "/programs", label: "Programs", icon: "📋" },
   { path: "/achievements", label: "Achievements", icon: "🏆" },
   { path: "/media", label: "Media Gallery", icon: "📸" },

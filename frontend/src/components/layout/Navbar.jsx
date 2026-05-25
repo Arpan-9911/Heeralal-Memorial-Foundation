@@ -137,13 +137,13 @@ const MainNav = () => {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center justify-center gap-40 w-full">
             
-            {/* Left Links: Home, About, Achievements, Programs */}
+            {/* Left Links: Home, About, Patrons, Achievements, Program */}
             <div className="flex justify-end gap-10 text-xs font-medium flex-1">
               <Link to={"/"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "HOME" : "होम"}</Link>
               <Link to={"/about"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "ABOUT US" : "हमारे बारे में"}</Link>
+              <Link to={"/patrons"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "PATRONS" : "संरक्षक"}</Link>
               <Link to={"/achievements"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "ACHIEVEMENTS" : "उपलब्धियाँ" }</Link>
-              <Link to={"/programs"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "PROGRAMS" : "प्रोग्राम" }</Link>
-              <Link to={"/commendations"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "COMMENDATIONS" : "प्रशंसापत्र" }</Link>
+              <Link to={"/programs"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "PROGRAM" : "प्रोग्राम" }</Link>
             </div>
 
             {/* Center Diamond — 3D Golden Donate Button */}
@@ -169,11 +169,11 @@ const MainNav = () => {
               </div>
             </Link>
 
-            {/* Right Links: Media, Join Us, Team, Contact Us */}
+            {/* Right Links: Commendations, Media, Join Us, Team, Contact Us */}
             <div className="flex gap-10 text-xs font-medium flex-1">
+              <Link to={"/commendations"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "COMMENDATIONS" : "प्रशंसापत्र" }</Link>
               <Link to={"/media"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "MEDIA" : "मीडिया"}</Link>
               <Link to={"/join-us"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "JOIN US" : "जुड़ें"}</Link>
-
               <Link to={"/teams"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "TEAM" : "टीम" }</Link>
               <Link to={"/contact"} className="hover:text-[var(--color-primary)]">{lang === "en" ? "CONTACT US" : "संपर्क करें" }</Link>
             </div>

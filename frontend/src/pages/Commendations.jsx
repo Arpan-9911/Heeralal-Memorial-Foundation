@@ -13,7 +13,7 @@ const lang$ = (obj, lang) => {
 
 /* ───────────── COMMENDATION CARD ───────────── */
 
-const CommendationCard = ({ card, index }) => {
+const CommendationCard = ({ card, index, onImageClick }) => {
   const { lang } = useLanguage();
   const isEven = index % 2 === 0;
 
@@ -43,7 +43,8 @@ const CommendationCard = ({ card, index }) => {
               <img
                 src={`${BACKEND}/uploads/commendation-cards/${card.leftPhoto}`}
                 alt={lang$(card.byName, lang)}
-                className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
+                onClick={() => onImageClick(`${BACKEND}/uploads/commendation-cards/${card.leftPhoto}`)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-secondary)]/40 to-transparent md:bg-gradient-to-r" />
             </>
@@ -92,7 +93,8 @@ const CommendationCard = ({ card, index }) => {
               <img
                 src={`${BACKEND}/uploads/commendation-cards/${card.rightPhoto}`}
                 alt="Certificate"
-                className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in"
+                onClick={() => onImageClick(`${BACKEND}/uploads/commendation-cards/${card.rightPhoto}`)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-secondary)]/40 to-transparent md:bg-gradient-to-l" />
             </>
@@ -113,6 +115,7 @@ const Commendations = () => {
   const { lang } = useLanguage();
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [popupImage, setPopupImage] = useState(null);
 
   useEffect(() => {
     const fetch = async () => {
@@ -190,12 +193,45 @@ const Commendations = () => {
           ) : (
             <div className="space-y-8">
               {cards.map((card, index) => (
-                <CommendationCard key={card._id} card={card} index={index} />
+                <CommendationCard 
+                  key={card._id} 
+                  card={card} 
+                  index={index} 
+                  onImageClick={setPopupImage} 
+                />
               ))}
             </div>
           )}
         </div>
       </section>
+
+      {/* Image Lightbox Modal */}
+      {popupImage && (
+        <div
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 cursor-zoom-out"
+          onClick={() => setPopupImage(null)}
+        >
+          {/* Close button */}
+          <button
+            className="absolute top-6 right-6 text-white text-3xl font-bold hover:scale-110 transition-transform cursor-pointer focus:outline-none"
+            onClick={() => setPopupImage(null)}
+          >
+            ✕
+          </button>
+          
+          {/* Image Container */}
+          <div
+            className="relative max-w-4xl max-h-[85vh] overflow-hidden rounded-xl shadow-2xl bg-white/5 p-2 animate-[zoomIn_0.3s_ease]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={popupImage}
+              alt="Commendation Full View"
+              className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-lg"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Animations */}
       <style>{`
@@ -207,6 +243,16 @@ const Commendations = () => {
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+        @keyframes zoomIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
           }
         }
       `}</style>

@@ -41,6 +41,11 @@ export const getTeams = async () => {
   return response.data.members;
 }
 
+export const getPatrons = async () => {
+  const response = await API.get("/patrons");
+  return response.data.patrons;
+}
+
 export const getAboutUs = async () => {
   const response = await API.get("/about-us");
   return response.data;

@@ -15,6 +15,7 @@ import JoinUs from "./pages/JoinUs";
 import Commendations from "./pages/Commendations";
 import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
+import Patrons from "./pages/Patrons";
 
 
 const ScrollToTop = () => {
@@ -39,6 +40,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/patrons" element={<Patrons />} />
           <Route path="/media" element={<Media />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/programs" element={<Programs />} />

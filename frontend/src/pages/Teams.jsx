@@ -356,16 +356,16 @@ const ExecutionTeamSection = ({ executionTeam, layout }) => {
         {rows.map((row, rIdx) => (
           <div className="flex justify-center" key={rIdx}>
             <div
-              className="grid gap-5"
+              className="grid gap-5 execution-team-grid w-full px-4"
               style={{
-                gridTemplateColumns: `repeat(${row.members.length}, minmax(0, 320px))`,
+                "--desktop-cols": row.members.length,
                 justifyContent: "center",
               }}
             >
               {row.members.map((member) => (
                 <div
                   key={member._id}
-                  className="relative rounded-lg overflow-hidden group cursor-pointer h-56"
+                  className="relative rounded-lg overflow-hidden group cursor-pointer h-56 w-full max-w-[320px] mx-auto"
                 >
                   <img
                     src={`${BACKEND}/uploads/team/${member.photo}`}
@@ -512,6 +512,14 @@ const Teams = () => {
         @keyframes goldenShimmer {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
+        }
+        .execution-team-grid {
+          grid-template-columns: repeat(1, minmax(0, 320px));
+        }
+        @media (min-width: 768px) {
+          .execution-team-grid {
+            grid-template-columns: repeat(var(--desktop-cols), minmax(0, 320px));
+          }
         }
       `}</style>
 
