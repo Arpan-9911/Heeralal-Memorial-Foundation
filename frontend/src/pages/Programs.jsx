@@ -188,7 +188,7 @@ const ProgramCard = ({ data, onReadMore }) => {
   const { lang } = useLanguage();
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col">
+    <div className="bg-white border border-gray-400 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col">
       {/* Image */}
       <div className="relative h-52 overflow-hidden">
         <img
@@ -272,7 +272,7 @@ const Programs = () => {
 
           {/* Programs Grid — 2 per row */}
           <section className="show">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {programs.map((program) => (
                 <ProgramCard
                   key={program._id}
