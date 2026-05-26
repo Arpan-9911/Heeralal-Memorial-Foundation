@@ -135,7 +135,7 @@ const MainNav = () => {
           </button>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center justify-center gap-40 w-full">
+          <div className="hidden lg:flex items-center justify-center gap-40 w-full">
             
             {/* Left Links: Home, About, Patrons, Achievements, Program */}
             <div className="flex justify-end gap-10 text-xs font-medium flex-1">
@@ -180,7 +180,7 @@ const MainNav = () => {
           </div>
 
           {/* Mobile Title */}
-          <div className="md:hidden text-sm font-semibold tracking-wider">
+          <div className="lg:hidden text-sm font-semibold tracking-wider">
             {lang === "en" ? "H.L.M.F." : "एच.एल.एम.एफ."}
           </div>
         </div>

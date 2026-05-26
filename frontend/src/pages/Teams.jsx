@@ -225,50 +225,45 @@ const LeadershipCard = ({ member }) => {
   const quote = t(member.quote, lang);
 
   return (
-    <div className="group relative bg-white/80 backdrop-blur-sm border border-gray-200 rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-      {/* Top Gradient */}
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] opacity-90" />
-
-      <div className="relative px-6 pb-8 pt-10 flex flex-col items-center text-center">
-        {/* Floating Image */}
-        <div className="relative z-10">
-          <div className="absolute inset-0 rounded-full blur-2xl bg-[var(--color-primary)] opacity-30 group-hover:scale-125 transition duration-500" />
-
-          <div className="relative border-4 border-white rounded-full shadow-xl overflow-hidden">
-            <GoldenCirclePhoto
-              src={`${BACKEND}/uploads/team/${member.photo}`}
-              alt={t(member.name, lang)}
-              size="w-36 h-36 md:w-44 md:h-44"
-            />
+    <div className="min-h-full group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl">
+      {/* Top Section */}
+      <div className="relative bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] px-5 py-5">
+        <div className="flex items-center gap-4">
+          {/* Image */}
+          <div className="shrink-0">
+            <div className="rounded-full border-3 border-white shadow-lg overflow-hidden">
+              <GoldenCirclePhoto
+                src={`${BACKEND}/uploads/team/${member.photo}`}
+                alt={t(member.name, lang)}
+                size="w-20 h-20 md:w-24 md:h-24"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Name & Role */}
-        <div className="mt-6">
-          <h3 className="text-2xl font-extrabold text-gray-900">
-            {t(member.name, lang)}
-          </h3>
+          {/* Name + Role */}
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
+              {t(member.name, lang)}
+            </h3>
 
-          <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-[var(--color-primary-dark)] font-bold">
-            {t(member.role, lang)}
-          </p>
-        </div>
-
-        {/* Decorative Line */}
-        <div className="w-16 h-1 rounded-full bg-[var(--color-primary)] mt-5" />
-
-        {/* Quote */}
-        {quote && (
-          <div className="mt-6">
-            <p
-              className="text-gray-600 italic leading-8 text-[15px]"
-              style={{ fontFamily: "'Georgia', serif" }}
-            >
-              “{quote}”
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-white/80 font-medium">
+              {t(member.role, lang)}
             </p>
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Bottom Quote */}
+      {quote && (
+        <div className="p-5">
+          <p
+            className="text-gray-600 italic text-[14px] leading-7"
+            style={{ fontFamily: "'Georgia', serif" }}
+          >
+            “{quote}”
+          </p>
+        </div>
+      )}
     </div>
   );
 };
@@ -282,21 +277,6 @@ const LeadershipSection = ({ members }) => {
 
   return (
     <section className="relative mb-8">
-      {/* Heading */}
-      <div className="text-center mb-8">
-        <span className="text-[11px] uppercase tracking-[0.35em] text-[var(--color-primary)] font-bold">
-          {lang === "en" ? "Leadership" : "नेतृत्व"}
-        </span>
-
-        <h2 className="mt-3 text-3xl md:text-4xl font-black text-gray-900">
-          {lang === "en"
-            ? "Meet Our Visionaries"
-            : "हमारे दूरदर्शी नेताओं से मिलें"}
-        </h2>
-
-        <div className="w-20 h-1 bg-[var(--color-primary)] mx-auto mt-4 rounded-full" />
-      </div>
-
       {/* Centered 2-Column Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {members.map((member, index) => {
@@ -306,11 +286,7 @@ const LeadershipSection = ({ members }) => {
           return (
             <div
               key={member._id}
-              className={
-                isOdd && isLast
-                  ? "md:col-span-2 w-1/2 mx-auto"
-                  : ""
-              }
+              className={isOdd && isLast ? "md:col-span-2 w-1/2 mx-auto" : ""}
             >
               <LeadershipCard member={member} />
             </div>
